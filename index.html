@@ -177,6 +177,19 @@ th{background:#F6F7F3;font-weight:700}
 footer{max-width:1040px;margin:0 auto;padding:6px 18px 28px;font-size:13px;color:var(--soft)}
 
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Pemilih topik */
+.topics{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--edge);border-radius:8px;overflow:hidden;margin-bottom:8px}
+.topic{background:var(--surface);border:0;border-left:1px solid var(--edge);padding:8px 6px;cursor:pointer;text-align:center;line-height:1.2}
+.topic:first-child{border-left:0}
+.topic small{display:block;font-size:12px;color:var(--soft)}
+.topic span{display:block;font-family:var(--display);font-weight:700;font-size:15px;margin-top:2px}
+.topic[aria-pressed="true"]{background:var(--ink);color:#fff}
+.topic[aria-pressed="true"] small{color:#C9D1DB}
+.topic-desc{font-size:13px;color:var(--soft);margin:0 0 10px}
+.opt.text{min-height:56px;font-family:var(--body);font-weight:700;font-size:15px}
+.spin{animation:spin 1.2s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -229,6 +242,13 @@ footer{max-width:1040px;margin:0 auto;padding:6px 18px 28px;font-size:13px;color
 
   <!-- Mod -->
   <section class="panel-box">
+    <div class="topics" role="group" aria-label="Topik">
+      <button class="topic" data-topic="elektrik" aria-pressed="true"><small>Tingkatan 2</small><span>Elektrik</span></button>
+      <button class="topic" data-topic="elektronik" aria-pressed="false"><small>Tingkatan 2</small><span>Elektronik</span></button>
+      <button class="topic" data-topic="mekatronik" aria-pressed="false"><small>Tingkatan 3</small><span>Mekatronik</span></button>
+    </div>
+    <p class="topic-desc" id="topicDesc"></p>
+
     <nav class="tabs" role="tablist">
       <button class="tab" role="tab" aria-selected="true" data-mode="imbas">Imbas</button>
       <button class="tab" role="tab" aria-selected="false" data-mode="litar">Bina Litar</button>
@@ -242,7 +262,7 @@ footer{max-width:1040px;margin:0 auto;padding:6px 18px 28px;font-size:13px;color
       <h2>Kenali komponen</h2>
       <p class="lead">Pegang satu komponen di tengah bingkai kamera. Apabila penjuru bingkai bertukar hijau, maklumatnya dipaparkan di sini.</p>
       <div id="infoArea"><div class="empty">Belum ada komponen dikesan.</div></div>
-      <h3>Koleksi saya <span class="found-count" id="kolCount"></span></h3>
+      <h3>Komponen topik ini <span class="found-count" id="kolCount"></span></h3>
       <div class="parts" id="koleksi"></div>
     </div>
 
@@ -263,9 +283,10 @@ footer{max-width:1040px;margin:0 auto;padding:6px 18px 28px;font-size:13px;color
     <!-- Kuiz -->
     <div class="view" id="view-kuiz">
       <div id="quizStart">
-        <h2>Kuiz cabaran</h2>
-        <p class="lead">Baca petunjuk, kemudian pilih jawapan atau tunjukkan komponen sebenar kepada kamera. Lebih cepat dijawab, lebih tinggi markahnya.</p>
+        <h2 id="quizTitle">Kuiz cabaran</h2>
+        <p class="lead">Sepuluh soalan daripada topik yang dipilih. Pilih jawapan, atau untuk soalan komponen, tunjukkan komponen sebenar kepada kamera. Lebih cepat dijawab, lebih tinggi markahnya.</p>
         <button class="btn" id="btnQuiz">Mula kuiz</button>
+        <div class="note" id="quizStartFb"></div>
       </div>
       <div id="quizPlay" style="display:none">
         <div class="clue-box">
@@ -289,7 +310,7 @@ footer{max-width:1040px;margin:0 auto;padding:6px 18px 28px;font-size:13px;color
           <div class="small" id="endInfo"></div>
         </div>
         <label class="field">Nama<input id="inNama" maxlength="40" autocomplete="name"></label>
-        <label class="field">Kelas<input id="inKelas" maxlength="20" placeholder="Contoh: 3 Bestari"></label>
+        <label class="field">Kelas<input id="inKelas" maxlength="20" placeholder="Contoh: 2 Bestari"></label>
         <div class="actions">
           <button class="btn go" id="btnSend">Simpan markah</button>
           <button class="btn line" id="btnAgain">Main semula</button>
@@ -317,7 +338,7 @@ footer{max-width:1040px;margin:0 auto;padding:6px 18px 28px;font-size:13px;color
     <!-- Papan Markah -->
     <div class="view" id="view-markah">
       <h2>Papan markah kuiz</h2>
-      <p class="lead">Sepuluh markah tertinggi daripada semua pemain.</p>
+      <p class="lead" id="lbLead">Sepuluh markah tertinggi bagi topik ini.</p>
       <button class="btn line" id="btnLoadLb">Muat semula</button>
       <div id="lb" style="margin-top:14px"></div>
     </div>
@@ -345,123 +366,268 @@ const CONFIG = {
 };
 
 /* =========================================================
+   TOPIK SILIBUS RBT
+   ========================================================= */
+const TOPICS = {
+  elektrik: { tingkatan: "Tingkatan 2", nama: "Reka Bentuk Elektrik", pendek: "T2 Elektrik", bab: "Bab 2.3",
+    ringkas: "Elemen sistem elektrik (sumber, medium, beban dan kawalan), reka bentuk litar dan pengiraan parameter elektrik." },
+  elektronik: { tingkatan: "Tingkatan 2", nama: "Reka Bentuk Elektronik", pendek: "T2 Elektronik", bab: "Bab 2.4",
+    ringkas: "Mikropengawal, peranti input dan output, litar skematik dan gambar rajah blok." },
+  mekatronik: { tingkatan: "Tingkatan 3", nama: "Reka Bentuk Mekatronik", pendek: "T3 Mekatronik", bab: "Bab 1.1",
+    ringkas: "Elemen mekatronik dan gambar rajah blok input, proses dan output bagi produk sedia ada." }
+};
+
+/* =========================================================
    DATA KOMPONEN — nama kunci MESTI sama dengan nama kelas
-   dalam Teachable Machine (huruf besar/kecil tidak penting)
+   dalam Teachable Machine (huruf besar/kecil tidak penting).
+   ALIASES membenarkan nama kelas lain dipadankan.
    ========================================================= */
 const COMPONENTS = {
-  "Perintang": {
-    nama: "Perintang", pendek: "Perintang", jenis: "Komponen pasif", blok: "",
-    fungsi: "Menghadkan atau mengawal jumlah arus elektrik yang mengalir dalam litar.",
-    contoh: "Melindungi LED daripada rosak akibat arus berlebihan.",
-    unit: "Ohm (Ω)",
-    clue: "Komponen yang menghadkan arus elektrik dalam litar"
-  },
-  "LED": {
-    nama: "LED", pendek: "LED", jenis: "Output", blok: "Output",
-    fungsi: "Diod pemancar cahaya. Mengeluarkan cahaya apabila arus mengalir mengikut satu arah sahaja. Kaki yang lebih panjang ialah anod (+).",
-    contoh: "Lampu penunjuk, lampu isyarat dan papan iklan digital.",
-    unit: "",
-    clue: "Komponen yang mengeluarkan cahaya apabila arus mengalir ikut satu arah"
-  },
   "Bateri": {
-    nama: "Bateri", pendek: "Bateri", jenis: "Sumber kuasa", blok: "",
-    fungsi: "Membekalkan tenaga elektrik arus terus (a.t.) kepada litar.",
-    contoh: "Sumber kuasa robot, alat kawalan jauh dan jam dinding.",
+    nama: "Bateri", pendek: "Bateri", topik: ["elektrik", "elektronik", "mekatronik"],
+    elemen: "Sumber", peranti: "Bekalan kuasa", mek: "Sistem elektrik",
+    fungsi: "Membekalkan tenaga elektrik arus terus (AT) kepada litar.",
+    contoh: "Lampu suluh, alat kawalan jauh dan robot.",
     unit: "Volt (V)",
     clue: "Sumber tenaga elektrik arus terus untuk litar"
   },
+  "Wayar": {
+    nama: "Wayar penyambung", pendek: "Wayar", topik: ["elektrik", "elektronik"],
+    elemen: "Medium", peranti: "Penyambung", mek: "Sistem elektrik",
+    fungsi: "Medium yang mengalirkan arus elektrik dari sumber ke beban.",
+    contoh: "Wayar pelompat pada papan reka dan kabel peralatan elektrik.",
+    unit: "",
+    clue: "Medium yang mengalirkan arus dari sumber ke beban"
+  },
   "Suis": {
-    nama: "Suis", pendek: "Suis", jenis: "Kawalan", blok: "Input",
-    fungsi: "Menyambung (ON) atau memutuskan (OFF) aliran arus dalam litar.",
-    contoh: "Suis lampu dan butang tekan pada loceng.",
+    nama: "Suis", pendek: "Suis", topik: ["elektrik", "elektronik", "mekatronik"],
+    elemen: "Kawalan", peranti: "Peranti input", mek: "Sistem elektronik",
+    fungsi: "Mengawal aliran arus dengan menyambung (ON) atau memutuskan (OFF) litar. Suis tekan tutup menghantar isyarat digital kepada mikropengawal.",
+    contoh: "Suis lampu, butang loceng dan butang alat kawalan jauh.",
     unit: "",
     clue: "Komponen untuk menyambung dan memutuskan litar"
   },
-  "Buzzer": {
-    nama: "Buzzer", pendek: "Buzzer", jenis: "Output", blok: "Output",
-    fungsi: "Menukarkan tenaga elektrik kepada tenaga bunyi.",
-    contoh: "Penggera keselamatan, loceng pintu elektronik dan penggera ketuhar.",
+  "Mentol": {
+    nama: "Mentol", pendek: "Mentol", topik: ["elektrik"],
+    elemen: "Beban", peranti: "Peranti output", mek: "Sistem elektrik",
+    fungsi: "Beban yang menukarkan tenaga elektrik kepada tenaga cahaya dan haba.",
+    contoh: "Lampu suluh dan lampu meja.",
+    unit: "Watt (W)",
+    clue: "Beban yang menukarkan tenaga elektrik kepada cahaya dan haba"
+  },
+  "Motor AT": {
+    nama: "Motor arus terus (motor AT)", pendek: "Motor AT", topik: ["elektrik", "mekatronik"],
+    elemen: "Beban", peranti: "Peranti output", mek: "Sistem elektrik",
+    fungsi: "Menukarkan tenaga elektrik kepada tenaga kinetik dalam bentuk putaran berterusan.",
+    contoh: "Kipas mini, roda kereta kawalan jauh dan robot.",
     unit: "",
-    clue: "Komponen yang menukarkan isyarat elektrik kepada bunyi"
+    clue: "Komponen yang berputar secara berterusan apabila dialiri arus"
+  },
+  "Buzzer": {
+    nama: "Pembaz (buzzer)", pendek: "Pembaz", topik: ["elektrik", "elektronik", "mekatronik"],
+    elemen: "Beban", peranti: "Peranti output", mek: "Sistem elektronik",
+    fungsi: "Mengeluarkan isyarat dalam bentuk bunyi.",
+    contoh: "Loceng pintu, penggera keselamatan dan penggera ketuhar.",
+    unit: "",
+    clue: "Peranti output yang mengeluarkan isyarat bunyi"
+  },
+  "LED": {
+    nama: "Diod pemancar cahaya (LED)", pendek: "LED", topik: ["elektrik", "elektronik", "mekatronik"],
+    elemen: "Beban", peranti: "Peranti output", mek: "Sistem elektronik",
+    fungsi: "Mengeluarkan isyarat dalam bentuk cahaya. Arus hanya mengalir dari kaki panjang (anod +) ke kaki pendek (katod −).",
+    contoh: "Lampu penunjuk, lampu isyarat dan LED berkelip.",
+    unit: "",
+    clue: "Peranti output yang mengeluarkan cahaya dan mempunyai kekutuban"
+  },
+  "Perintang": {
+    nama: "Perintang tetap", pendek: "Perintang", topik: ["elektrik", "elektronik"],
+    elemen: "", peranti: "Komponen sokongan", mek: "Sistem elektronik",
+    fungsi: "Mengehadkan arus elektrik. Perintang 1 kΩ melindungi LED, manakala perintang 10 kΩ digunakan bersama suis tekan tutup.",
+    contoh: "Litar LED dan litar input mikropengawal.",
+    unit: "Ohm (Ω)",
+    clue: "Komponen yang mengehadkan arus elektrik dalam litar"
   },
   "LDR": {
-    nama: "LDR", pendek: "LDR", jenis: "Input (sensor)", blok: "Input",
-    fungsi: "Perintang peka cahaya. Rintangannya berkurang apabila cahaya semakin terang dan bertambah dalam gelap.",
-    contoh: "Lampu jalan automatik dan lampu taman solar.",
+    nama: "Perintang peka cahaya (LDR)", pendek: "LDR", topik: ["elektronik", "mekatronik"],
+    elemen: "", peranti: "Peranti input", mek: "Sistem elektronik",
+    fungsi: "Penderia cahaya. Rintangannya berkurang apabila cahaya terang dan bertambah dalam gelap.",
+    contoh: "Lampu jalan automatik dan lampu taman.",
     unit: "Ohm (Ω)",
-    clue: "Komponen yang rintangannya berubah mengikut keamatan cahaya"
-  },
-  "Perintang Boleh Ubah": {
-    nama: "Potensiometer", pendek: "Potensiometer", jenis: "Input (kawalan)", blok: "Input",
-    fungsi: "Perintang boleh ubah. Rintangannya dilaraskan dengan memutar tombol.",
-    contoh: "Kawalan kelantangan radio dan pemalap lampu.",
-    unit: "Ohm (Ω)",
-    clue: "Komponen yang rintangannya boleh dilaras dengan memutar tombol"
-  },
-  "Servo": {
-    nama: "Motor servo", pendek: "Servo", jenis: "Output (penggerak)", blok: "Output",
-    fungsi: "Berputar ke sudut tertentu, antara 0° hingga 180°, mengikut isyarat daripada mikropengawal.",
-    contoh: "Lengan robot, palang pintu automatik dan pemberi makanan ikan automatik.",
-    unit: "",
-    clue: "Motor yang boleh berputar ke sudut tertentu"
-  },
-  "ESP32": {
-    nama: "ESP32", pendek: "ESP32", jenis: "Proses (mikropengawal)", blok: "Proses",
-    fungsi: "Mikropengawal yang boleh diprogram, dengan Wi-Fi dan Bluetooth terbina dalam.",
-    contoh: "Projek IoT, rumah pintar dan sistem pemantauan jarak jauh.",
-    unit: "",
-    clue: "Mikropengawal yang mempunyai Wi-Fi dan Bluetooth"
+    clue: "Penderia yang rintangannya berubah mengikut keamatan cahaya"
   },
   "Sensor Ultrasonik": {
-    nama: "Sensor ultrasonik", pendek: "Ultrasonik", jenis: "Input (sensor)", blok: "Input",
-    fungsi: "Mengukur jarak objek menggunakan gelombang bunyi ultrasonik yang dipantulkan.",
+    nama: "Penderia ultrasonik", pendek: "Ultrasonik", topik: ["elektronik", "mekatronik"],
+    elemen: "", peranti: "Peranti input", mek: "Sistem elektronik",
+    fungsi: "Mengukur jarak objek menggunakan pantulan gelombang bunyi ultrasonik.",
     contoh: "Sensor parkir kereta dan robot pengelak halangan.",
     unit: "Sentimeter (cm)",
-    clue: "Sensor yang mengukur jarak menggunakan gelombang bunyi"
+    clue: "Penderia yang mengukur jarak menggunakan gelombang bunyi"
+  },
+  "Mikropengawal": {
+    nama: "Papan mikropengawal", pendek: "Mikropengawal", topik: ["elektronik", "mekatronik"],
+    elemen: "", peranti: "Proses", mek: "Sistem kawalan (atur cara)",
+    fungsi: "Mengawal peranti elektronik berdasarkan atur cara yang dimuat naik. Mengandungi CPU, memori dan port input/output dalam satu cip.",
+    contoh: "Arduino Uno, ESP32 dan micro:bit.",
+    unit: "",
+    clue: "Peranti kawalan dalam satu cip yang menerima input, memproses dan menghasilkan output"
+  },
+  "Servo": {
+    nama: "Motor servo", pendek: "Servo", topik: ["elektronik", "mekatronik"],
+    elemen: "", peranti: "Peranti output", mek: "Sistem elektrik",
+    fungsi: "Membuat gerakan bersudut mengikut isyarat daripada mikropengawal.",
+    contoh: "Palang pintu automatik, lengan robot dan pemberi makanan ikan automatik.",
+    unit: "",
+    clue: "Motor yang berputar ke sudut tertentu mengikut isyarat mikropengawal"
+  },
+  "Pemacu Motor": {
+    nama: "Pemacu motor", pendek: "Pemacu motor", topik: ["mekatronik"],
+    elemen: "", peranti: "Pemacu", mek: "Sistem elektronik",
+    fungsi: "Menerima isyarat daripada mikropengawal dan membekalkan arus yang cukup untuk mengawal arah dan kelajuan motor AT.",
+    contoh: "Modul L298N atau L293D dalam kereta kawalan jauh dan robot.",
+    unit: "",
+    clue: "Modul yang membolehkan mikropengawal mengawal arah dan kelajuan motor AT"
   }
+};
+
+const ALIASES = {
+  "esp32": "Mikropengawal", "arduino": "Mikropengawal", "papan mikropengawal": "Mikropengawal",
+  "pembaz": "Buzzer", "penderia ultrasonik": "Sensor Ultrasonik", "motor servo": "Servo",
+  "wayar pelompat": "Wayar", "perintang tetap": "Perintang", "motor": "Motor AT",
+  "pemacu": "Pemacu Motor", "l298n": "Pemacu Motor"
 };
 
 /* Simbol litar (SVG) — pusat (0,0), kaki penyambung di x = -40 dan x = 40 */
 const SYM = {
-  "Perintang": `<line x1="-40" y1="0" x2="-20" y2="0"/><rect x="-20" y="-9" width="40" height="18"/><line x1="20" y1="0" x2="40" y2="0"/>`,
-  "LED": `<line x1="-40" y1="0" x2="-12" y2="0"/><polygon points="-12,-12 -12,12 10,0"/><line x1="10" y1="-12" x2="10" y2="12"/><line x1="10" y1="0" x2="40" y2="0"/><line x1="0" y1="-14" x2="10" y2="-26"/><polyline points="4,-26 10,-26 10,-20"/><line x1="12" y1="-14" x2="22" y2="-26"/><polyline points="16,-26 22,-26 22,-20"/>`,
   "Bateri": `<line x1="-40" y1="0" x2="-6" y2="0"/><line x1="-6" y1="-18" x2="-6" y2="18"/><line x1="6" y1="-9" x2="6" y2="9" stroke-width="6"/><line x1="6" y1="0" x2="40" y2="0"/><text x="-20" y="-20" font-size="14" fill="currentColor" stroke="none">+</text>`,
+  "Wayar": `<line x1="-36" y1="0" x2="36" y2="0"/><circle cx="-36" cy="0" r="4" fill="currentColor"/><circle cx="36" cy="0" r="4" fill="currentColor"/>`,
   "Suis": `<line x1="-40" y1="0" x2="-17" y2="0"/><circle cx="-14" cy="0" r="3"/><line x1="-12" y1="-2" x2="14" y2="-16"/><circle cx="16" cy="0" r="3"/><line x1="19" y1="0" x2="40" y2="0"/>`,
+  "Mentol": `<line x1="-40" y1="0" x2="-16" y2="0"/><circle cx="0" cy="0" r="16"/><line x1="-11" y1="-11" x2="11" y2="11"/><line x1="-11" y1="11" x2="11" y2="-11"/><line x1="16" y1="0" x2="40" y2="0"/>`,
+  "Motor AT": `<line x1="-40" y1="0" x2="-18" y2="0"/><circle cx="0" cy="0" r="18"/><line x1="18" y1="0" x2="40" y2="0"/><text x="0" y="6" font-size="18" text-anchor="middle" fill="currentColor" stroke="none" font-weight="700">M</text>`,
   "Buzzer": `<line x1="-40" y1="0" x2="-16" y2="0"/><line x1="16" y1="0" x2="40" y2="0"/><path d="M-16,0 A16,16 0 0 1 16,0 Z"/><line x1="-6" y1="-6" x2="-6" y2="0"/><line x1="6" y1="-6" x2="6" y2="0"/>`,
+  "LED": `<line x1="-40" y1="0" x2="-12" y2="0"/><polygon points="-12,-12 -12,12 10,0"/><line x1="10" y1="-12" x2="10" y2="12"/><line x1="10" y1="0" x2="40" y2="0"/><line x1="0" y1="-14" x2="10" y2="-26"/><polyline points="4,-26 10,-26 10,-20"/><line x1="12" y1="-14" x2="22" y2="-26"/><polyline points="16,-26 22,-26 22,-20"/>`,
+  "Perintang": `<line x1="-40" y1="0" x2="-20" y2="0"/><rect x="-20" y="-9" width="40" height="18"/><line x1="20" y1="0" x2="40" y2="0"/>`,
   "LDR": `<line x1="-40" y1="0" x2="-14" y2="0"/><rect x="-14" y="-6" width="28" height="12"/><line x1="14" y1="0" x2="40" y2="0"/><circle cx="0" cy="0" r="20"/><line x1="-28" y1="-32" x2="-16" y2="-20"/><polyline points="-16,-26 -16,-20 -22,-20"/><line x1="-14" y1="-34" x2="-2" y2="-22"/><polyline points="-2,-28 -2,-22 -8,-22"/>`,
-  "Perintang Boleh Ubah": `<line x1="-40" y1="0" x2="-20" y2="0"/><rect x="-20" y="-9" width="40" height="18"/><line x1="20" y1="0" x2="40" y2="0"/><line x1="0" y1="28" x2="0" y2="12"/><polyline points="-5,17 0,11 5,17"/>`,
-  "Servo": `<line x1="-40" y1="0" x2="-18" y2="0"/><circle cx="0" cy="0" r="18"/><line x1="18" y1="0" x2="40" y2="0"/><text x="0" y="6" font-size="18" text-anchor="middle" fill="currentColor" stroke="none" font-weight="700">M</text>`,
-  "ESP32": `<line x1="-40" y1="0" x2="-28" y2="0"/><rect x="-28" y="-18" width="56" height="36" rx="3"/><line x1="28" y1="0" x2="40" y2="0"/><line x1="-18" y1="-18" x2="-18" y2="-24"/><line x1="-6" y1="-18" x2="-6" y2="-24"/><line x1="6" y1="-18" x2="6" y2="-24"/><line x1="18" y1="-18" x2="18" y2="-24"/><line x1="-18" y1="18" x2="-18" y2="24"/><line x1="-6" y1="18" x2="-6" y2="24"/><line x1="6" y1="18" x2="6" y2="24"/><line x1="18" y1="18" x2="18" y2="24"/><text x="0" y="4" font-size="11" text-anchor="middle" fill="currentColor" stroke="none" font-weight="700">ESP32</text>`,
-  "Sensor Ultrasonik": `<line x1="-40" y1="0" x2="-30" y2="0"/><rect x="-30" y="-16" width="60" height="32" rx="4"/><circle cx="-13" cy="0" r="9"/><circle cx="13" cy="0" r="9"/><line x1="30" y1="0" x2="40" y2="0"/>`
+  "Sensor Ultrasonik": `<line x1="-40" y1="0" x2="-30" y2="0"/><rect x="-30" y="-16" width="60" height="32" rx="4"/><circle cx="-13" cy="0" r="9"/><circle cx="13" cy="0" r="9"/><line x1="30" y1="0" x2="40" y2="0"/>`,
+  "Mikropengawal": `<line x1="-40" y1="0" x2="-28" y2="0"/><rect x="-28" y="-18" width="56" height="36" rx="3"/><line x1="28" y1="0" x2="40" y2="0"/><line x1="-18" y1="-18" x2="-18" y2="-24"/><line x1="-6" y1="-18" x2="-6" y2="-24"/><line x1="6" y1="-18" x2="6" y2="-24"/><line x1="18" y1="-18" x2="18" y2="-24"/><line x1="-18" y1="18" x2="-18" y2="24"/><line x1="-6" y1="18" x2="-6" y2="24"/><line x1="6" y1="18" x2="6" y2="24"/><line x1="18" y1="18" x2="18" y2="24"/><text x="0" y="4" font-size="11" text-anchor="middle" fill="currentColor" stroke="none" font-weight="700">MCU</text>`,
+  "Servo": `<line x1="-40" y1="0" x2="-24" y2="0"/><rect x="-24" y="-14" width="48" height="28" rx="3"/><circle cx="10" cy="0" r="5"/><line x1="10" y1="0" x2="10" y2="-26" stroke-width="4"/><line x1="24" y1="0" x2="40" y2="0"/>`,
+  "Pemacu Motor": `<line x1="-40" y1="0" x2="-26" y2="0"/><rect x="-26" y="-16" width="52" height="32" rx="2"/><line x1="26" y1="0" x2="40" y2="0"/><line x1="-26" y1="-8" x2="-32" y2="-8"/><line x1="-26" y1="8" x2="-32" y2="8"/><line x1="26" y1="-8" x2="32" y2="-8"/><line x1="26" y1="8" x2="32" y2="8"/><text x="0" y="4" font-size="9" text-anchor="middle" fill="currentColor" stroke="none" font-weight="700">L298N</text>`
 };
 
-/* Misi Bina Litar */
-const MISSIONS = [
-  { id: "m1", tajuk: "Litar LED asas", jenis: "litar",
-    desc: "Bina litar sesiri untuk menyalakan LED dengan selamat. Imbas komponen mengikut urutan aliran arus.",
-    urutan: ["Bateri", "Suis", "Perintang", "LED"], output: "LED",
-    berjaya: "LED menyala. Perintang melindungi LED daripada arus berlebihan." },
-  { id: "m2", tajuk: "Penggera bunyi", jenis: "litar",
-    desc: "Bina litar penggera ringkas yang berbunyi apabila suis dihidupkan.",
-    urutan: ["Bateri", "Suis", "Buzzer"], output: "Buzzer",
-    berjaya: "Buzzer berbunyi apabila litar lengkap." },
-  { id: "m3", tajuk: "Lampu malap", jenis: "litar",
-    desc: "Bina litar yang membolehkan kecerahan LED dilaraskan.",
-    urutan: ["Bateri", "Perintang Boleh Ubah", "LED"], output: "LED",
-    berjaya: "Putar potensiometer untuk mengubah kecerahan LED." },
-  { id: "m4", tajuk: "Lampu peka cahaya", jenis: "litar",
-    desc: "Bina litar di mana kecerahan LED dipengaruhi oleh cahaya sekeliling.",
-    urutan: ["Bateri", "LDR", "Perintang", "LED"], output: "LED",
-    berjaya: "Rintangan LDR berubah mengikut cahaya, jadi kecerahan LED turut berubah." },
-  { id: "m5", tajuk: "Sistem parkir pintar", jenis: "blok",
-    desc: "Susun gambar rajah blok input, proses dan output. Sensor mengesan jarak, ESP32 memproses dan buzzer memberi amaran.",
-    urutan: ["Sensor Ultrasonik", "ESP32", "Buzzer"], output: "Buzzer",
-    berjaya: "Inilah konsep input, proses dan output dalam sistem pintar." },
-  { id: "m6", tajuk: "Palang pintu automatik", jenis: "blok",
-    desc: "Susun sistem palang automatik. Sensor mengesan kenderaan, ESP32 memproses dan servo mengangkat palang.",
-    urutan: ["Sensor Ultrasonik", "ESP32", "Servo"], output: "Servo",
-    berjaya: "Servo berputar ke sudut tertentu untuk mengangkat palang." }
-];
+/* Misi Bina Litar mengikut topik */
+const MISSIONS = {
+  elektrik: [
+    { id: "e1", tajuk: "Lampu suluh", jenis: "litar",
+      desc: "Bina litar lampu suluh. Imbas sumber, kawalan dan beban mengikut aliran arus. Wayar dalam litar ialah medium.",
+      urutan: ["Bateri", "Suis", "Mentol"], label: ["Sumber", "Kawalan", "Beban"], output: "Mentol",
+      berjaya: "Litar tertutup. Arus mengalir dari sumber melalui medium ke beban, dan suis mengawal alirannya." },
+    { id: "e2", tajuk: "Kipas mini", jenis: "litar",
+      desc: "Bina litar kipas mini menggunakan motor AT sebagai beban.",
+      urutan: ["Bateri", "Suis", "Motor AT"], label: ["Sumber", "Kawalan", "Beban"], output: "Motor AT",
+      berjaya: "Motor AT menukarkan tenaga elektrik kepada putaran untuk memusingkan bilah kipas." },
+    { id: "e3", tajuk: "Loceng pintu", jenis: "litar",
+      desc: "Bina litar loceng pintu yang berbunyi apabila suis ditekan.",
+      urutan: ["Bateri", "Suis", "Buzzer"], label: ["Sumber", "Kawalan", "Beban"], output: "Buzzer",
+      berjaya: "Pembaz berbunyi apabila suis menutup litar." },
+    { id: "e4", tajuk: "Lampu penunjuk LED", jenis: "litar",
+      desc: "Bina litar LED yang selamat. LED perlukan perintang untuk mengehadkan arus.",
+      urutan: ["Bateri", "Suis", "Perintang", "LED"], label: ["Sumber", "Kawalan", "Had arus", "Beban"], output: "LED",
+      berjaya: "Perintang mengehadkan arus supaya LED tidak rosak." }
+  ],
+  elektronik: [
+    { id: "n1", tajuk: "LED berkelip", jenis: "blok",
+      desc: "Susun gambar rajah blok projek LED berkelip. Suis tekan tutup menghantar isyarat kepada mikropengawal, yang menyalakan LED.",
+      urutan: ["Suis", "Mikropengawal", "LED"], label: ["Input", "Proses", "Output"], output: "LED",
+      berjaya: "Mikropengawal membaca isyarat daripada suis dan mengawal LED mengikut atur cara." },
+    { id: "n2", tajuk: "Lampu automatik", jenis: "blok",
+      desc: "Susun sistem lampu yang menyala sendiri apabila keadaan gelap.",
+      urutan: ["LDR", "Mikropengawal", "LED"], label: ["Input", "Proses", "Output"], output: "LED",
+      berjaya: "LDR mengesan cahaya, mikropengawal memproses bacaan dan menyalakan LED apabila gelap." },
+    { id: "n3", tajuk: "Penggera keselamatan", jenis: "blok",
+      desc: "Susun gambar rajah blok penggera yang berbunyi apabila ada objek terlalu dekat.",
+      urutan: ["Sensor Ultrasonik", "Mikropengawal", "Buzzer"], label: ["Input", "Proses", "Output"], output: "Buzzer",
+      berjaya: "Penderia mengukur jarak, mikropengawal membandingkannya dengan had, dan pembaz memberi amaran." },
+    { id: "n4", tajuk: "Palang automatik", jenis: "blok",
+      desc: "Susun sistem palang yang terangkat apabila butang ditekan.",
+      urutan: ["Suis", "Mikropengawal", "Servo"], label: ["Input", "Proses", "Output"], output: "Servo",
+      berjaya: "Motor servo berputar ke sudut yang ditetapkan dalam atur cara untuk mengangkat palang." }
+  ],
+  mekatronik: [
+    { id: "k1", tajuk: "Kereta kawalan jauh", jenis: "blok",
+      desc: "Susun gambar rajah blok kereta kawalan jauh: input, proses, pemacu dan output yang memutarkan roda.",
+      urutan: ["Suis", "Mikropengawal", "Pemacu Motor", "Motor AT"], label: ["Input", "Proses", "Pemacu", "Output"], output: "Motor AT",
+      berjaya: "Isyarat kawalan diproses oleh mikropengawal, pemacu motor membekalkan arus, dan motor AT memutarkan roda melalui gear." },
+    { id: "k2", tajuk: "Robot pengelak halangan", jenis: "blok",
+      desc: "Susun sistem robot yang berhenti dan membelok apabila mengesan halangan.",
+      urutan: ["Sensor Ultrasonik", "Mikropengawal", "Pemacu Motor", "Motor AT"], label: ["Input", "Proses", "Pemacu", "Output"], output: "Motor AT",
+      berjaya: "Penderia mengesan halangan, mikropengawal membuat keputusan dan pemacu motor menukar arah putaran roda." },
+    { id: "k3", tajuk: "Palang pintu automatik", jenis: "blok",
+      desc: "Susun sistem palang yang terangkat apabila kenderaan dikesan.",
+      urutan: ["Sensor Ultrasonik", "Mikropengawal", "Servo"], label: ["Input", "Proses", "Output"], output: "Servo",
+      berjaya: "Gabungan sistem elektronik, kawalan dan mekanikal menggerakkan palang secara automatik." },
+    { id: "k4", tajuk: "Lampu jalan pintar", jenis: "blok",
+      desc: "Susun sistem lampu jalan yang menyala apabila hari gelap dan memberi bunyi amaran jika rosak.",
+      urutan: ["LDR", "Mikropengawal", "LED"], label: ["Input", "Proses", "Output"], output: "LED",
+      berjaya: "Produk mekatronik menggunakan penderia dan atur cara untuk bertindak secara automatik." }
+  ]
+};
+
+/* Soalan konsep mengikut topik (jawapan = indeks pilihan yang betul) */
+const KONSEP = {
+  elektrik: [
+    { q: "Berapakah bilangan elemen utama dalam sistem elektrik?", opts: ["Dua", "Tiga", "Empat", "Lima"], ans: 2,
+      nota: "Empat elemen: sumber, medium, beban dan kawalan." },
+    { q: "Elemen yang menjadi perantara antara sumber dengan beban ialah", opts: ["Sumber", "Medium", "Beban", "Kawalan"], ans: 1,
+      nota: "Medium, sama ada berwayar atau tanpa wayar, menghubungkan sumber dengan beban." },
+    { q: "Manakah contoh beban dalam sistem elektrik?", opts: ["Bateri", "Suis", "Mentol", "Wayar"], ans: 2,
+      nota: "Beban menggunakan tenaga elektrik, contohnya mentol, motor dan pembaz." },
+    { q: "Bateri membekalkan arus jenis", opts: ["Arus terus (AT)", "Arus ulang-alik (AU)", "Arus pusar", "Arus aruhan"], ans: 0,
+      nota: "Bateri ialah sumber arus terus (AT)." },
+    { q: "Sebuah mentol 3 Ω dialiri arus 1.5 A. Berapakah voltannya? (V = IR)", opts: ["1.5 V", "2.5 V", "3.5 V", "4.5 V"], ans: 3,
+      nota: "V = I × R = 1.5 A × 3 Ω = 4.5 V." },
+    { q: "Litar 12 V mempunyai rintangan 4 Ω. Berapakah arus yang mengalir? (I = V ÷ R)", opts: ["3 A", "8 A", "16 A", "48 A"], ans: 0,
+      nota: "I = V ÷ R = 12 V ÷ 4 Ω = 3 A." },
+    { q: "Sebuah peranti 6 V menggunakan arus 2 A. Berapakah kuasanya? (P = VI)", opts: ["3 W", "4 W", "8 W", "12 W"], ans: 3,
+      nota: "P = V × I = 6 V × 2 A = 12 W." },
+    { q: "Dalam litar selari, apakah berlaku kepada mentol lain jika satu mentol terbakar?", opts: ["Semua padam", "Terus menyala", "Menjadi lebih malap", "Berkelip-kelip"], ans: 1,
+      nota: "Setiap cabang litar selari mempunyai laluan arus sendiri." }
+  ],
+  elektronik: [
+    { q: "Apakah maksud mikropengawal?", opts: ["Peranti kawalan dalam satu cip yang mengandungi CPU, memori dan port input/output", "Cip pemproses yang memerlukan memori dan port luaran", "Komponen yang menyimpan cas elektrik", "Komponen yang mengehadkan arus"], ans: 0,
+      nota: "Mikropengawal menggabungkan CPU, memori dan port input/output dalam satu cip." },
+    { q: "Manakah peranti input?", opts: ["LED", "Pembaz", "Suis tekan tutup", "Motor servo"], ans: 2,
+      nota: "Suis tekan tutup menghantar isyarat digital ke pin input mikropengawal." },
+    { q: "Manakah peranti output?", opts: ["Suis tekan tutup", "Perintang peka cahaya", "Pembaz", "Penderia ultrasonik"], ans: 2,
+      nota: "Pembaz mengeluarkan isyarat dalam bentuk bunyi." },
+    { q: "Mengapakah perintang disambung secara bersiri dengan LED?", opts: ["Menambah kecerahan LED", "Mengehadkan arus supaya LED tidak rosak", "Menukar arus AT kepada AU", "Menyimpan tenaga"], ans: 1,
+      nota: "Perintang, contohnya 1 kΩ, mengehadkan arus yang melalui LED." },
+    { q: "Kaki LED yang lebih panjang ialah", opts: ["Anod (+)", "Katod (−)", "Pin data", "Pin bumi"], ans: 0,
+      nota: "Kaki panjang ialah anod (+), kaki pendek ialah katod (−)." },
+    { q: "Lakaran yang menunjukkan kedudukan komponen elektronik dalam bentuk simbol ialah", opts: ["Litar skematik", "Gambar rajah blok", "Lukisan isometri", "Lakaran perspektif"], ans: 0,
+      nota: "Litar skematik memudahkan pemilihan dan penyambungan komponen." },
+    { q: "Bahagian mikropengawal yang menyimpan atur cara ialah", opts: ["CPU", "Memori", "Port input/output", "Pengatur voltan"], ans: 1,
+      nota: "Atur cara disimpan dalam memori, kemudian dilaksanakan oleh CPU." },
+    { q: "Dalam gambar rajah blok, mikropengawal diletakkan di bahagian", opts: ["Input", "Proses", "Output", "Sumber"], ans: 1,
+      nota: "Mikropengawal memproses isyarat input dan mengawal output." }
+  ],
+  mekatronik: [
+    { q: "Reka bentuk mekatronik menggabungkan disiplin", opts: ["Elektrik, mekanikal, elektronik, kawalan dan pengaturcaraan", "Elektrik dan mekanikal sahaja", "Seni reka dan pemasaran", "Kimia dan biologi"], ans: 0,
+      nota: "Mekatronik ialah gabungan beberapa bidang kejuruteraan dalam satu produk." },
+    { q: "Gambar rajah blok sistem mekatronik disusun mengikut urutan", opts: ["Output, proses, input", "Input, proses, output", "Proses, input, output", "Input, output, proses"], ans: 1,
+      nota: "Isyarat bergerak dari input ke proses, kemudian ke output." },
+    { q: "Fungsi pemacu motor dalam kereta kawalan jauh ialah", opts: ["Mengesan halangan", "Menyimpan atur cara", "Membekalkan arus yang cukup untuk mengawal arah dan kelajuan motor", "Mengecas bateri"], ans: 2,
+      nota: "Mikropengawal tidak dapat membekalkan arus yang besar kepada motor secara terus." },
+    { q: "Contoh elemen sistem mekanikal dalam kereta kawalan jauh ialah", opts: ["Gear dan roda", "Mikropengawal", "Bateri", "LED"], ans: 0,
+      nota: "Gear dan roda memindahkan gerakan daripada motor." },
+    { q: "Penderia ultrasonik dalam robot pengelak halangan berfungsi sebagai", opts: ["Peranti input", "Peranti output", "Pemacu", "Sumber kuasa"], ans: 0,
+      nota: "Penderia mengumpul maklumat jarak sebagai input." },
+    { q: "Atur cara yang dimuat naik ke mikropengawal tergolong dalam", opts: ["Sistem mekanikal", "Sistem kawalan", "Sistem hidraulik", "Sistem pneumatik"], ans: 1,
+      nota: "Atur cara mengawal tindakan produk mekatronik." },
+    { q: "Komponen yang membuat gerakan bersudut untuk mengangkat palang ialah", opts: ["Motor servo", "Pembaz", "LDR", "Perintang"], ans: 0,
+      nota: "Motor servo berputar ke sudut yang ditetapkan." },
+    { q: "Manakah produk mekatronik?", opts: ["Pemegang pintu", "Mesin basuh automatik", "Gunting", "Pembaris"], ans: 1,
+      nota: "Mesin basuh automatik menggabungkan motor, penderia dan atur cara." }
+  ]
+};
 
 /* =========================================================
    UTILITI
@@ -477,7 +643,7 @@ function normKey(name) {
   const n = String(name).trim().toLowerCase();
   if (n === CONFIG.NONE_CLASS.toLowerCase()) return CONFIG.NONE_CLASS;
   const k = Object.keys(COMPONENTS).find(x => x.toLowerCase() === n);
-  return k || String(name).trim();
+  return k || ALIASES[n] || String(name).trim();
 }
 const isNone = k => k === CONFIG.NONE_CLASS;
 const compName = k => isNone(k) ? "Tiada komponen" : (COMPONENTS[k]?.nama || k);
@@ -513,6 +679,8 @@ function speak(text) {
 let model = null, labels = [], keys = [], simulate = false, running = false;
 let stream = null, facing = "environment";
 let mode = "imbas";
+let topic = load("ik_topic", "elektrik");
+if (!TOPICS[topic]) topic = "elektrik";
 let cand = null, candCount = 0, noneCount = 0, locked = null;
 const video = $("video");
 const canvas = document.createElement("canvas");
@@ -520,6 +688,7 @@ canvas.width = 224; canvas.height = 224;
 const ctx = canvas.getContext("2d");
 
 const availKeys = () => keys.filter(k => COMPONENTS[k]);
+const topicKeys = () => availKeys().filter(k => COMPONENTS[k].topik.includes(topic));
 
 /* =========================================================
    KAMERA
@@ -628,6 +797,35 @@ function onLock(k) {
 }
 
 /* =========================================================
+   TOPIK
+   ========================================================= */
+function topicRole(c) {
+  if (topic === "elektrik") return c.elemen ? `${c.elemen} (elemen sistem elektrik)` : "Komponen sokongan dalam litar";
+  if (topic === "elektronik") return c.peranti;
+  return `${c.mek}. Dalam gambar rajah blok: ${c.peranti.toLowerCase()}`;
+}
+function setTopic(t) {
+  if (!TOPICS[t]) return;
+  if (mode === "kuiz") abortQuiz();
+  topic = t;
+  store("ik_topic", t);
+  document.querySelectorAll(".topic").forEach(b => b.setAttribute("aria-pressed", b.dataset.topic === t ? "true" : "false"));
+  const T = TOPICS[t];
+  $("topicDesc").textContent = `${T.bab} ${T.nama}: ${T.ringkas}`;
+  $("quizTitle").textContent = `Kuiz ${T.nama}`;
+  $("infoArea").innerHTML = `<div class="empty">Belum ada komponen dikesan.</div>`;
+  locked = null; cand = null; candCount = 0;
+  $("viewfinder").classList.remove("locked");
+  missions = (MISSIONS[t] || []).filter(m => m.urutan.every(k => availKeys().includes(k)));
+  mi = 0; step = 0; done = false;
+  hideNote($("litarFb"));
+  renderKoleksi();
+  renderMission();
+  if (mode === "markah") loadLb();
+}
+document.querySelectorAll(".topic").forEach(b => b.onclick = () => setTopic(b.dataset.topic));
+
+/* =========================================================
    MOD IMBAS
    ========================================================= */
 const discovered = new Set(load("ik_kol", []));
@@ -637,16 +835,18 @@ function showInfo(k) {
     $("infoArea").innerHTML = `<div class="empty"><b>${esc(k)}</b> dikesan tetapi belum ada maklumatnya. Tambah dalam senarai COMPONENTS.</div>`;
     return;
   }
+  const inTopic = c.topik.includes(topic);
   $("infoArea").innerHTML = `
     <div class="comp">
       <div class="symbol">${symSvg(k, 150)}<small>Simbol litar</small></div>
       <div>
         <h4>${esc(c.nama)}</h4>
         <dl class="facts">
-          <dt>Jenis</dt><dd>${esc(c.jenis)}</dd>
+          <dt>Peranan</dt><dd>${esc(topicRole(c))}</dd>
           ${c.unit ? `<dt>Unit</dt><dd>${esc(c.unit)}</dd>` : ""}
           <dt>Fungsi</dt><dd>${esc(c.fungsi)}</dd>
           <dt>Contoh</dt><dd>${esc(c.contoh)}</dd>
+          ${inTopic ? "" : `<dt>Nota</dt><dd>Komponen ini tidak dibincangkan dalam topik ${esc(TOPICS[topic].nama)}.</dd>`}
         </dl>
       </div>
     </div>`;
@@ -656,10 +856,12 @@ function showInfo(k) {
   renderKoleksi();
 }
 function renderKoleksi() {
-  const av = availKeys();
-  const got = av.filter(k => discovered.has(k)).length;
-  $("kolCount").textContent = `${got} daripada ${av.length} ditemui`;
-  $("koleksi").innerHTML = av.map(k => `<span class="${discovered.has(k) ? "got" : ""}">${esc(COMPONENTS[k].pendek)}</span>`).join("");
+  const tk = topicKeys();
+  const got = tk.filter(k => discovered.has(k)).length;
+  $("kolCount").textContent = `${got} daripada ${tk.length} ditemui`;
+  $("koleksi").innerHTML = tk.length
+    ? tk.map(k => `<span class="${discovered.has(k) ? "got" : ""}">${esc(COMPONENTS[k].pendek)}</span>`).join("")
+    : `<div class="empty" style="width:100%">Model belum ada komponen untuk topik ini.</div>`;
 }
 
 /* =========================================================
@@ -672,25 +874,27 @@ function slotSvg(k, i, x, y, m) {
   const placed = i < step;
   const target = i === step && !done;
   let s = `<g transform="translate(${x},${y})">`;
-  if (m.jenis === "blok") {
-    s += `<text x="0" y="-44" text-anchor="middle" font-size="14" font-weight="700" fill="#1F4FBF">${esc(COMPONENTS[k].blok || "")}</text>`;
+  if (m.label && m.label[i]) {
+    s += `<text x="0" y="-44" text-anchor="middle" font-size="15" font-weight="700" fill="#1F4FBF">${esc(m.label[i])}</text>`;
   }
   if (placed) {
     s += m.jenis === "blok"
       ? `<rect x="-46" y="-32" width="92" height="64" rx="6" fill="#fff" stroke="#D3D8CD" stroke-width="2"/>`
       : `<rect x="-40" y="-30" width="80" height="60" fill="#F6F7F3"/>`;
-    if (done && k === m.output && k === "LED") s += `<circle cx="0" cy="0" r="26" fill="#FFD84D" opacity=".7" class="glow"/>`;
+    const isOut = done && k === m.output;
+    if (isOut && (k === "LED" || k === "Mentol")) s += `<circle cx="0" cy="0" r="26" fill="#FFD84D" opacity=".7" class="glow"/>`;
     s += `<g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${SYM[k] || ""}</g>`;
-    if (done && k === m.output && k === "Buzzer") {
+    if (isOut && k === "Buzzer") {
       s += `<g fill="none" stroke="#B5652A" stroke-width="2.5" stroke-linecap="round">
         <path class="wave" d="M-10,-14 A12,12 0 0 1 10,-14"/>
         <path class="wave" style="animation-delay:.25s" d="M-16,-20 A20,20 0 0 1 16,-20"/>
         <path class="wave" style="animation-delay:.5s" d="M-22,-26 A28,28 0 0 1 22,-26"/></g>`;
     }
-    if (done && k === m.output && k === "Servo") s += `<g class="arm"><line x1="0" y1="0" x2="0" y2="-30" stroke="#B5652A" stroke-width="5" stroke-linecap="round"/></g>`;
-    s += `<text x="0" y="52" text-anchor="middle" font-size="17" font-weight="700" fill="#1B2330">${esc(COMPONENTS[k].pendek)}</text>`;
+    if (isOut && k === "Servo") s += `<g transform="translate(10,0)"><g class="arm"><line x1="0" y1="0" x2="0" y2="-30" stroke="#B5652A" stroke-width="5" stroke-linecap="round"/></g></g>`;
+    if (isOut && k === "Motor AT") s += `<g class="spin"><circle cx="0" cy="0" r="25" fill="none" stroke="#B5652A" stroke-width="3" stroke-dasharray="7 7"/></g>`;
+    s += `<text x="0" y="52" text-anchor="middle" font-size="16" font-weight="700" fill="#1B2330">${esc(COMPONENTS[k].pendek)}</text>`;
   } else if (target) {
-    s += `<rect x="-40" y="-28" width="80" height="56" rx="6" class="slot-target"/><text x="0" y="8" text-anchor="middle" font-size="24" font-weight="700" fill="#1F4FBF">?</text><text x="0" y="52" text-anchor="middle" font-size="16" fill="#1F4FBF" font-weight="700">Imbas sekarang</text>`;
+    s += `<rect x="-40" y="-28" width="80" height="56" rx="6" class="slot-target"/><text x="0" y="8" text-anchor="middle" font-size="24" font-weight="700" fill="#1F4FBF">?</text><text x="0" y="52" text-anchor="middle" font-size="15" fill="#1F4FBF" font-weight="700">Imbas sekarang</text>`;
   } else {
     s += `<rect x="-40" y="-28" width="80" height="56" rx="6" class="slot-empty"/><text x="0" y="7" text-anchor="middle" font-size="18" fill="#9AA29A">${i + 1}</text>`;
   }
@@ -699,19 +903,20 @@ function slotSvg(k, i, x, y, m) {
 
 function renderCircuit() {
   const svg = $("circuit");
-  if (!missions.length) { svg.innerHTML = `<text x="320" y="120" text-anchor="middle" fill="#59636F">Tiada misi sepadan dengan komponen dalam model.</text>`; return; }
+  if (!missions.length) { svg.innerHTML = `<text x="320" y="120" text-anchor="middle" fill="#59636F" font-size="16">Tiada misi sepadan dengan komponen dalam model.</text>`; return; }
   const m = missions[mi], n = m.urutan.length;
-  const xs = m.urutan.map((_, i) => n === 1 ? 320 : 110 + i * (420 / (n - 1)));
+  const xs = m.urutan.map((_, i) => n === 1 ? 320 : 100 + i * (440 / (n - 1)));
   let s = `<defs>
     <marker id="ah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B2330"/></marker>
     <pattern id="holes" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="8" cy="8" r="1.4" fill="#D3D8CD"/></pattern>
   </defs><rect width="640" height="240" fill="url(#holes)"/>`;
   let y;
   if (m.jenis === "litar") {
-    y = 80;
-    const d = `M40,${y} L600,${y} L600,190 L40,190 Z`;
+    y = 90;
+    const d = `M40,${y} L600,${y} L600,200 L40,200 Z`;
     s += `<path class="wire" d="${d}"/>`;
     if (done) s += `<path class="flow" d="${d}"/>`;
+    s += `<text x="320" y="224" text-anchor="middle" font-size="13" fill="#59636F">Wayar (medium)</text>`;
   } else {
     y = 124;
     for (let i = 0; i < n - 1; i++) {
@@ -724,7 +929,7 @@ function renderCircuit() {
 }
 
 function renderMission() {
-  if (!missions.length) { $("mTitle").textContent = "Bina Litar"; $("mDesc").textContent = ""; $("mProg").textContent = ""; renderCircuit(); return; }
+  if (!missions.length) { $("mTitle").textContent = "Bina Litar"; $("mDesc").textContent = "Latih model dengan komponen topik ini untuk membuka misi."; $("mProg").textContent = ""; renderCircuit(); return; }
   const m = missions[mi];
   const nDone = missions.filter(x => completed.has(x.id)).length;
   $("mTitle").textContent = `Misi ${mi + 1}: ${m.tajuk}`;
@@ -743,10 +948,11 @@ function litarLock(k) {
       done = true;
       completed.add(m.id);
       store("ik_done", [...completed]);
-      note($("litarFb"), "ok", "Litar lengkap. " + m.berjaya);
-      speak("Litar lengkap. " + m.berjaya);
+      note($("litarFb"), "ok", "Selesai. " + m.berjaya);
+      speak(m.berjaya);
     } else {
-      note($("litarFb"), "ok", `${COMPONENTS[k].nama} dipasang. Cari komponen ke-${step + 1}.`);
+      const lbl = m.label ? ` sebagai ${m.label[step - 1].toLowerCase()}` : "";
+      note($("litarFb"), "ok", `${COMPONENTS[k].nama} dipasang${lbl}. Cari komponen ke-${step + 1}.`);
       speak(`Betul. ${COMPONENTS[k].pendek}.`);
     }
     renderMission();
@@ -759,8 +965,9 @@ function litarLock(k) {
 }
 $("btnHint").onclick = () => {
   if (!missions.length || done) return;
-  const k = missions[mi].urutan[step];
-  note($("litarFb"), "info", `Komponen ke-${step + 1}: ${COMPONENTS[k].clue.toLowerCase()}.`);
+  const m = missions[mi], k = m.urutan[step];
+  const lbl = m.label ? `${m.label[step]}: ` : "";
+  note($("litarFb"), "info", `${lbl}${COMPONENTS[k].clue.toLowerCase()}.`);
   speak(COMPONENTS[k].clue);
 };
 $("btnResetM").onclick = () => { step = 0; done = false; locked = null; hideNote($("litarFb")); renderMission(); };
@@ -782,78 +989,102 @@ function updQuizStats() {
   $("qTimer").style.width = (quiz.timeLeft / CONFIG.QUIZ_SECONDS * 100) + "%";
   $("qTimer").classList.toggle("low", quiz.timeLeft <= 5);
 }
+function buildQuestions() {
+  const comp = shuffle(topicKeys()).map(k => ({ type: "komp", k }));
+  const kon = shuffle(KONSEP[topic] || []).map(q => ({ type: "konsep", ...q }));
+  const nKomp = Math.min(comp.length, Math.max(CONFIG.QUIZ_COUNT - kon.length, Math.ceil(CONFIG.QUIZ_COUNT / 2)));
+  const list = [...comp.slice(0, nKomp), ...kon.slice(0, CONFIG.QUIZ_COUNT - nKomp)];
+  return shuffle(list).slice(0, CONFIG.QUIZ_COUNT);
+}
 function startQuiz() {
-  const pool = shuffle(availKeys()).slice(0, CONFIG.QUIZ_COUNT);
-  if (pool.length < 2) { note($("sendFb"), "bad", "Model perlu sekurang-kurangnya dua komponen untuk kuiz."); return; }
-  quiz = { qs: pool, i: 0, score: 0, betul: 0, t0: Date.now(), timeLeft: CONFIG.QUIZ_SECONDS, iv: null, answered: false };
+  const qs = buildQuestions();
+  if (qs.length < 2) { note($("quizStartFb"), "bad", "Topik ini belum ada soalan yang mencukupi."); return; }
+  hideNote($("quizStartFb"));
+  quiz = { qs, i: 0, score: 0, betul: 0, t0: Date.now(), timeLeft: CONFIG.QUIZ_SECONDS, iv: null, answered: false };
   showQuiz("play");
   nextQ();
 }
+const qText = q => q.type === "komp" ? COMPONENTS[q.k].clue : q.q;
+const qAnswerName = q => q.type === "komp" ? COMPONENTS[q.k].nama : q.opts[q.ans];
 function nextQ() {
   if (!quiz) return;
   clearInterval(quiz.iv);
   if (quiz.i >= quiz.qs.length) return endQuiz();
-  const k = quiz.qs[quiz.i];
+  const q = quiz.qs[quiz.i];
   quiz.answered = false;
   quiz.timeLeft = CONFIG.QUIZ_SECONDS;
-  $("qNum").textContent = `Soalan ${quiz.i + 1} daripada ${quiz.qs.length}`;
-  $("qClue").textContent = COMPONENTS[k].clue;
+  $("qNum").textContent = `Soalan ${quiz.i + 1} daripada ${quiz.qs.length}` + (q.type === "komp" ? ", boleh dijawab dengan kamera" : "");
+  $("qClue").textContent = qText(q);
   hideNote($("quizFb"));
-  renderOptions(k);
+  renderOptions(q);
   updQuizStats();
-  speak(COMPONENTS[k].clue);
+  speak(qText(q));
   quiz.iv = setInterval(() => {
     quiz.timeLeft--;
     updQuizStats();
     if (quiz.timeLeft <= 0) {
       clearInterval(quiz.iv);
       quiz.answered = true;
-      revealAnswer(k);
-      note($("quizFb"), "bad", `Masa tamat. Jawapannya ${COMPONENTS[k].nama}.`);
-      speak("Masa tamat. Jawapannya " + COMPONENTS[k].pendek);
+      revealAnswer();
+      note($("quizFb"), "bad", `Masa tamat. Jawapannya ${qAnswerName(q)}.`);
+      speak("Masa tamat.");
       quiz.i++;
-      setTimeout(nextQ, 2200);
+      setTimeout(nextQ, 2400);
     }
   }, 1000);
 }
-function renderOptions(target) {
-  const others = shuffle(availKeys().filter(x => x !== target)).slice(0, 3);
-  const opts = shuffle([target, ...others]);
-  $("qOpts").innerHTML = opts.map(k => `<button class="opt" data-k="${esc(k)}">${symSvg(k, 52)}<span>${esc(COMPONENTS[k].nama)}</span></button>`).join("");
-  $("qOpts").querySelectorAll(".opt").forEach(b => b.onclick = () => answerQuiz(b.dataset.k, b));
+function renderOptions(q) {
+  let html;
+  if (q.type === "komp") {
+    const others = shuffle(availKeys().filter(x => x !== q.k)).slice(0, 3);
+    const opts = shuffle([q.k, ...others]);
+    html = opts.map(k => `<button class="opt" data-v="${esc(k)}">${symSvg(k, 52)}<span>${esc(COMPONENTS[k].nama)}</span></button>`).join("");
+  } else {
+    const order = shuffle(q.opts.map((_, i) => i));
+    html = order.map(i => `<button class="opt text" data-v="${i}"><span>${esc(q.opts[i])}</span></button>`).join("");
+  }
+  $("qOpts").innerHTML = html;
+  $("qOpts").querySelectorAll(".opt").forEach(b => b.onclick = () => answerQuiz(b.dataset.v, b));
 }
-function revealAnswer(target) {
+function isRight(q, v) { return q.type === "komp" ? v === q.k : Number(v) === q.ans; }
+function revealAnswer() {
+  const q = quiz.qs[quiz.i];
   $("qOpts").querySelectorAll(".opt").forEach(b => {
     b.disabled = true;
-    if (b.dataset.k === target) b.classList.add("right");
+    if (isRight(q, b.dataset.v)) b.classList.add("right");
   });
 }
-function answerQuiz(k, btn) {
+function answerQuiz(v, btn) {
   if (!quiz || quiz.answered || quiz.i >= quiz.qs.length) return;
-  const target = quiz.qs[quiz.i];
-  if (k === target) {
+  const q = quiz.qs[quiz.i];
+  if (isRight(q, v)) {
     quiz.answered = true;
     clearInterval(quiz.iv);
     const pts = 10 + quiz.timeLeft;
     quiz.score += pts; quiz.betul++;
     updQuizStats();
-    revealAnswer(target);
-    note($("quizFb"), "ok", `Betul, ${COMPONENTS[k].nama}. Tambah ${pts} markah.`);
+    revealAnswer();
+    const extra = q.type === "konsep" && q.nota ? " " + q.nota : "";
+    note($("quizFb"), "ok", `Betul. Tambah ${pts} markah.${extra}`);
     speak("Betul!");
     quiz.i++;
-    setTimeout(nextQ, 1600);
+    setTimeout(nextQ, q.type === "konsep" ? 2600 : 1600);
   } else {
-    const b = btn || $("qOpts").querySelector(`.opt[data-k="${CSS.escape(k)}"]`);
+    const b = btn || $("qOpts").querySelector(`.opt[data-v="${CSS.escape(v)}"]`);
     if (b) { b.classList.add("wrong"); b.disabled = true; }
-    note($("quizFb"), "bad", `Itu ${compName(k)}. Cuba lagi.`);
+    note($("quizFb"), "bad", q.type === "komp" ? `Itu ${compName(v)}. Cuba lagi.` : "Bukan itu. Cuba lagi.");
   }
 }
-const quizLock = k => answerQuiz(k, null);
+function quizLock(k) {
+  if (!quiz || quiz.answered || quiz.i >= quiz.qs.length) return;
+  if (quiz.qs[quiz.i].type !== "komp") return; // soalan konsep dijawab dengan butang sahaja
+  answerQuiz(k, null);
+}
 function endQuiz() {
   clearInterval(quiz.iv);
   quiz.masa = Math.round((Date.now() - quiz.t0) / 1000);
   $("endScore").textContent = quiz.score;
-  $("endInfo").textContent = `${quiz.betul} daripada ${quiz.qs.length} betul dalam ${quiz.masa} saat`;
+  $("endInfo").textContent = `${TOPICS[topic].nama}: ${quiz.betul} daripada ${quiz.qs.length} betul dalam ${quiz.masa} saat`;
   $("btnSend").disabled = false;
   hideNote($("sendFb"));
   showQuiz("end");
@@ -870,11 +1101,11 @@ $("btnSkip").onclick = () => {
   if (!quiz || quiz.answered) return;
   quiz.answered = true;
   clearInterval(quiz.iv);
-  const k = quiz.qs[quiz.i];
-  revealAnswer(k);
-  note($("quizFb"), "info", `Jawapannya ${COMPONENTS[k].nama}.`);
+  const q = quiz.qs[quiz.i];
+  revealAnswer();
+  note($("quizFb"), "info", `Jawapannya ${qAnswerName(q)}.`);
   quiz.i++;
-  setTimeout(nextQ, 1500);
+  setTimeout(nextQ, 1800);
 };
 $("btnSend").onclick = async () => {
   const nama = $("inNama").value.trim(), kelas = $("inKelas").value.trim();
@@ -885,7 +1116,7 @@ $("btnSend").onclick = async () => {
   try {
     const res = await fetch(CONFIG.SCRIPT_URL, {
       method: "POST",
-      body: JSON.stringify({ nama, kelas, markah: quiz.score, betul: quiz.betul, jumlah: quiz.qs.length, masa: quiz.masa, mod: "Kuiz" })
+      body: JSON.stringify({ nama, kelas, markah: quiz.score, betul: quiz.betul, jumlah: quiz.qs.length, masa: quiz.masa, mod: TOPICS[topic].pendek })
     });
     const j = await res.json();
     if (!j.ok) throw new Error(j.error || "ralat pelayan");
@@ -974,12 +1205,13 @@ $("btnCsv").onclick = () => {
    PAPAN MARKAH
    ========================================================= */
 async function loadLb() {
+  $("lbLead").textContent = `Sepuluh markah tertinggi bagi topik ${TOPICS[topic].nama}.`;
   if (!CONFIG.SCRIPT_URL) { $("lb").innerHTML = `<div class="empty">Papan markah perlukan SCRIPT_URL dalam CONFIG.</div>`; return; }
   $("lb").innerHTML = `<p class="small">Memuatkan…</p>`;
   try {
-    const res = await fetch(CONFIG.SCRIPT_URL + "?action=top");
+    const res = await fetch(CONFIG.SCRIPT_URL + "?action=top&mod=" + encodeURIComponent(TOPICS[topic].pendek));
     const j = await res.json();
-    if (!j.ok || !j.rows.length) { $("lb").innerHTML = `<div class="empty">Belum ada markah. Jadilah yang pertama dengan bermain kuiz.</div>`; return; }
+    if (!j.ok || !j.rows.length) { $("lb").innerHTML = `<div class="empty">Belum ada markah untuk topik ini. Jadilah yang pertama dengan bermain kuiz.</div>`; return; }
     $("lb").innerHTML = `<table><tr><th>Kedudukan</th><th>Nama</th><th>Kelas</th><th>Markah</th><th>Betul</th><th>Masa</th></tr>` +
       j.rows.map((r, i) => `<tr><td class="rank ${i === 0 ? "r1" : ""}">${i + 1}</td><td style="text-align:left">${esc(r.nama)}</td><td>${esc(r.kelas)}</td><td><b>${esc(r.markah)}</b></td><td>${esc(r.betul)}/${esc(r.jumlah)}</td><td>${esc(r.masa)}s</td></tr>`).join("") + "</table>";
   } catch (e) {
@@ -1034,11 +1266,8 @@ async function init() {
   const unknown = keys.filter(k => !COMPONENTS[k] && !isNone(k));
   if (unknown.length) $("status").textContent += ` Nama kelas tidak dikenali: ${unknown.join(", ")}. Semak ejaan dalam Teachable Machine.`;
 
-  const av = availKeys();
-  missions = MISSIONS.filter(m => m.urutan.every(k => av.includes(k)));
   $("ujiActual").innerHTML = keys.map(k => `<option value="${esc(k)}">${esc(compName(k))}</option>`).join("");
-  renderKoleksi();
-  renderMission();
+  setTopic(topic);
   renderMatrix();
   running = true;
   loop();

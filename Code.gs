@@ -18,7 +18,7 @@ function getSheet_() {
   let sh = ss.getSheetByName(SHEET_NAME);
   if (!sh) {
     sh = ss.insertSheet(SHEET_NAME);
-    sh.appendRow(['Tarikh', 'Nama', 'Kelas', 'Markah', 'Betul', 'Jumlah Soalan', 'Masa (s)', 'Mod']);
+    sh.appendRow(['Tarikh', 'Nama', 'Kelas', 'Markah', 'Betul', 'Jumlah Soalan', 'Masa (s)', 'Topik']);
     sh.setFrozenRows(1);
     sh.getRange(1, 1, 1, 8).setFontWeight('bold').setBackground('#dbeafe');
   }
@@ -61,9 +61,11 @@ function doPost(e) {
 function doGet(e) {
   const action = (e && e.parameter && e.parameter.action) || 'top';
   if (action === 'top') {
-    const values = getSheet_().getDataRange().getValues().slice(1);
+    const mod = (e && e.parameter && e.parameter.mod) || '';
+    const values = getSheet_().getDataRange().getValues().slice(1)
+      .filter(r => !mod || String(r[7]) === mod);
     const rows = values
-      .map(r => ({ nama: r[1], kelas: r[2], markah: Number(r[3]) || 0, betul: r[4], jumlah: r[5], masa: Number(r[6]) || 0 }))
+      .map(r => ({ nama: r[1], kelas: r[2], markah: Number(r[3]) || 0, betul: r[4], jumlah: r[5], masa: Number(r[6]) || 0, topik: r[7] }))
       .sort((a, b) => b.markah - a.markah || a.masa - b.masa)
       .slice(0, 10);
     return json_({ ok: true, rows: rows });
