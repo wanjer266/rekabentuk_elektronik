@@ -98,6 +98,14 @@ video.mirror{transform:scaleX(-1)}
 h2{font-family:var(--display);font-stretch:118%;font-weight:750;font-size:22px;line-height:1.2;margin:0 0 6px;letter-spacing:-.01em}
 h3{font-family:var(--display);font-stretch:110%;font-weight:700;font-size:17px;margin:22px 0 8px}
 .lead{color:var(--soft);margin:0 0 14px;max-width:62ch}
+details.info{margin:2px 0 12px;font-size:14px;color:var(--soft)}
+details.info summary{display:inline-flex;align-items:center;gap:6px;cursor:pointer;list-style:none;font-family:var(--display);font-weight:650;font-size:14px;color:var(--rail-blue);padding:4px 0;user-select:none}
+details.info summary::-webkit-details-marker{display:none}
+details.info summary::after{content:"";width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .15s}
+details.info[open] summary::after{transform:translateY(2px) rotate(-135deg)}
+details.info>div{margin:6px 0 0;padding:10px 12px;background:#F6F7F3;border-left:3px solid var(--rail-blue);border-radius:0 6px 6px 0;line-height:1.55;max-width:62ch}
+details.info p{margin:0}
+details.info p+p{margin-top:6px}
 
 /* Kad komponen */
 .comp{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:start;animation:show .25s ease-out}
@@ -193,7 +201,7 @@ footer{max-width:1040px;margin:0 auto;padding:6px 18px 28px;font-size:13px;color
 .opt.text{min-height:56px;font-family:var(--body);font-weight:700;font-size:15px}
 /* Makmal litar */
 .lab-bar{display:flex;gap:12px;align-items:end;flex-wrap:wrap}
-.lab-bar .field{flex:1 1 220px}
+.lab-bar .field{flex:1 1 100%}
 .chk{display:flex;gap:6px;align-items:center;font-size:14px;color:var(--soft);padding-bottom:10px}
 .chk input{width:auto;margin:0}
 .palette{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
@@ -301,8 +309,8 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
     <p class="status" id="status">Memuatkan model AI…</p>
     <div class="sim" id="simBox" style="display:none">
       <b>Mod simulasi</b>
-      Model AI belum dipasang. Pilih komponen di bawah seolah-olah ia berada di depan kamera.
       <select id="simSelect" aria-label="Komponen simulasi"></select>
+      <details class="info" style="margin:6px 0 0"><summary>Apa itu mod simulasi?</summary><div><p>Model AI belum dipasang. Pilih komponen di sini seolah-olah ia berada di depan kamera.</p></div></details>
     </div>
   </section>
 
@@ -313,7 +321,7 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
       <button class="topic" data-topic="elektronik" aria-pressed="false"><small>Tingkatan 2</small><span>Elektronik</span></button>
       <button class="topic" data-topic="mekatronik" aria-pressed="false"><small>Tingkatan 3</small><span>Mekatronik</span></button>
     </div>
-    <p class="topic-desc" id="topicDesc"></p>
+    <details class="info"><summary>Tentang topik ini</summary><div><p id="topicDesc"></p></div></details>
 
     <nav class="tabs" role="tablist">
       <button class="tab" role="tab" aria-selected="true" data-mode="imbas">Imbas</button>
@@ -328,7 +336,7 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
     <!-- Imbas -->
     <div class="view on" id="view-imbas">
       <h2>Kenali komponen</h2>
-      <p class="lead">Pegang satu komponen di tengah bingkai kamera. Apabila penjuru bingkai bertukar hijau, maklumatnya dipaparkan di sini.</p>
+      <details class="info"><summary>Cara guna</summary><div><p>Pegang satu komponen di tengah bingkai kamera. Apabila penjuru bingkai bertukar hijau, maklumatnya dipaparkan di sini.</p></div></details>
       <div id="infoArea"><div class="empty">Belum ada komponen dikesan.</div></div>
       <h3>Komponen topik ini <span class="found-count" id="kolCount"></span></h3>
       <div class="parts" id="koleksi"></div>
@@ -337,7 +345,7 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
     <!-- Bina Litar -->
     <div class="view" id="view-litar">
       <h2 id="mTitle">Bina Litar</h2>
-      <p class="lead" id="mDesc"></p>
+      <details class="info"><summary>Penerangan misi</summary><div><p id="mDesc"></p></div></details>
       <svg class="circuit" id="circuit" viewBox="0 0 640 240" role="img" aria-label="Rajah litar"></svg>
       <div class="note" id="litarFb"></div>
       <div class="actions">
@@ -351,7 +359,7 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
     <!-- Makmal Litar -->
     <div class="view" id="view-lab">
       <h2>Makmal litar</h2>
-      <p class="lead">Tambah komponen, sambungkan kaki komponen ke pin ESP32 DevKit V1, kemudian susun kod blok dan jalankan simulasi.</p>
+      <details class="info"><summary>Cara guna</summary><div><p>1. Tambah komponen atau pilih contoh projek.</p><p>2. Ketik kaki komponen, kemudian ketik pin pada ESP32 untuk menyambung wayar. Ketik wayar untuk membuangnya.</p><p>3. Susun kod blok, kemudian tekan Jalankan.</p><p>Di telefon, leret papan ke kiri atau kanan untuk melihat semua pin.</p></div></details>
 
       <div class="lab-bar">
         <label class="field" style="margin:0;flex:1">Contoh projek<select id="labEx">
@@ -376,8 +384,7 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
         <button data-add="Ultrasonik">Ultrasonik</button>
       </div>
       <div class="labwrap"><svg class="labsvg" id="labSvg" viewBox="0 0 760 510" role="img" aria-label="Papan litar"></svg></div>
-      <p class="lab-hint swipe">Leret papan ke kiri atau kanan untuk melihat semua pin.</p>
-      <p class="lab-hint" id="labHint">Ketik kaki komponen, kemudian ketik pin pada ESP32 untuk menyambung wayar. Ketik wayar untuk membuangnya.</p>
+      <p class="lab-hint" id="labHint"></p>
       <div class="actions" style="margin-top:6px"><button class="btn line" id="btnClrWire">Buang semua wayar</button></div>
       <ul class="checklist" id="labCheck"></ul>
       <div class="sensors" id="labSensors"></div>
@@ -391,7 +398,7 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
         <button data-blk="forever" class="b-ctl">Ulang selamanya</button>
         <button data-blk="if" class="b-log">Jika</button>
       </div>
-      <p class="lab-hint" id="blkHint"></p>
+      <details class="info"><summary>Cara menyusun blok</summary><div><p id="blkHint"></p></div></details>
       <div class="program" id="program"></div>
       <div class="actions">
         <button class="btn go" id="btnRun">Jalankan</button>
@@ -401,7 +408,7 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
       <div class="note" id="labFb"></div>
 
       <h3>3. Kod ESP32 (Arduino IDE)</h3>
-      <p class="small" style="margin-top:0">Dijana daripada kod blok dan sambungan wayar. Salin ke Arduino IDE dan pilih papan ESP32 Dev Module.</p>
+      <details class="info"><summary>Tentang kod ini</summary><div><p>Dijana daripada kod blok dan sambungan wayar. Salin ke Arduino IDE dan pilih papan ESP32 Dev Module. Untuk servo, pasang pustaka ESP32Servo.</p></div></details>
       <pre class="code" id="ardCode"></pre>
       <div class="actions"><button class="btn line" id="btnCopyCode">Salin kod</button></div>
     </div>
@@ -409,7 +416,7 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
     <!-- Multimeter -->
     <div class="view" id="view-meter">
       <h2>Multimeter maya</h2>
-      <p class="lead">Ukur voltan, arus dan rintangan pada litar sesiri. Pilih fungsi pada pemutar, kemudian pilih kedudukan probe.</p>
+      <details class="info"><summary>Cara guna</summary><div><p>Ukur voltan, arus dan rintangan pada litar sesiri. Pilih fungsi pada pemutar, kemudian pilih kedudukan probe.</p><p>Voltan diukur secara selari, arus secara bersiri, dan rintangan ketika suis litar dibuka.</p></div></details>
       <div class="meter-grid">
         <svg class="mcirc" id="mCirc" viewBox="0 0 320 210" role="img" aria-label="Litar ujian multimeter"></svg>
         <div class="meter">
@@ -442,7 +449,7 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
 
       <div class="ohm-box">
         <h3 style="margin-top:0">Cabaran Hukum Ohm</h3>
-        <p class="small" style="margin:0">Kira dahulu, kemudian ukur dengan multimeter untuk menyemak. V = I × R, dan dalam litar sesiri jumlah rintangan ialah R1 + R2.</p>
+        <details class="info"><summary>Formula</summary><div><p>Kira dahulu, kemudian ukur dengan multimeter untuk menyemak.</p><p>V = I × R, dan dalam litar sesiri jumlah rintangan ialah R1 + R2.</p></div></details>
         <div class="ohm-q" id="ohmQ"></div>
         <div class="ohm-in">
           <label class="field" style="margin:0;flex:1;max-width:180px">Jawapan<input id="ohmAns" type="number" step="any" inputmode="decimal"></label>
@@ -457,7 +464,7 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
     <div class="view" id="view-kuiz">
       <div id="quizStart">
         <h2 id="quizTitle">Kuiz cabaran</h2>
-        <p class="lead">Sepuluh soalan daripada topik yang dipilih. Pilih jawapan, atau untuk soalan komponen, tunjukkan komponen sebenar kepada kamera. Lebih cepat dijawab, lebih tinggi markahnya.</p>
+        <details class="info"><summary>Cara bermain</summary><div><p>Sepuluh soalan daripada topik yang dipilih. Pilih jawapan, atau untuk soalan komponen, tunjukkan komponen sebenar kepada kamera.</p><p>Lebih cepat dijawab, lebih tinggi markahnya.</p></div></details>
         <button class="btn" id="btnQuiz">Mula kuiz</button>
         <div class="note" id="quizStartFb"></div>
       </div>
@@ -495,7 +502,7 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
     <!-- Uji Ketepatan -->
     <div class="view" id="view-uji">
       <h2>Uji ketepatan AI</h2>
-      <p class="lead">Pilih komponen yang sedang dipegang, halakan ke kamera dan rekod. Gunakan komponen atau latar yang tidak digunakan semasa latihan supaya keputusannya jujur.</p>
+      <details class="info"><summary>Cara guna</summary><div><p>Pilih komponen yang sedang dipegang, halakan ke kamera dan rekod.</p><p>Gunakan komponen atau latar yang tidak digunakan semasa latihan supaya keputusannya jujur.</p></div></details>
       <label class="field">Komponen sebenar<select id="ujiActual"></select></label>
       <div class="actions">
         <button class="btn" id="btnRec">Rekod 30 sampel</button>
@@ -505,13 +512,13 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
       <div class="rec"><div id="recProg"></div></div>
       <div class="acc"><b id="accAll">–</b><span id="accN">ketepatan keseluruhan</span></div>
       <div class="scroll" id="matrix"></div>
-      <p class="small">Baris ialah komponen sebenar, lajur ialah ramalan AI. Hijau bermaksud betul, merah bermaksud AI tersalah kenal.</p>
+      <details class="info"><summary>Cara membaca jadual</summary><div><p>Baris ialah komponen sebenar, lajur ialah ramalan AI. Hijau bermaksud betul, merah bermaksud AI tersalah kenal.</p></div></details>
     </div>
 
     <!-- Papan Markah -->
     <div class="view" id="view-markah">
       <h2>Papan markah kuiz</h2>
-      <p class="lead" id="lbLead">Sepuluh markah tertinggi bagi topik ini.</p>
+      <p class="small" id="lbLead" style="margin:0 0 10px">Sepuluh markah tertinggi bagi topik ini.</p>
       <button class="btn line" id="btnLoadLb">Muat semula</button>
       <div id="lb" style="margin-top:14px"></div>
     </div>
@@ -1627,7 +1634,7 @@ function blkHTML(b) {
 }
 function renderProg() {
   $("program").innerHTML = lab.prog.map(blkHTML).join("") + zone(null, "root", "+ Tambah blok di sini");
-  $("blkHint").textContent = lab.target ? "Blok baharu akan dimasukkan ke dalam blok yang dipilih. Ketik ruang bawah sekali untuk kembali ke luar." : "Ketik blok di atas untuk menambahnya. Ketik ruang bertitik dalam blok Ulang atau Jika untuk memasukkan blok ke dalamnya.";
+  $("blkHint").textContent = "Ketik blok untuk menambahnya. Untuk memasukkan blok ke dalam Ulang atau Jika, ketik ruang bertitik dalam blok itu dahulu. Ketik ruang paling bawah untuk kembali ke luar. Gunakan butang anak panah untuk menaikkan blok dan butang silang untuk membuangnya.";
   renderCode();
 }
 $("program").addEventListener("change", e => {
