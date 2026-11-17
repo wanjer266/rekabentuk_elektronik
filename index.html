@@ -47,6 +47,8 @@ button,input,select{font:inherit;color:inherit}
 
 main{max-width:1040px;margin:0 auto;padding:18px;display:grid;gap:18px}
 main>*{min-width:0}
+main.nocam .cam{display:none}
+@media(min-width:920px){main.nocam{grid-template-columns:1fr;max-width:940px}}
 @media(min-width:920px){main{grid-template-columns:400px 1fr;align-items:start}.cam{position:sticky;top:96px}}
 
 .panel-box{background:var(--surface);border:1px solid var(--edge);border-radius:10px;padding:16px}
@@ -88,6 +90,7 @@ video.mirror{transform:scaleX(-1)}
 /* Tab */
 .tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--edge);margin:-4px -4px 0;padding:0 4px;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
+@media(max-width:700px){.tabs{-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent);padding-right:24px}}
 .tab{flex:0 0 auto;background:none;border:0;border-bottom:3px solid transparent;padding:10px 12px 9px;font-family:var(--display);font-weight:600;font-size:15px;color:var(--soft);cursor:pointer}
 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--rail-blue)}
 .view{display:none;padding-top:16px}
@@ -190,6 +193,7 @@ footer{max-width:1040px;margin:0 auto;padding:6px 18px 28px;font-size:13px;color
 .opt.text{min-height:56px;font-family:var(--body);font-weight:700;font-size:15px}
 /* Makmal litar */
 .lab-bar{display:flex;gap:12px;align-items:end;flex-wrap:wrap}
+.lab-bar .field{flex:1 1 220px}
 .chk{display:flex;gap:6px;align-items:center;font-size:14px;color:var(--soft);padding-bottom:10px}
 .chk input{width:auto;margin:0}
 .palette{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
@@ -199,9 +203,11 @@ footer{max-width:1040px;margin:0 auto;padding:6px 18px 28px;font-size:13px;color
 .blocks-pal .b-ctl{border-left:5px solid var(--copper)}
 .blocks-pal .b-log{border-left:5px solid var(--led)}
 .labwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:6px}
-svg.labsvg{min-width:560px;width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;background:#F6F7F3;font-family:var(--body);touch-action:manipulation;user-select:none;-webkit-user-select:none}
+svg.labsvg{min-width:700px;width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;background:#F6F7F3;font-family:var(--body);touch-action:manipulation;user-select:none;-webkit-user-select:none}
 .labsvg [data-leg],.labsvg [data-pin],.labsvg [data-wire],.labsvg [data-del],.labsvg [data-press]{cursor:pointer}
 .lab-hint{font-size:13px;color:var(--soft);margin:8px 0 0}
+.swipe{display:none}
+@media(max-width:760px){.swipe{display:block;margin:4px 0 0}}
 .checklist{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:4px;font-size:14px}
 .checklist li{padding:6px 10px;border-left:3px solid var(--led);background:#EAF7F0}
 .checklist li.bad{border-color:var(--rail-red);background:#FCECEE}
@@ -345,7 +351,7 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
     <!-- Makmal Litar -->
     <div class="view" id="view-lab">
       <h2>Makmal litar</h2>
-      <p class="lead">Tambah komponen, sambungkan kaki komponen ke pin mikropengawal, kemudian susun kod blok dan jalankan simulasi.</p>
+      <p class="lead">Tambah komponen, sambungkan kaki komponen ke pin ESP32 DevKit V1, kemudian susun kod blok dan jalankan simulasi.</p>
 
       <div class="lab-bar">
         <label class="field" style="margin:0;flex:1">Contoh projek<select id="labEx">
@@ -369,8 +375,9 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
         <button data-add="LDR">LDR</button>
         <button data-add="Ultrasonik">Ultrasonik</button>
       </div>
-      <div class="labwrap"><svg class="labsvg" id="labSvg" viewBox="0 0 560 470" role="img" aria-label="Papan litar"></svg></div>
-      <p class="lab-hint" id="labHint">Ketik kaki komponen, kemudian ketik pin pada mikropengawal untuk menyambung wayar. Ketik wayar untuk membuangnya.</p>
+      <div class="labwrap"><svg class="labsvg" id="labSvg" viewBox="0 0 760 510" role="img" aria-label="Papan litar"></svg></div>
+      <p class="lab-hint swipe">Leret papan ke kiri atau kanan untuk melihat semua pin.</p>
+      <p class="lab-hint" id="labHint">Ketik kaki komponen, kemudian ketik pin pada ESP32 untuk menyambung wayar. Ketik wayar untuk membuangnya.</p>
       <div class="actions" style="margin-top:6px"><button class="btn line" id="btnClrWire">Buang semua wayar</button></div>
       <ul class="checklist" id="labCheck"></ul>
       <div class="sensors" id="labSensors"></div>
@@ -393,8 +400,8 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
       </div>
       <div class="note" id="labFb"></div>
 
-      <h3>3. Kod Arduino</h3>
-      <p class="small" style="margin-top:0">Dijana daripada kod blok dan sambungan wayar. Boleh disalin ke Arduino IDE.</p>
+      <h3>3. Kod ESP32 (Arduino IDE)</h3>
+      <p class="small" style="margin-top:0">Dijana daripada kod blok dan sambungan wayar. Salin ke Arduino IDE dan pilih papan ESP32 Dev Module.</p>
       <pre class="code" id="ardCode"></pre>
       <div class="actions"><button class="btn line" id="btnCopyCode">Salin kod</button></div>
     </div>
@@ -1161,6 +1168,7 @@ $("btnNextM").onclick = () => { if (!missions.length) return; mi = (mi + 1) % mi
    ========================================================= */
 const meter = { mode: "off", sw: false };
 const fmt = (n, d = 2) => (Math.round(n * 100) / 100).toFixed(d);
+const fmt3 = n => String(Math.round(n * 1000) / 1000);
 function circuitVals() {
   const V = parseFloat($("selV").value), R1 = parseFloat($("selR1").value), R2 = parseFloat($("selR2").value);
   return { V, R1, R2, I: meter.sw ? V / (R1 + R2) : 0 };
@@ -1174,14 +1182,14 @@ function meterRead() {
       msg: "Voltmeter bersiri menghalang arus, jadi litar tidak berfungsi. Voltan diukur secara selari, iaitu merentasi komponen." };
     const v = p === "bat" ? V : p === "r1" ? I * R1 : p === "r2" ? I * R2 : I * (R1 + R2);
     let msg = meter.sw ? "" : (p === "bat" ? "" : "Suis terbuka, tiada arus, jadi tiada voltan merentasi perintang.");
-    if (meter.sw && p !== "bat") msg = `V = I × R = ${fmt(I)} A × ${p === "r1" ? R1 : p === "r2" ? R2 : R1 + R2} Ω = ${fmt(v)} V`;
+    if (meter.sw && p !== "bat") msg = `V = I × R = ${fmt3(I)} A × ${p === "r1" ? R1 : p === "r2" ? R2 : R1 + R2} Ω = ${fmt(v)} V`;
     return { val: fmt(v), unit: "volt (V)", cls: msg ? "info" : "", msg };
   }
   if (m === "A") {
     if (p !== "siri") return { val: "FUSE", unit: "fius putus", cls: "bad",
       msg: "Bahaya: ammeter yang disambung merentasi komponen menyebabkan litar pintas dan memutuskan fius multimeter. Arus mesti diukur secara bersiri." };
     return { val: fmt(I), unit: "ampere (A)", cls: "info",
-      msg: meter.sw ? `I = V ÷ (R1 + R2) = ${V} V ÷ ${R1 + R2} Ω = ${fmt(I)} A` : "Suis terbuka, jadi tiada arus mengalir." };
+      msg: meter.sw ? `I = V ÷ (R1 + R2) = ${V} V ÷ ${R1 + R2} Ω = ${fmt3(I)} A` : "Suis terbuka, jadi tiada arus mengalir." };
   }
   // rintangan
   if (meter.sw) return { val: "Err", unit: "", cls: "bad", msg: "Buka suis litar (matikan bekalan) sebelum mengukur rintangan." };
@@ -1249,8 +1257,8 @@ function newOhm() {
   const V = pick([3, 4.5, 6, 9, 12]), R1 = pick([1, 2, 3, 4, 6, 10]), R2 = pick([1, 2, 3, 4, 6, 10]);
   const I = V / (R1 + R2);
   const types = [
-    { q: `Bateri ${V} V, R1 = ${R1} Ω, R2 = ${R2} Ω. Berapakah arus dalam litar (A)?`, ans: I, kerja: `I = V ÷ (R1 + R2) = ${V} ÷ ${R1 + R2} = ${fmt(I)} A`, set: { mode: "A", probe: "siri", sw: true } },
-    { q: `Bateri ${V} V, R1 = ${R1} Ω, R2 = ${R2} Ω. Berapakah voltan merentasi R1 (V)?`, ans: I * R1, kerja: `I = ${fmt(I)} A, maka V1 = I × R1 = ${fmt(I)} × ${R1} = ${fmt(I * R1)} V`, set: { mode: "V", probe: "r1", sw: true } },
+    { q: `Bateri ${V} V, R1 = ${R1} Ω, R2 = ${R2} Ω. Berapakah arus dalam litar (A)?`, ans: I, kerja: `I = V ÷ (R1 + R2) = ${V} ÷ ${R1 + R2} = ${fmt3(I)} A`, set: { mode: "A", probe: "siri", sw: true } },
+    { q: `Bateri ${V} V, R1 = ${R1} Ω, R2 = ${R2} Ω. Berapakah voltan merentasi R1 (V)?`, ans: I * R1, kerja: `I = ${V} ÷ ${R1 + R2} = ${fmt3(I)} A, maka V1 = I × R1 = ${fmt3(I)} × ${R1} = ${fmt3(I * R1)} V`, set: { mode: "V", probe: "r1", sw: true } },
     { q: `R1 = ${R1} Ω dan R2 = ${R2} Ω disambung sesiri. Berapakah jumlah rintangan (Ω)?`, ans: R1 + R2, kerja: `R = R1 + R2 = ${R1} + ${R2} = ${R1 + R2} Ω`, set: { mode: "R", probe: "r12", sw: false } }
   ];
   ohm = { V, R1, R2, ...pick(types) };
@@ -1265,7 +1273,7 @@ $("btnOhmCheck").onclick = () => {
   if (!ohm) return;
   const v = parseFloat($("ohmAns").value);
   if (isNaN(v)) { note($("ohmFb"), "bad", "Masukkan jawapan dalam bentuk nombor."); return; }
-  const ok = Math.abs(v - ohm.ans) <= Math.max(0.02, Math.abs(ohm.ans) * 0.02);
+  const ok = Math.abs(v - ohm.ans) <= Math.max(0.02, Math.abs(ohm.ans) * 0.03);
   note($("ohmFb"), ok ? "ok" : "bad", (ok ? "Betul. " : "Belum tepat. ") + ohm.kerja + ". Semak dengan multimeter: pemutar dan probe telah disediakan.");
   meter.mode = ohm.set.mode; meter.sw = ohm.set.sw; $("probe").value = ohm.set.probe;
   document.querySelectorAll(".dial button").forEach(x => x.setAttribute("aria-pressed", x.dataset.m === meter.mode ? "true" : "false"));
@@ -1274,23 +1282,46 @@ $("btnOhmCheck").onclick = () => {
 };
 
 /* =========================================================
-   MAKMAL LITAR (sambung wayar, kod blok, simulasi)
+   MAKMAL LITAR (ESP32 DevKit V1 30 pin, kod blok, simulasi)
    ========================================================= */
-const PINS = ["5V", "GND", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10", "D11", "D12", "D13", "A0", "A1"];
-const PIN_X = 140, pinY = i => 38 + i * 26;
-const SLOTS = [[205, 12], [385, 12], [205, 162], [385, 162], [205, 312], [385, 312]];
-const SLOT_W = 165, SLOT_H = 142;
-const SIG_COLORS = ["#1F4FBF", "#1E9E5A", "#B5652A", "#7A3FB0", "#D97706", "#0E7490", "#BE185D", "#4D7C0F"];
+/* Susunan pin sebenar ESP32 DevKit V1 (30 pin), dari atas ke bawah.
+   k: io = input/output, in = input sahaja, ser = UART0, en = set semula, gnd, v5 = VIN, v33 = 3V3 */
+const PIN_LEFT = [
+  ["EN", null, "en"], ["VP", 36, "in", 1], ["VN", 39, "in", 1], ["D34", 34, "in", 1], ["D35", 35, "in", 1],
+  ["D32", 32, "io", 1], ["D33", 33, "io", 1], ["D25", 25, "io"], ["D26", 26, "io"], ["D27", 27, "io"],
+  ["D14", 14, "io"], ["D12", 12, "io"], ["D13", 13, "io"], ["GND", null, "gnd"], ["VIN", null, "v5"]
+];
+const PIN_RIGHT = [
+  ["D23", 23, "io"], ["D22", 22, "io"], ["TX0", 1, "ser"], ["RX0", 3, "ser"], ["D21", 21, "io"],
+  ["D19", 19, "io"], ["D18", 18, "io"], ["D5", 5, "io"], ["TX2", 17, "io"], ["RX2", 16, "io"],
+  ["D4", 4, "io"], ["D2", 2, "io"], ["D15", 15, "io"], ["GND", null, "gnd"], ["3V3", null, "v33"]
+];
+const PININFO = {};
+PIN_LEFT.forEach(([l, g, k, adc], i) => PININFO[l === "GND" ? "GND1" : l] = { label: l, gpio: g, k, adc: !!adc, side: "L", i });
+PIN_RIGHT.forEach(([l, g, k, adc], i) => PININFO[l === "GND" ? "GND2" : l] = { label: l, gpio: g, k, adc: !!adc, side: "R", i });
+const BOARD_X = 300, BOARD_W = 160, PIN_Y0 = 62, PIN_DY = 29;
+const pinXY = id => { const p = PININFO[id]; return [p.side === "L" ? BOARD_X + 14 : BOARD_X + BOARD_W - 14, PIN_Y0 + p.i * PIN_DY]; };
+const SLOTS = [[10, 14, "L"], [590, 14, "R"], [10, 178, "L"], [590, 178, "R"], [10, 342, "L"], [590, 342, "R"]];
+const SLOT_W = 160, SLOT_H = 152;
+const SIG_COLORS = ["#1F4FBF", "#1E9E5A", "#7A3FB0", "#0E7490", "#BE185D", "#4D7C0F", "#9A3412", "#475569"];
 
-/* role: dig = pin digital, ana = pin analog, gnd = GND, vcc = 5V */
+/* Peranan kaki: out = output digital, inp = input digital, inpu = input dengan tarik naik dalaman,
+   adc = input analog ADC1, gnd, v5 = 5V (VIN), v33 = 3.3V, opt = pilihan (tidak wajib) */
 const LABTYPES = {
-  LED:        { nama: "LED", jenis: "out", legs: [["a", "Anod (+)", "dig"], ["k", "Katod (−)", "gnd"]] },
-  Pembaz:     { nama: "Pembaz", jenis: "out", legs: [["p", "Positif (+)", "dig"], ["n", "Negatif (−)", "gnd"]] },
-  Motor:      { nama: "Motor AT", jenis: "out", legs: [["in", "IN pemacu", "dig"], ["g", "GND", "gnd"]] },
-  Servo:      { nama: "Servo", jenis: "servo", legs: [["s", "Isyarat", "dig"], ["v", "5V", "vcc"], ["g", "GND", "gnd"]] },
-  Butang:     { nama: "Butang", jenis: "in", legs: [["s", "Kaki 1", "dig"], ["g", "Kaki 2", "gnd"]] },
-  LDR:        { nama: "LDR", jenis: "in", legs: [["ao", "AO", "ana"], ["v", "VCC", "vcc"], ["g", "GND", "gnd"]] },
-  Ultrasonik: { nama: "Ultrasonik", jenis: "in", legs: [["v", "VCC", "vcc"], ["t", "Trig", "dig"], ["e", "Echo", "dig"], ["g", "GND", "gnd"]] }
+  LED:        { nama: "LED", jenis: "out", note: "LED dengan perintang 220 Ω; anod ialah kaki panjang",
+                legs: [["a", "Anod (+)", "out"], ["k", "Katod (−)", "gnd"]] },
+  Pembaz:     { nama: "Pembaz", jenis: "out", note: "Pembaz aktif 3.3 V hingga 5 V",
+                legs: [["p", "Positif (+)", "out"], ["n", "Negatif (−)", "gnd"]] },
+  Motor:      { nama: "Motor AT", jenis: "out", note: "Motor AT melalui pemacu L298N",
+                legs: [["in1", "IN1", "out"], ["in2", "IN2", "out"], ["v", "+5V", "v5"], ["g", "GND", "gnd"]] },
+  Servo:      { nama: "Servo", jenis: "servo", note: "Servo SG90: perang, merah, oren",
+                legs: [["g", "Perang (GND)", "gnd"], ["v", "Merah (5V)", "v5"], ["s", "Oren (isyarat)", "out"]] },
+  Butang:     { nama: "Butang", jenis: "in", note: "Butang tekan, disambung ke GND",
+                legs: [["s", "Kaki 1", "inpu"], ["g", "Kaki 2", "gnd"]] },
+  LDR:        { nama: "LDR", jenis: "in", note: "Modul LDR 4 pin",
+                legs: [["v", "VCC", "v33"], ["g", "GND", "gnd"], ["do", "DO", "opt"], ["ao", "AO", "adc"]] },
+  Ultrasonik: { nama: "Ultrasonik", jenis: "in", note: "HC-SR04",
+                legs: [["v", "VCC", "v5"], ["t", "Trig", "out"], ["e", "Echo", "inp"], ["g", "GND", "gnd"]] }
 };
 
 const lab = { comps: [], wires: [], sel: null, prog: [], target: null, running: false, stop: false, seq: 1 };
@@ -1298,15 +1329,16 @@ let audioCtx = null, osc = null;
 
 const labComp = id => lab.comps.find(c => c.id === id);
 const wireOf = (cid, leg) => lab.wires.find(w => w.comp === cid && w.leg === leg);
-const pinClass = p => p === "GND" ? "gnd" : p === "5V" ? "vcc" : p[0] === "A" ? "ana" : "dig";
+const pinLabel = id => PININFO[id] ? PININFO[id].label : id;
+const isPower = id => ["gnd", "v5", "v33"].includes(PININFO[id].k);
 function compLabel(c) { return `${LABTYPES[c.type].nama} ${c.n}`; }
 
-function addComp(type, opts = {}) {
+function addComp(type) {
   const used = lab.comps.map(c => c.slot);
   const slot = [0, 1, 2, 3, 4, 5].find(i => !used.includes(i));
   if (slot === undefined) { note($("labFb"), "bad", "Papan penuh. Buang satu komponen dahulu (maksimum enam)."); return null; }
   const n = lab.comps.filter(c => c.type === type).length + 1;
-  const c = { id: "c" + (lab.seq++), type, n, slot, on: false, deg: 0, pressed: false, ldr: 70, jarak: 50, ...opts };
+  const c = { id: "c" + (lab.seq++), type, n, slot, on: false, deg: 0, pressed: false, ldr: 70, jarak: 50 };
   lab.comps.push(c);
   return c;
 }
@@ -1316,130 +1348,148 @@ function removeComp(id) {
   if (lab.sel && lab.sel.comp === id) lab.sel = null;
 }
 
-/* Semak sambungan setiap komponen */
+/* Semak sama ada pin sesuai untuk peranan kaki. Pulangkan null jika betul, atau mesej ralat. */
+function pinProblem(role, pid) {
+  const P = PININFO[pid], L = P.label;
+  if (P.k === "en") return "EN ialah pin set semula, bukan pin data";
+  if (P.k === "ser") return `${L} digunakan untuk memuat naik kod (UART0). Elakkan pin ini`;
+  if (role === "gnd") return P.k === "gnd" ? null : `perlu ke GND, bukan ${L}`;
+  if (role === "v5") return P.k === "v5" ? null : P.k === "v33" ? "perlukan 5 V. Sambung ke VIN, bukan 3V3" : `perlu ke VIN (5 V), bukan ${L}`;
+  if (role === "v33") return P.k === "v33" ? null : P.k === "v5" ? "modul ini disambung ke 3V3 supaya isyarat AO tidak melebihi 3.3 V" : `perlu ke 3V3, bukan ${L}`;
+  if (["gnd", "v5", "v33"].includes(P.k)) return `perlu ke pin GPIO, bukan ${L}`;
+  if (role === "out") return P.k === "in" ? `${L} ialah pin input sahaja dan tidak boleh mengeluarkan isyarat. Cuba D13, D25 atau D26` : null;
+  if (role === "inpu") return P.k === "in" ? `${L} tiada perintang tarik naik dalaman. Gunakan pin lain seperti D4 atau D14` : null;
+  if (role === "adc") return P.adc ? null : `perlu ke pin ADC1 (VP, VN, D32, D33, D34 atau D35), bukan ${L}`;
+  return null; // inp dan opt menerima mana-mana GPIO
+}
 function compStatus(c) {
-  const T = LABTYPES[c.type], msgs = [], pins = {};
-  // LED atau pembaz terbalik
+  const T = LABTYPES[c.type], msgs = [], pins = {}, notes = [];
   if (c.type === "LED" || c.type === "Pembaz") {
     const wa = wireOf(c.id, T.legs[0][0]), wk = wireOf(c.id, T.legs[1][0]);
-    if (wa && wk && pinClass(wa.pin) === "gnd" && pinClass(wk.pin) === "dig")
-      return { ok: false, pins, msgs: [`${compLabel(c)} disambung terbalik. ${T.legs[0][1]} ke pin digital, ${T.legs[1][1]} ke GND.`] };
+    if (wa && wk && PININFO[wa.pin].k === "gnd" && !isPower(wk.pin))
+      return { ok: false, pins, notes, msgs: [`disambung terbalik. Kaki positif ke pin GPIO, kaki negatif ke GND`] };
   }
   T.legs.forEach(([lid, lname, role]) => {
     const w = wireOf(c.id, lid);
-    if (!w) { msgs.push(`${lname} belum disambung`); return; }
-    const pc = pinClass(w.pin);
-    if (pc !== role) {
-      const want = role === "dig" ? "pin digital (D2 hingga D13)" : role === "ana" ? "pin analog (A0 atau A1)" : role === "gnd" ? "GND" : "5V";
-      msgs.push(`${lname} perlu ke ${want}, bukan ${w.pin}`);
-      return;
-    }
+    if (!w) { if (role !== "opt") msgs.push(`${lname} belum disambung`); return; }
+    const pr = pinProblem(role, w.pin);
+    if (pr) { msgs.push(`${lname}: ${pr.charAt(0).toLowerCase() + pr.slice(1)}`); return; }
     pins[lid] = w.pin;
   });
-  return { ok: msgs.length === 0, pins, msgs };
+  if (c.type === "Ultrasonik" && msgs.length === 0) notes.push("Nota: Echo HC-SR04 mengeluarkan 5 V. Dalam litar sebenar, gunakan pembahagi voltan sebelum ke ESP32");
+  return { ok: msgs.length === 0, pins, msgs, notes };
 }
-const sigPin = c => {
-  const st = compStatus(c);
-  const lid = LABTYPES[c.type].legs.find(l => l[2] === "dig" || l[2] === "ana")[0];
-  return st.ok ? st.pins[lid] : null;
-};
 
 /* ---------- Lukis papan ---------- */
-function legPos(c, i) { const [x, y] = SLOTS[c.slot]; return [x + 10, y + 42 + i * 24]; }
+function legPos(c, i) {
+  const [x, y, side] = SLOTS[c.slot];
+  return [side === "L" ? x + SLOT_W - 10 : x + 10, y + 46 + i * 25];
+}
 function compGraphic(c) {
-  const [x, y] = SLOTS[c.slot];
-  const cx = x + 118, cy = y + 80;
+  const [x, y, side] = SLOTS[c.slot];
+  const cx = side === "L" ? x + 38 : x + SLOT_W - 38, cy = y + 86;
   let g = "";
   if (c.type === "LED") {
     if (c.on) g += `<circle cx="${cx}" cy="${cy}" r="30" fill="#FF6B6B" opacity=".35" class="glow"/>`;
-    g += `<path d="M${cx - 15},${cy + 14} L${cx - 15},${cy - 4} A15,15 0 0 1 ${cx + 15},${cy - 4} L${cx + 15},${cy + 14} Z" fill="${c.on ? "#FF3B3B" : "#F2C4C4"}" stroke="#8E1A27" stroke-width="2"/>`;
-    g += `<rect x="${cx - 19}" y="${cy + 14}" width="38" height="6" fill="${c.on ? "#E22" : "#E9B0B0"}" stroke="#8E1A27" stroke-width="1.5"/>`;
+    g += `<path d="M${cx - 14},${cy + 12} L${cx - 14},${cy - 4} A14,14 0 0 1 ${cx + 14},${cy - 4} L${cx + 14},${cy + 12} Z" fill="${c.on ? "#FF3B3B" : "#F2C4C4"}" stroke="#8E1A27" stroke-width="2"/>`;
+    g += `<rect x="${cx - 18}" y="${cy + 12}" width="36" height="6" fill="${c.on ? "#E22" : "#E9B0B0"}" stroke="#8E1A27" stroke-width="1.5"/>`;
+    g += `<line x1="${cx - 6}" y1="${cy + 18}" x2="${cx - 6}" y2="${cy + 40}" stroke="#8C949E" stroke-width="2"/><line x1="${cx + 6}" y1="${cy + 18}" x2="${cx + 6}" y2="${cy + 32}" stroke="#8C949E" stroke-width="2"/>`;
   } else if (c.type === "Pembaz") {
-    g += `<circle cx="${cx}" cy="${cy}" r="22" fill="#1B2330"/><circle cx="${cx}" cy="${cy}" r="4" fill="#59636F"/>`;
-    if (c.on) g += `<g fill="none" stroke="#B5652A" stroke-width="2.5" stroke-linecap="round"><path class="wave" d="M${cx + 26},${cy - 12} A14,14 0 0 1 ${cx + 26},${cy + 12}"/><path class="wave" style="animation-delay:.3s" d="M${cx + 33},${cy - 19} A22,22 0 0 1 ${cx + 33},${cy + 19}"/></g>`;
+    g += `<circle cx="${cx}" cy="${cy}" r="21" fill="#1B2330"/><circle cx="${cx}" cy="${cy}" r="4" fill="#59636F"/><text x="${cx - 13}" y="${cy - 9}" font-size="11" fill="#fff">+</text>`;
+    if (c.on) g += `<g fill="none" stroke="#B5652A" stroke-width="2.5" stroke-linecap="round"><path class="wave" d="M${cx - 12},${cy - 26} A16,16 0 0 1 ${cx + 12},${cy - 26}"/><path class="wave" style="animation-delay:.3s" d="M${cx - 18},${cy - 33} A24,24 0 0 1 ${cx + 18},${cy - 33}"/></g>`;
   } else if (c.type === "Motor") {
-    g += `<circle cx="${cx}" cy="${cy}" r="24" fill="#C7CCC2" stroke="#59636F" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="5" fill="#59636F"/>`;
-    g += `<g transform="translate(${cx},${cy})"><g class="${c.on ? "spin" : ""}"><line x1="0" y1="0" x2="0" y2="-20" stroke="#1B2330" stroke-width="4" stroke-linecap="round"/><line x1="0" y1="0" x2="17" y2="10" stroke="#1B2330" stroke-width="4" stroke-linecap="round"/><line x1="0" y1="0" x2="-17" y2="10" stroke="#1B2330" stroke-width="4" stroke-linecap="round"/></g></g>`;
+    g += `<rect x="${cx - 26}" y="${cy + 18}" width="52" height="20" rx="3" fill="#B91C1C"/><text x="${cx}" y="${cy + 32}" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">L298N</text>`;
+    g += `<circle cx="${cx}" cy="${cy - 6}" r="20" fill="#C7CCC2" stroke="#59636F" stroke-width="2"/><circle cx="${cx}" cy="${cy - 6}" r="4" fill="#59636F"/>`;
+    g += `<g transform="translate(${cx},${cy - 6})"><g class="${c.on ? "spin" : ""}"><line x1="0" y1="0" x2="0" y2="-16" stroke="#1B2330" stroke-width="4" stroke-linecap="round"/><line x1="0" y1="0" x2="14" y2="8" stroke="#1B2330" stroke-width="4" stroke-linecap="round"/><line x1="0" y1="0" x2="-14" y2="8" stroke="#1B2330" stroke-width="4" stroke-linecap="round"/></g></g>`;
   } else if (c.type === "Servo") {
-    g += `<rect x="${cx - 26}" y="${cy - 14}" width="52" height="34" rx="3" fill="#1F4FBF"/>`;
-    g += `<g transform="translate(${cx},${cy - 2})"><g style="transform:rotate(${c.deg - 90}deg);transition:transform .45s"><rect x="-4" y="-4" width="34" height="8" rx="4" fill="#F6F7F3" stroke="#1B2330" stroke-width="1.5"/></g><circle r="5" fill="#F6F7F3" stroke="#1B2330" stroke-width="1.5"/></g>`;
-    g += `<text x="${cx}" y="${cy + 38}" text-anchor="middle" font-size="12" fill="#59636F">${c.deg}°</text>`;
+    g += `<rect x="${cx - 24}" y="${cy - 12}" width="48" height="30" rx="3" fill="#1F4FBF"/><text x="${cx}" y="${cy + 12}" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">SG90</text>`;
+    g += `<g transform="translate(${cx - 8},${cy - 4})"><g style="transform:rotate(${c.deg - 90}deg);transition:transform .45s"><rect x="-4" y="-4" width="32" height="8" rx="4" fill="#F6F7F3" stroke="#1B2330" stroke-width="1.5"/></g><circle r="5" fill="#F6F7F3" stroke="#1B2330" stroke-width="1.5"/></g>`;
+    g += `<text x="${cx}" y="${cy + 36}" text-anchor="middle" font-size="12" fill="#59636F">${c.deg}°</text>`;
   } else if (c.type === "Butang") {
     g += `<g data-press="${c.id}"><rect x="${cx - 22}" y="${cy - 22}" width="44" height="44" rx="5" fill="#1B2330"/><circle cx="${cx}" cy="${cy}" r="${c.pressed ? 12 : 14}" fill="${c.pressed ? "#B5652A" : "#E9B23A"}"/></g>`;
-    g += `<text x="${cx}" y="${cy + 38}" text-anchor="middle" font-size="12" fill="#59636F">${c.pressed ? "Ditekan" : "Tekan saya"}</text>`;
+    g += `<text x="${cx}" y="${cy + 38}" text-anchor="middle" font-size="12" fill="#59636F">${c.pressed ? "Ditekan" : "Tekan"}</text>`;
   } else if (c.type === "LDR") {
-    g += `<rect x="${cx - 22}" y="${cy - 16}" width="44" height="32" rx="3" fill="#1E9E5A"/><circle cx="${cx}" cy="${cy}" r="9" fill="#F2D27A" stroke="#8C6A10" stroke-width="1.5"/><path d="M${cx - 5},${cy - 3} h3 v6 h3 v-6 h3" fill="none" stroke="#8E1A27" stroke-width="1.2"/>`;
+    g += `<rect x="${cx - 24}" y="${cy - 18}" width="48" height="34" rx="3" fill="#1E9E5A"/><circle cx="${cx - 8}" cy="${cy - 2}" r="9" fill="#F2D27A" stroke="#8C6A10" stroke-width="1.5"/><path d="M${cx - 13},${cy - 5} h3 v6 h3 v-6 h3" fill="none" stroke="#8E1A27" stroke-width="1.2"/><rect x="${cx + 6}" y="${cy - 10}" width="12" height="16" rx="2" fill="#1F4FBF"/>`;
     g += `<text x="${cx}" y="${cy + 34}" text-anchor="middle" font-size="12" fill="#59636F">Cahaya ${c.ldr}%</text>`;
   } else if (c.type === "Ultrasonik") {
-    g += `<rect x="${cx - 32}" y="${cy - 16}" width="64" height="32" rx="3" fill="#1F4FBF"/><circle cx="${cx - 15}" cy="${cy}" r="11" fill="#D3D8CD" stroke="#59636F" stroke-width="2"/><circle cx="${cx + 15}" cy="${cy}" r="11" fill="#D3D8CD" stroke="#59636F" stroke-width="2"/>`;
+    g += `<rect x="${cx - 32}" y="${cy - 18}" width="64" height="32" rx="3" fill="#1F4FBF"/><circle cx="${cx - 15}" cy="${cy - 2}" r="11" fill="#D3D8CD" stroke="#59636F" stroke-width="2"/><circle cx="${cx + 15}" cy="${cy - 2}" r="11" fill="#D3D8CD" stroke="#59636F" stroke-width="2"/>`;
     g += `<text x="${cx}" y="${cy + 34}" text-anchor="middle" font-size="12" fill="#59636F">Jarak ${c.jarak} cm</text>`;
   }
   return g;
 }
 function drawLab() {
-  let s = `<defs><pattern id="h3" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="7" cy="7" r="1.2" fill="#D3D8CD"/></pattern></defs><rect width="560" height="470" fill="url(#h3)"/>`;
+  let s = `<defs><pattern id="h3" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="7" cy="7" r="1.2" fill="#D3D8CD"/></pattern></defs><rect width="760" height="510" fill="url(#h3)"/>`;
   let dots = "";
-  // mikropengawal
-  s += `<rect x="8" y="10" width="146" height="450" rx="10" fill="#1D4C9E"/>`;
-  s += `<text x="20" y="30" font-size="12" font-weight="700" fill="#fff">MIKROPENGAWAL</text>`;
-  s += `<rect x="24" y="200" width="62" height="62" rx="3" fill="#1B2330"/><text x="55" y="236" text-anchor="middle" font-size="10" fill="#AEB7C2">MCU</text>`;
-  PINS.forEach((p, i) => {
-    const y = pinY(i), selp = lab.sel && lab.sel.kind === "pin" && lab.sel.pin === p;
-    const col = p === "GND" ? "#1B2330" : p === "5V" ? "#D22B3C" : "#F6F7F3";
-    s += `<text x="${PIN_X - 14}" y="${y + 4}" text-anchor="end" font-size="12" font-weight="700" fill="#fff">${p}</text>`;
-    dots += `<g data-pin="${p}"><circle cx="${PIN_X}" cy="${y}" r="12" fill="transparent"/><circle cx="${PIN_X}" cy="${y}" r="6.5" fill="${col}" stroke="${selp ? "#E9B23A" : "#fff"}" stroke-width="${selp ? 4 : 2}"/></g>`;
+  // ESP32 DevKit V1
+  s += `<rect x="${BOARD_X}" y="14" width="${BOARD_W}" height="482" rx="8" fill="#1B2330"/>`;
+  s += `<rect x="${BOARD_X + 40}" y="20" width="80" height="26" rx="2" fill="#C7CCC2"/><path d="M${BOARD_X + 48},28 h12 v8 h12 v-8 h12 v8 h12 v-8 h8" fill="none" stroke="#59636F" stroke-width="2"/>`;
+  s += `<rect x="${BOARD_X + 46}" y="200" width="68" height="92" rx="3" fill="#59636F"/><text x="${BOARD_X + 80}" y="240" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">ESP32</text><text x="${BOARD_X + 80}" y="256" text-anchor="middle" font-size="9" fill="#D3D8CD">WROOM-32</text>`;
+  s += `<text x="${BOARD_X + 80}" y="320" text-anchor="middle" font-size="10" fill="#AEB7C2">DEVKIT V1</text>`;
+  s += `<rect x="${BOARD_X + 62}" y="474" width="36" height="18" rx="3" fill="#AEB7C2"/><text x="${BOARD_X + 80}" y="468" text-anchor="middle" font-size="9" fill="#AEB7C2">USB</text>`;
+  Object.entries(PININFO).forEach(([id, P]) => {
+    const [px, py] = pinXY(id), selp = lab.sel && lab.sel.kind === "pin" && lab.sel.pin === id;
+    const col = P.k === "gnd" ? "#59636F" : P.k === "v5" ? "#D22B3C" : P.k === "v33" ? "#E9B23A" : (P.k === "ser" || P.k === "en") ? "#3A4656" : "#F6F7F3";
+    const tx = P.side === "L" ? px + 12 : px - 12, anchor = P.side === "L" ? "start" : "end";
+    const tcol = (P.k === "ser" || P.k === "en") ? "#8C949E" : "#fff";
+    dots += `<text x="${tx}" y="${py + 4}" text-anchor="${anchor}" font-size="11.5" font-weight="700" fill="${tcol}" stroke="#1B2330" stroke-width="3" paint-order="stroke">${P.label}</text>`;
+    dots += `<g data-pin="${id}"><circle cx="${px}" cy="${py}" r="12" fill="transparent"/><circle cx="${px}" cy="${py}" r="6" fill="${col}" stroke="${selp ? "#E9B23A" : "#fff"}" stroke-width="${selp ? 4 : 1.5}"/></g>`;
   });
-  // komponen (badan)
+  // komponen
   lab.comps.forEach(c => {
-    const [x, y] = SLOTS[c.slot], T = LABTYPES[c.type], st = compStatus(c);
-    s += `<rect x="${x}" y="${y}" width="${SLOT_W}" height="${SLOT_H}" rx="8" fill="#fff" stroke="${st.ok ? "#1E9E5A" : "#D3D8CD"}" stroke-width="${st.ok ? 2 : 1.5}"/>`;
-    s += `<text x="${x + 10}" y="${y + 22}" font-size="14" font-weight="700" fill="#1B2330">${compLabel(c)}</text>`;
+    const [x, y, side] = SLOTS[c.slot], T = LABTYPES[c.type], st = compStatus(c);
+    s += `<rect x="${x}" y="${y}" width="${SLOT_W}" height="${SLOT_H}" rx="8" fill="#fff" stroke="${st.ok ? "#1E9E5A" : "#D3D8CD"}" stroke-width="${st.ok ? 2.5 : 1.5}"/>`;
+    s += `<text x="${x + 10}" y="${y + 21}" font-size="14" font-weight="700" fill="#1B2330">${compLabel(c)}</text>`;
     s += `<g data-del="${c.id}"><rect x="${x + SLOT_W - 30}" y="${y + 6}" width="24" height="24" rx="5" fill="#F6F7F3" stroke="#D3D8CD"/><path d="M${x + SLOT_W - 23},${y + 13} l10,10 M${x + SLOT_W - 13},${y + 13} l-10,10" stroke="#59636F" stroke-width="2" stroke-linecap="round"/></g>`;
-    T.legs.forEach(([lid, lname], i) => {
+    T.legs.forEach(([lid, lname, role], i) => {
       const [lx, ly] = legPos(c, i), sl = lab.sel && lab.sel.kind === "leg" && lab.sel.comp === c.id && lab.sel.leg === lid;
-      s += `<line x1="${lx}" y1="${ly}" x2="${x + 82}" y2="${ly}" stroke="#AEB7C2" stroke-width="2"/>`;
-      s += `<text x="${lx + 12}" y="${ly - 5}" font-size="11" fill="#59636F">${lname}</text>`;
-      dots += `<g data-leg="${c.id}|${lid}"><circle cx="${lx}" cy="${ly}" r="11" fill="transparent"/><circle cx="${lx}" cy="${ly}" r="6" fill="#B5652A" stroke="${sl ? "#E9B23A" : "#fff"}" stroke-width="${sl ? 4 : 2}"/></g>`;
+      const inner = side === "L" ? lx - 34 : lx + 34;
+      s += `<line x1="${lx}" y1="${ly}" x2="${inner}" y2="${ly}" stroke="#AEB7C2" stroke-width="2"/>`;
+      s += `<text x="${side === "L" ? lx - 12 : lx + 12}" y="${ly - 5}" text-anchor="${side === "L" ? "end" : "start"}" font-size="10.5" fill="#59636F">${lname}</text>`;
+      const legCol = role === "gnd" ? "#59636F" : (role === "v5" ? "#D22B3C" : role === "v33" ? "#E9B23A" : "#B5652A");
+      dots += `<g data-leg="${c.id}|${lid}"><circle cx="${lx}" cy="${ly}" r="11" fill="transparent"/><circle cx="${lx}" cy="${ly}" r="6" fill="${legCol}" stroke="${sl ? "#E9B23A" : "#fff"}" stroke-width="${sl ? 4 : 2}"/></g>`;
     });
     s += compGraphic(c);
   });
-  // wayar (di bawah titik pin dan kaki supaya titik masih boleh diketik)
+  // wayar
   let si = 0;
   lab.wires.forEach((w, i) => {
     const c = labComp(w.comp); if (!c) return;
     const li = LABTYPES[c.type].legs.findIndex(l => l[0] === w.leg);
-    const [lx, ly] = legPos(c, li), py = pinY(PINS.indexOf(w.pin));
-    const col = w.pin === "GND" ? "#1B2330" : w.pin === "5V" ? "#D22B3C" : SIG_COLORS[(si++) % SIG_COLORS.length];
-    const d = `M${PIN_X},${py} C${PIN_X + 45},${py} ${lx - 45},${ly} ${lx},${ly}`;
+    const [lx, ly] = legPos(c, li), [px, py] = pinXY(w.pin), k = PININFO[w.pin].k;
+    const col = k === "gnd" ? "#1B2330" : k === "v5" ? "#D22B3C" : k === "v33" ? "#D97706" : SIG_COLORS[(si++) % SIG_COLORS.length];
+    const dx = PININFO[w.pin].side === "L" ? -1 : 1;
+    const d = `M${px},${py} C${px + dx * 70},${py} ${lx - dx * 60},${ly} ${lx},${ly}`;
     s += `<g data-wire="${i}"><path d="${d}" stroke="transparent" stroke-width="12" fill="none"/><path d="${d}" stroke="${col}" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".9"/></g>`;
   });
   $("labSvg").innerHTML = s + dots;
   renderChecklist();
 }
 function renderChecklist() {
-  if (!lab.comps.length) { $("labCheck").innerHTML = ""; return; }
+  if (!lab.comps.length) { $("labCheck").innerHTML = `<li class="bad">Belum ada komponen. Tambah komponen atau pilih contoh projek.</li>`; return; }
   $("labCheck").innerHTML = lab.comps.map(c => {
-    const st = compStatus(c);
+    const st = compStatus(c), T = LABTYPES[c.type];
     if (st.ok) {
-      const pins = Object.values(st.pins).filter(p => p !== "GND" && p !== "5V").join(" dan ");
-      return `<li>${esc(compLabel(c))}: disambung dengan betul${pins ? " ke " + esc(pins) : ""}.</li>`;
+      const pins = [...new Set(Object.values(st.pins).filter(p => !isPower(p)).map(pinLabel))].join(" dan ");
+      const nt = st.notes.length ? ` ${st.notes.join(". ")}.` : "";
+      return `<li><b>${esc(compLabel(c))}</b> (${esc(T.note)}): disambung dengan betul${pins ? " ke " + esc(pins) : ""}.${esc(nt)}</li>`;
     }
-    return `<li class="bad">${esc(compLabel(c))}: ${esc(st.msgs.join("; "))}.</li>`;
+    return `<li class="bad"><b>${esc(compLabel(c))}</b> (${esc(T.note)})<br>${st.msgs.map(m => esc(m.charAt(0).toUpperCase() + m.slice(1)) + ".").join("<br>")}</li>`;
   }).join("");
 }
 function renderSensors() {
   const ins = lab.comps.filter(c => c.type === "LDR" || c.type === "Ultrasonik" || c.type === "Butang");
   $("labSensors").innerHTML = ins.map(c => {
     if (c.type === "Butang") return `<div class="sensor"><b>${esc(compLabel(c))}</b><div class="actions" style="margin-top:6px"><button class="btn line hold" data-hold="${c.id}">Tekan dan tahan</button></div></div>`;
-    if (c.type === "LDR") return `<div class="sensor"><b>${esc(compLabel(c))}</b>: cahaya <span id="v-${c.id}">${c.ldr}</span>% (gelap jika kurang 40%)<input type="range" min="0" max="100" value="${c.ldr}" data-ldr="${c.id}" aria-label="Keamatan cahaya"></div>`;
+    if (c.type === "LDR") return `<div class="sensor"><b>${esc(compLabel(c))}</b>: cahaya <span id="v-${c.id}">${c.ldr}</span>% (gelap jika kurang daripada 40%)<input type="range" min="0" max="100" value="${c.ldr}" data-ldr="${c.id}" aria-label="Keamatan cahaya"></div>`;
     return `<div class="sensor"><b>${esc(compLabel(c))}</b>: jarak objek <span id="v-${c.id}">${c.jarak}</span> cm<input type="range" min="2" max="100" value="${c.jarak}" data-jarak="${c.id}" aria-label="Jarak objek"></div>`;
   }).join("");
   $("labSensors").querySelectorAll("[data-ldr]").forEach(r => r.oninput = () => { const c = labComp(r.dataset.ldr); c.ldr = +r.value; $("v-" + c.id).textContent = c.ldr; drawLab(); });
   $("labSensors").querySelectorAll("[data-jarak]").forEach(r => r.oninput = () => { const c = labComp(r.dataset.jarak); c.jarak = +r.value; $("v-" + c.id).textContent = c.jarak; drawLab(); });
   $("labSensors").querySelectorAll("[data-hold]").forEach(b => {
-    const set = v => { const c = labComp(b.dataset.hold); if (c) { c.pressed = v; drawLab(); } };
+    const set = v => { const c = labComp(b.dataset.hold); if (c && c.pressed !== v) { c.pressed = v; drawLab(); } };
     b.onpointerdown = e => { e.preventDefault(); set(true); };
     b.onpointerup = b.onpointerleave = b.onpointercancel = () => set(false);
+    b.oncontextmenu = e => e.preventDefault();
   });
 }
 
@@ -1447,37 +1497,41 @@ function renderSensors() {
 function labHint(t) { $("labHint").textContent = t; }
 function connect(cid, leg, pin) {
   const c = labComp(cid);
-  const other = lab.wires.find(w => w.pin === pin && pinClass(pin) !== "gnd" && pinClass(pin) !== "vcc" && !(w.comp === cid && w.leg === leg));
-  if (other) { labHint(`Pin ${pin} sudah digunakan oleh ${compLabel(labComp(other.comp))}. Pilih pin lain.`); return; }
+  const lname = LABTYPES[c.type].legs.find(l => l[0] === leg)[1];
+  const P = PININFO[pin];
+  if (P.k === "en" || P.k === "ser") { labHint(`${pinLabel(pin)} tidak digunakan untuk komponen. ${P.k === "en" ? "EN ialah pin set semula." : "Pin ini digunakan semasa memuat naik kod."} Pilih pin lain.`); lab.sel = null; drawLab(); return; }
+  const other = lab.wires.find(w => w.pin === pin && !isPower(pin) && !(w.comp === cid && w.leg === leg));
+  if (other) { labHint(`Pin ${pinLabel(pin)} sudah digunakan oleh ${compLabel(labComp(other.comp))}. Pilih pin lain.`); lab.sel = null; drawLab(); return; }
   lab.wires = lab.wires.filter(w => !(w.comp === cid && w.leg === leg));
   lab.wires.push({ pin, comp: cid, leg });
-  const lname = LABTYPES[c.type].legs.find(l => l[0] === leg)[1];
-  labHint(`${lname} ${compLabel(c)} disambung ke ${pin}.`);
+  labHint(`${lname} ${compLabel(c)} disambung ke ${pinLabel(pin)}.`);
   lab.sel = null;
   refreshLab();
 }
 $("labSvg").addEventListener("click", e => {
   const del = e.target.closest("[data-del]"), leg = e.target.closest("[data-leg]"), pin = e.target.closest("[data-pin]"), wire = e.target.closest("[data-wire]");
-  if (del) { removeComp(del.dataset.del); refreshLab(); return; }
+  if (del) { if (lab.running) $("btnStop").click(); removeComp(del.dataset.del); labHint("Komponen dibuang."); refreshLab(); return; }
   if (leg) {
     const [cid, lid] = leg.dataset.leg.split("|");
     if (lab.sel && lab.sel.kind === "pin") return connect(cid, lid, lab.sel.pin);
     lab.sel = { kind: "leg", comp: cid, leg: lid };
     const c = labComp(cid);
-    labHint(`Dipilih: ${LABTYPES[c.type].legs.find(l => l[0] === lid)[1]} ${compLabel(c)}. Sekarang ketik pin pada mikropengawal.`);
+    labHint(`Dipilih: ${LABTYPES[c.type].legs.find(l => l[0] === lid)[1]} pada ${compLabel(c)}. Sekarang ketik pin pada ESP32.`);
     drawLab(); return;
   }
   if (pin) {
     const p = pin.dataset.pin;
     if (lab.sel && lab.sel.kind === "leg") return connect(lab.sel.comp, lab.sel.leg, p);
     lab.sel = { kind: "pin", pin: p };
-    labHint(`Dipilih: pin ${p}. Sekarang ketik kaki komponen.`);
+    const P = PININFO[p];
+    const info = P.k === "in" ? " (input sahaja)" : P.k === "ser" ? " (UART0, elakkan)" : P.k === "en" ? " (set semula)" : P.gpio !== null ? ` (GPIO${P.gpio}${P.adc ? ", ADC1" : ""})` : "";
+    labHint(`Dipilih: pin ${P.label}${info}. Sekarang ketik kaki komponen.`);
     drawLab(); return;
   }
   if (wire) {
     const w = lab.wires[+wire.dataset.wire];
     lab.wires.splice(+wire.dataset.wire, 1);
-    labHint(`Wayar ke ${w.pin} dibuang.`);
+    labHint(`Wayar ke ${pinLabel(w.pin)} dibuang.`);
     refreshLab(); return;
   }
   if (lab.sel) { lab.sel = null; labHint("Pilihan dibatalkan."); drawLab(); }
@@ -1487,14 +1541,15 @@ $("labSvg").addEventListener("pointerdown", e => {
   if (!pr) return;
   const c = labComp(pr.dataset.press);
   c.pressed = true; drawLab();
-  const up = () => { c.pressed = false; drawLab(); window.removeEventListener("pointerup", up); };
+  const up = () => { c.pressed = false; drawLab(); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); };
   window.addEventListener("pointerup", up);
+  window.addEventListener("pointercancel", up);
 });
 document.querySelectorAll("#compPalette [data-add]").forEach(b => b.onclick = () => {
   const c = addComp(b.dataset.add);
   if (c) { labHint(`${compLabel(c)} ditambah. Ketik kakinya untuk mula menyambung wayar.`); refreshLab(); }
 });
-$("btnClrWire").onclick = () => { lab.wires = []; lab.sel = null; labHint("Semua wayar dibuang."); refreshLab(); };
+$("btnClrWire").onclick = () => { if (lab.running) $("btnStop").click(); lab.wires = []; lab.sel = null; labHint("Semua wayar dibuang."); refreshLab(); };
 
 /* ---------- Kod blok ---------- */
 const ICON_UP = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l5-5 5 5"/></svg>`;
@@ -1658,7 +1713,8 @@ $("btnRun").onclick = async () => {
   lab.running = false;
   $("btnRun").disabled = false; $("btnStop").disabled = true;
   hl(null);
-  if (!lab.stop) note($("labFb"), "ok", "Atur cara selesai dijalankan.");
+  beep(false);
+  if (!lab.stop) note($("labFb"), "ok", "Atur cara selesai dijalankan. Output kekal pada keadaan terakhir.");
 };
 $("btnStop").onclick = () => {
   lab.stop = true;
@@ -1667,24 +1723,29 @@ $("btnStop").onclick = () => {
   note($("labFb"), "info", "Simulasi dihentikan.");
 };
 
-/* ---------- Kod Arduino ---------- */
-function varName(c) { return { LED: "led", Pembaz: "pembaz", Motor: "motor", Servo: "servo", Butang: "butang", LDR: "ldr", Ultrasonik: "jarak" }[c.type] + c.n; }
-const pinNum = p => p ? (p[0] === "D" ? p.slice(1) : p) : "?";
+/* ---------- Kod Arduino (ESP32) ---------- */
+function varName(c) { return { LED: "LED", Pembaz: "PEMBAZ", Motor: "MOTOR", Servo: "SERVO", Butang: "BUTANG", LDR: "LDR", Ultrasonik: "JARAK" }[c.type] + c.n; }
+const gpio = p => p && PININFO[p] && PININFO[p].gpio !== null ? PININFO[p].gpio : "?";
 function condCode(cond) {
   const [cid, k] = cond.split("|"); const c = labComp(cid); if (!c) return "false";
   const v = varName(c);
-  if (k === "tekan") return `digitalRead(${v.toUpperCase()}) == LOW`;
-  if (k === "lepas") return `digitalRead(${v.toUpperCase()}) == HIGH`;
-  if (k === "gelap") return `analogRead(${v.toUpperCase()}) < 409`;
-  if (k === "terang") return `analogRead(${v.toUpperCase()}) >= 409`;
-  return `bacaJarak(TRIG${c.n}, ECHO${c.n}) < ${k.slice(2)}`;
+  if (k === "tekan") return `digitalRead(${v}) == LOW`;
+  if (k === "lepas") return `digitalRead(${v}) == HIGH`;
+  if (k === "gelap") return `analogRead(${v}_AO) < 1638`;
+  if (k === "terang") return `analogRead(${v}_AO) >= 1638`;
+  return `bacaJarak(${v}_TRIG, ${v}_ECHO) < ${k.slice(2)}`;
 }
 function blkCode(list, ind, depth) {
   const pad = "  ".repeat(ind);
   return list.map(b => {
     const c = b.c ? labComp(b.c) : null;
-    if (b.t === "out") return c ? `${pad}digitalWrite(${varName(c).toUpperCase()}, ${b.on ? "HIGH" : "LOW"});` : `${pad}// pilih komponen output`;
-    if (b.t === "servo") return c ? `${pad}${varName(c)}.write(${b.deg});\n${pad}delay(450);` : `${pad}// pilih servo`;
+    if (b.t === "out") {
+      if (!c) return `${pad}// pilih komponen output`;
+      const v = varName(c);
+      if (c.type === "Motor") return b.on ? `${pad}digitalWrite(${v}_IN1, HIGH);\n${pad}digitalWrite(${v}_IN2, LOW);` : `${pad}digitalWrite(${v}_IN1, LOW);\n${pad}digitalWrite(${v}_IN2, LOW);`;
+      return `${pad}digitalWrite(${v}, ${b.on ? "HIGH" : "LOW"});`;
+    }
+    if (b.t === "servo") return c ? `${pad}servo${c.n}.write(${b.deg});\n${pad}delay(450);` : `${pad}// pilih servo`;
     if (b.t === "wait") return `${pad}delay(${Math.round(b.s * 1000)});`;
     if (b.t === "repeat") { const v = "ijk"[depth % 3]; return `${pad}for (int ${v} = 0; ${v} < ${b.n}; ${v}++) {\n${blkCode(b.body, ind + 1, depth + 1)}\n${pad}}`; }
     if (b.t === "forever") return blkCode(b.body, ind, depth);
@@ -1694,20 +1755,23 @@ function blkCode(list, ind, depth) {
   }).filter(x => x !== "").join("\n");
 }
 function renderCode() {
-  const lines = ["// Dijana oleh ImbasKomp AI (Makmal litar)"];
+  const lines = ["// Dijana oleh ImbasKomp AI untuk ESP32 DevKit V1", "// Pilih papan: ESP32 Dev Module dalam Arduino IDE"];
   const servos = lab.comps.filter(c => c.type === "Servo");
   const ultra = lab.comps.filter(c => c.type === "Ultrasonik");
-  if (servos.length) lines.push("#include <Servo.h>");
+  if (servos.length) lines.push("#include <ESP32Servo.h>   // pasang pustaka ESP32Servo");
   lines.push("");
   lab.comps.forEach(c => {
-    const st = compStatus(c), v = varName(c);
-    if (c.type === "Servo") { lines.push(`Servo ${v};`); lines.push(`const int ${v.toUpperCase()}_PIN = ${pinNum(st.pins.s)};`); }
-    else if (c.type === "Ultrasonik") { lines.push(`const int TRIG${c.n} = ${pinNum(st.pins.t)};`); lines.push(`const int ECHO${c.n} = ${pinNum(st.pins.e)};`); }
-    else if (c.type === "LDR") lines.push(`const int ${v.toUpperCase()} = ${st.pins.ao || "A0"};`);
-    else { const lid = LABTYPES[c.type].legs[0][0]; lines.push(`const int ${v.toUpperCase()} = ${pinNum(st.pins[lid])};`); }
+    const st = compStatus(c), v = varName(c), P = st.pins;
+    if (c.type === "Servo") { lines.push(`Servo servo${c.n};`); lines.push(`const int ${v} = ${gpio(P.s)};`); }
+    else if (c.type === "Ultrasonik") { lines.push(`const int ${v}_TRIG = ${gpio(P.t)};`); lines.push(`const int ${v}_ECHO = ${gpio(P.e)};`); }
+    else if (c.type === "LDR") lines.push(`const int ${v}_AO = ${gpio(P.ao)};   // pin ADC1`);
+    else if (c.type === "Motor") { lines.push(`const int ${v}_IN1 = ${gpio(P.in1)};`); lines.push(`const int ${v}_IN2 = ${gpio(P.in2)};`); }
+    else if (c.type === "LED") lines.push(`const int ${v} = ${gpio(P.a)};`);
+    else if (c.type === "Pembaz") lines.push(`const int ${v} = ${gpio(P.p)};`);
+    else if (c.type === "Butang") lines.push(`const int ${v} = ${gpio(P.s)};`);
   });
   if (ultra.length) {
-    lines.push("", "long bacaJarak(int trig, int echo) {", "  digitalWrite(trig, LOW);", "  delayMicroseconds(2);", "  digitalWrite(trig, HIGH);", "  delayMicroseconds(10);", "  digitalWrite(trig, LOW);", "  return pulseIn(echo, HIGH) * 0.034 / 2;", "}");
+    lines.push("", "long bacaJarak(int trig, int echo) {", "  digitalWrite(trig, LOW);", "  delayMicroseconds(2);", "  digitalWrite(trig, HIGH);", "  delayMicroseconds(10);", "  digitalWrite(trig, LOW);", "  long masa = pulseIn(echo, HIGH, 30000);", "  if (masa == 0) return 999;   // tiada pantulan", "  return masa * 0.034 / 2;", "}");
   }
   const fi = lab.prog.findIndex(b => b.t === "forever");
   const setupBlocks = fi >= 0 ? lab.prog.slice(0, fi) : lab.prog;
@@ -1715,10 +1779,11 @@ function renderCode() {
   lines.push("", "void setup() {");
   lab.comps.forEach(c => {
     const v = varName(c);
-    if (c.type === "Servo") lines.push(`  ${v}.attach(${v.toUpperCase()}_PIN);`);
-    else if (c.type === "Ultrasonik") { lines.push(`  pinMode(TRIG${c.n}, OUTPUT);`); lines.push(`  pinMode(ECHO${c.n}, INPUT);`); }
-    else if (c.type === "Butang") lines.push(`  pinMode(${v.toUpperCase()}, INPUT_PULLUP);`);
-    else if (c.type !== "LDR") lines.push(`  pinMode(${v.toUpperCase()}, OUTPUT);`);
+    if (c.type === "Servo") lines.push(`  servo${c.n}.attach(${v});`);
+    else if (c.type === "Ultrasonik") { lines.push(`  pinMode(${v}_TRIG, OUTPUT);`); lines.push(`  pinMode(${v}_ECHO, INPUT);`); }
+    else if (c.type === "Butang") lines.push(`  pinMode(${v}, INPUT_PULLUP);`);
+    else if (c.type === "Motor") { lines.push(`  pinMode(${v}_IN1, OUTPUT);`); lines.push(`  pinMode(${v}_IN2, OUTPUT);`); }
+    else if (c.type !== "LDR") lines.push(`  pinMode(${v}, OUTPUT);`);
   });
   const sc = blkCode(setupBlocks, 1, 0); if (sc) lines.push(sc);
   lines.push("}", "", "void loop() {");
@@ -1727,21 +1792,21 @@ function renderCode() {
   $("ardCode").textContent = lines.join("\n");
 }
 $("btnCopyCode").onclick = async () => {
-  try { await navigator.clipboard.writeText($("ardCode").textContent); note($("labFb"), "ok", "Kod Arduino disalin."); }
+  try { await navigator.clipboard.writeText($("ardCode").textContent); note($("labFb"), "ok", "Kod disalin."); }
   catch (e) { note($("labFb"), "bad", "Kod tidak dapat disalin secara automatik. Pilih teks kod dan salin secara manual."); }
 };
 
 /* ---------- Contoh projek ---------- */
 const EXAMPLES = {
-  kelip: { comps: [["LED", { a: "D13", k: "GND" }]],
+  kelip: { comps: [["LED", { a: "D13", k: "GND1" }]],
     prog: c => [{ t: "forever", body: [{ t: "out", c: c[0], on: true }, { t: "wait", s: 0.5 }, { t: "out", c: c[0], on: false }, { t: "wait", s: 0.5 }] }] },
-  lampu: { comps: [["LDR", { ao: "A0", v: "5V", g: "GND" }], ["LED", { a: "D13", k: "GND" }]],
+  lampu: { comps: [["LDR", { v: "3V3", g: "GND1", ao: "D34" }], ["LED", { a: "D23", k: "GND2" }]],
     prog: c => [{ t: "forever", body: [{ t: "if", cond: c[0] + "|gelap", body: [{ t: "out", c: c[1], on: true }], els: [{ t: "out", c: c[1], on: false }] }] }] },
-  penggera: { comps: [["Ultrasonik", { v: "5V", t: "D6", e: "D7", g: "GND" }], ["Pembaz", { p: "D8", n: "GND" }], ["LED", { a: "D13", k: "GND" }]],
+  penggera: { comps: [["Ultrasonik", { v: "VIN", t: "D32", e: "D33", g: "GND1" }], ["Pembaz", { p: "D19", n: "GND2" }], ["LED", { a: "D13", k: "GND1" }]],
     prog: c => [{ t: "forever", body: [{ t: "if", cond: c[0] + "|lt20", body: [{ t: "out", c: c[1], on: true }, { t: "out", c: c[2], on: true }, { t: "wait", s: 0.2 }, { t: "out", c: c[2], on: false }, { t: "wait", s: 0.2 }], els: [{ t: "out", c: c[1], on: false }] }] }] },
-  palang: { comps: [["Butang", { s: "D2", g: "GND" }], ["Servo", { s: "D9", v: "5V", g: "GND" }]],
+  palang: { comps: [["Butang", { s: "D14", g: "GND1" }], ["Servo", { g: "GND2", v: "VIN", s: "D18" }]],
     prog: c => [{ t: "servo", c: c[1], deg: 0 }, { t: "forever", body: [{ t: "if", cond: c[0] + "|tekan", body: [{ t: "servo", c: c[1], deg: 90 }, { t: "wait", s: 2 }, { t: "servo", c: c[1], deg: 0 }], els: [] }] }] },
-  kipas: { comps: [["Butang", { s: "D2", g: "GND" }], ["Motor", { in: "D5", g: "GND" }]],
+  kipas: { comps: [["Butang", { s: "D14", g: "GND1" }], ["Motor", { in1: "D19", in2: "D18", v: "VIN", g: "GND2" }]],
     prog: c => [{ t: "forever", body: [{ t: "if", cond: c[0] + "|tekan", body: [{ t: "out", c: c[1], on: true }], els: [{ t: "out", c: c[1], on: false }] }] }] }
 };
 function withIds(list) { return list.map(b => ({ id: "b" + (lab.seq++), ...b, ...(b.body ? { body: withIds(b.body) } : {}), ...(b.els ? { els: withIds(b.els) } : {}) })); }
@@ -2018,6 +2083,7 @@ document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
   if (mode === "kuiz" && nm !== "kuiz") abortQuiz();
   if (mode === "lab" && nm !== "lab" && lab.running) $("btnStop").click();
   mode = nm;
+  document.querySelector("main").classList.toggle("nocam", nm === "lab" || nm === "meter");
   document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", x === t ? "true" : "false"));
   document.querySelectorAll(".view").forEach(p => p.classList.toggle("on", p.id === "view-" + nm));
   locked = null; cand = null; candCount = 0;

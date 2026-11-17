@@ -14,7 +14,7 @@ Pilih topik di bahagian atas. Misi, kuiz dan papan markah berubah ikut topik.
 
 - **Imbas**: kenal komponen, papar simbol litar, peranan dalam topik, fungsi dan contoh.
 - **Bina Litar**: imbas komponen mengikut urutan litar atau gambar rajah blok.
-- **Makmal Litar**: gaya Tinkercad. Tambah komponen (LED, pembaz, motor AT, servo, butang, LDR, ultrasonik), sambung kaki komponen ke pin mikropengawal, susun kod blok, jalankan simulasi dan salin kod Arduino yang dijana.
+- **Makmal Litar**: gaya Tinkercad dengan pin sebenar ESP32 DevKit V1 (30 pin). Tambah komponen (LED, pembaz, motor AT dengan L298N, servo SG90, butang, modul LDR, HC-SR04), sambung kaki komponen ke pin ESP32 (peraturan pin sebenar disemak: pin input sahaja, ADC1, VIN/3V3, UART0), susun kod blok, jalankan simulasi dan salin kod ESP32 untuk Arduino IDE (pustaka ESP32Servo untuk servo).
 - **Multimeter**: multimeter maya untuk mengukur voltan, arus dan rintangan pada litar sesiri, serta cabaran Hukum Ohm.
 - **Kuiz**: 10 soalan, campuran soalan komponen (boleh dijawab dengan kamera) dan soalan konsep.
 - **Uji Ketepatan**: matriks kekeliruan dan peratus ketepatan model.
