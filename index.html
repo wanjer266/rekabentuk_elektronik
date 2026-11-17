@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ImbasKomp AI – Kenal Komponen Elektronik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* Palet papan reka (breadboard) */
+:root{
+  --board:#ECEEE8;      /* plastik papan reka */
+  --hole:#C7CCC2;       /* lubang papan reka */
+  --surface:#FFFFFF;
+  --ink:#1B2330;
+  --soft:#59636F;
+  --edge:#D3D8CD;
+  --rail-red:#D22B3C;   /* rel kuasa + */
+  --rail-blue:#1F4FBF;  /* rel kuasa - */
+  --copper:#B5652A;
+  --led:#1E9E5A;
+  --display:"Archivo",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;font-family:var(--body);font-size:16px;line-height:1.55;color:var(--ink);
+  background-color:var(--board);
+  background-image:radial-gradient(var(--hole) 1.3px,transparent 1.6px);
+  background-size:20px 20px;
+}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--rail-blue);outline-offset:2px}
+
+/* Kepala dengan rel kuasa */
+.top{background:var(--surface);position:sticky;top:0;z-index:20}
+.top-inner{max-width:1040px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:12px}
+.mark{width:34px;height:34px;flex:0 0 auto}
+.title{flex:1;min-width:0}
+.title h1{font-family:var(--display);font-stretch:125%;font-weight:800;font-size:21px;letter-spacing:-.01em;margin:0;line-height:1.1}
+.title p{margin:2px 0 0;font-size:13px;color:var(--soft)}
+.rails{height:6px;background:linear-gradient(var(--rail-red) 0 2px,transparent 2px 4px,var(--rail-blue) 4px 6px)}
+.icon-btn{width:40px;height:40px;border-radius:8px;border:1px solid var(--edge);background:var(--surface);display:grid;place-items:center;cursor:pointer}
+.icon-btn svg{width:20px;height:20px}
+
+main{max-width:1040px;margin:0 auto;padding:18px;display:grid;gap:18px}
+main>*{min-width:0}
+@media(min-width:920px){main{grid-template-columns:400px 1fr;align-items:start}.cam{position:sticky;top:96px}}
+
+.panel-box{background:var(--surface);border:1px solid var(--edge);border-radius:10px;padding:16px}
+
+/* Kamera */
+.viewfinder{position:relative;aspect-ratio:1/1;border-radius:6px;overflow:hidden;background:#1B2330}
+video{width:100%;height:100%;object-fit:cover;display:block}
+video.mirror{transform:scaleX(-1)}
+.corners{position:absolute;inset:14%;pointer-events:none}
+.corners i{position:absolute;width:28px;height:28px;border:3px solid rgba(255,255,255,.75);transition:border-color .15s,border-width .15s}
+.corners i:nth-child(1){top:0;left:0;border-right:0;border-bottom:0}
+.corners i:nth-child(2){top:0;right:0;border-left:0;border-bottom:0}
+.corners i:nth-child(3){bottom:0;left:0;border-right:0;border-top:0}
+.corners i:nth-child(4){bottom:0;right:0;border-left:0;border-top:0}
+.viewfinder.locked .corners i{border-color:#34D27F;border-width:5px}
+.cam-empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#AEB7C2;padding:24px;font-size:15px}
+.cam-empty svg{width:44px;height:44px;margin:0 auto 8px;display:block}
+.readout{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:12px;padding-bottom:10px;border-bottom:1px solid var(--edge)}
+.readout b{font-family:var(--display);font-stretch:112%;font-size:19px;font-weight:700}
+.readout span{font-size:14px;color:var(--soft);font-variant-numeric:tabular-nums}
+.bars{display:grid;gap:7px;margin-top:10px}
+.bar{display:grid;grid-template-columns:96px 1fr 42px;gap:8px;align-items:center;font-size:13px}
+.bar .track{height:4px;background:var(--board);border-radius:2px;overflow:hidden}
+.bar .fill{height:100%;background:var(--rail-blue);transition:width .15s}
+.bar em{font-style:normal;text-align:right;color:var(--soft);font-variant-numeric:tabular-nums}
+.status{font-size:13px;color:var(--soft);margin:10px 0 0}
+.sim{margin-top:12px;padding:12px;border-left:3px solid var(--copper);background:#FBF6F1;font-size:14px}
+.sim b{display:block;margin-bottom:2px}
+
+/* Butang */
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn{border:1px solid transparent;border-radius:8px;padding:10px 16px;font-family:var(--display);font-weight:650;font-size:15px;cursor:pointer;background:var(--rail-blue);color:#fff;line-height:1.2}
+.btn:hover{background:#183F9C}
+.btn.line{background:var(--surface);color:var(--ink);border-color:var(--edge)}
+.btn.line:hover{border-color:var(--ink)}
+.btn.go{background:var(--led)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* Tab */
+.tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--edge);margin:-4px -4px 0;padding:0 4px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;background:none;border:0;border-bottom:3px solid transparent;padding:10px 12px 9px;font-family:var(--display);font-weight:600;font-size:15px;color:var(--soft);cursor:pointer}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--rail-blue)}
+.view{display:none;padding-top:16px}
+.view.on{display:block}
+h2{font-family:var(--display);font-stretch:118%;font-weight:750;font-size:22px;line-height:1.2;margin:0 0 6px;letter-spacing:-.01em}
+h3{font-family:var(--display);font-stretch:110%;font-weight:700;font-size:17px;margin:22px 0 8px}
+.lead{color:var(--soft);margin:0 0 14px;max-width:62ch}
+
+/* Kad komponen */
+.comp{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:start;animation:show .25s ease-out}
+@media(max-width:480px){.comp{grid-template-columns:1fr}}
+@keyframes show{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.symbol{border:1px solid var(--edge);border-radius:6px;padding:10px;color:var(--ink);
+  background-color:#F6F7F3;background-image:radial-gradient(var(--hole) 1px,transparent 1.3px);background-size:12px 12px}
+.symbol small{display:block;text-align:center;font-size:12px;color:var(--soft);margin-top:4px}
+.comp h4{font-family:var(--display);font-stretch:125%;font-weight:800;font-size:26px;line-height:1.1;margin:0 0 12px}
+.facts{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px}
+.facts dt{color:var(--soft);font-size:14px}
+.facts dd{margin:0}
+.empty{color:var(--soft);border:1px dashed var(--hole);border-radius:6px;padding:18px;text-align:center}
+
+.found-count{font-size:14px;color:var(--soft);font-weight:400;font-family:var(--body);font-stretch:100%}
+.parts{display:flex;flex-wrap:wrap;gap:6px}
+.parts span{font-size:14px;padding:5px 11px;border-radius:6px;border:1px dashed var(--hole);color:var(--soft)}
+.parts span.got{border:1px solid var(--ink);background:var(--ink);color:#fff}
+
+/* Maklum balas */
+.note{margin-top:12px;padding:10px 14px;border-left:4px solid;font-weight:700;display:none;background:var(--surface)}
+.note.show{display:block}
+.note.ok{border-color:var(--led);background:#EAF7F0;color:#145C37}
+.note.bad{border-color:var(--rail-red);background:#FCECEE;color:#8E1A27}
+.note.info{border-color:var(--rail-blue);background:#EBF0FB;color:#173A8C}
+
+/* Litar */
+svg.circuit{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;color:var(--ink);font-family:var(--body);background:#F6F7F3}
+.wire{stroke:var(--ink);stroke-width:3;fill:none}
+.flow{stroke:var(--copper);stroke-width:4;fill:none;stroke-dasharray:8 12;animation:flow .6s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-20}}
+.slot-empty{fill:#fff;stroke:var(--hole);stroke-width:2;stroke-dasharray:5 5}
+.slot-target{fill:#EBF0FB;stroke:var(--rail-blue);stroke-width:2.5;stroke-dasharray:5 5;animation:blink 1.1s ease-in-out infinite}
+@keyframes blink{50%{opacity:.4}}
+.glow{animation:glow 1s ease-in-out infinite}
+@keyframes glow{50%{opacity:.25}}
+.wave{animation:wave 1s ease-out infinite;opacity:0}
+@keyframes wave{0%{opacity:1}100%{opacity:0}}
+.arm{animation:arm 1.2s ease-in-out infinite alternate}
+@keyframes arm{from{transform:rotate(-60deg)}to{transform:rotate(60deg)}}
+.progress-line{font-size:14px;color:var(--soft);margin-top:12px}
+
+/* Kuiz */
+.clue-box{border:1px solid var(--edge);border-radius:6px;padding:18px;background:#F6F7F3}
+.clue-box .num{font-size:14px;color:var(--soft)}
+.clue-box .clue{font-family:var(--display);font-stretch:112%;font-weight:750;font-size:23px;line-height:1.25;margin:6px 0 14px}
+.timer{height:4px;background:var(--board);overflow:hidden}
+.timer div{height:100%;background:var(--rail-blue);transition:width 1s linear}
+.timer div.low{background:var(--rail-red)}
+.scoreline{display:flex;gap:22px;margin-top:12px;font-size:14px;color:var(--soft)}
+.scoreline b{display:block;font-family:var(--display);font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums}
+.final{font-family:var(--display);font-stretch:125%;font-weight:800;font-size:56px;line-height:1;margin:4px 0}
+label.field{display:block;margin-top:12px;font-size:14px;color:var(--soft)}
+input,select{width:100%;padding:10px 12px;border:1px solid var(--edge);border-radius:8px;font-size:16px;margin-top:4px;background:#fff}
+
+/* Jadual */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border:1px solid var(--edge);padding:7px;text-align:center}
+th{background:#F6F7F3;font-weight:700}
+.scroll{overflow-x:auto;margin-top:12px}
+.rec{height:4px;background:var(--board);margin-top:12px;overflow:hidden}
+.rec div{height:100%;width:0;background:var(--rail-red);transition:width .1s}
+.acc{display:flex;align-items:baseline;gap:10px;margin-top:14px}
+.acc b{font-family:var(--display);font-stretch:125%;font-weight:800;font-size:40px;line-height:1}
+.acc span{color:var(--soft);font-size:14px}
+.small{font-size:13px;color:var(--soft)}
+.rank{font-family:var(--display);font-weight:800}
+.rank.r1{color:var(--copper)}
+
+footer{max-width:1040px;margin:0 auto;padding:6px 18px 28px;font-size:13px;color:var(--soft)}
+
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <svg class="mark" viewBox="0 0 34 34" aria-hidden="true">
+      <rect x="1" y="1" width="32" height="32" rx="7" fill="#1B2330"/>
+      <line x1="5" y1="17" x2="10" y2="17" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+      <rect x="10" y="12" width="14" height="10" rx="1.5" fill="none" stroke="#fff" stroke-width="2.5"/>
+      <line x1="24" y1="17" x2="29" y2="17" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="14" y1="12" x2="14" y2="22" stroke="#D22B3C" stroke-width="2"/>
+      <line x1="17.5" y1="12" x2="17.5" y2="22" stroke="#B5652A" stroke-width="2"/>
+      <line x1="21" y1="12" x2="21" y2="22" stroke="#1F4FBF" stroke-width="2"/>
+    </svg>
+    <div class="title">
+      <h1>ImbasKomp AI</h1>
+    </div>
+    <button class="icon-btn" id="btnSound" aria-label="Bunyi"></button>
+  </div>
+  <div class="rails"></div>
+</header>
+
+<main>
+  <!-- Kamera -->
+  <section class="panel-box cam" aria-label="Kamera">
+    <div class="viewfinder" id="viewfinder">
+      <video id="video" playsinline muted></video>
+      <div class="corners"><i></i><i></i><i></i><i></i></div>
+      <div class="cam-empty" id="camPh">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+          Kamera belum dihidupkan
+        </div>
+      </div>
+    </div>
+    <div class="readout"><b id="camTop">Tiada komponen</b><span id="camPct"></span></div>
+    <div class="bars" id="bars"></div>
+    <div class="actions">
+      <button class="btn" id="btnStart">Hidupkan kamera</button>
+      <button class="btn line" id="btnFlip" disabled>Tukar kamera</button>
+    </div>
+    <p class="status" id="status">Memuatkan model AI…</p>
+    <div class="sim" id="simBox" style="display:none">
+      <b>Mod simulasi</b>
+      Model AI belum dipasang. Pilih komponen di bawah seolah-olah ia berada di depan kamera.
+      <select id="simSelect" aria-label="Komponen simulasi"></select>
+    </div>
+  </section>
+
+  <!-- Mod -->
+  <section class="panel-box">
+    <nav class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-mode="imbas">Imbas</button>
+      <button class="tab" role="tab" aria-selected="false" data-mode="litar">Bina Litar</button>
+      <button class="tab" role="tab" aria-selected="false" data-mode="kuiz">Kuiz</button>
+      <button class="tab" role="tab" aria-selected="false" data-mode="uji">Uji Ketepatan</button>
+      <button class="tab" role="tab" aria-selected="false" data-mode="markah">Papan Markah</button>
+    </nav>
+
+    <!-- Imbas -->
+    <div class="view on" id="view-imbas">
+      <h2>Kenali komponen</h2>
+      <p class="lead">Pegang satu komponen di tengah bingkai kamera. Apabila penjuru bingkai bertukar hijau, maklumatnya dipaparkan di sini.</p>
+      <div id="infoArea"><div class="empty">Belum ada komponen dikesan.</div></div>
+      <h3>Koleksi saya <span class="found-count" id="kolCount"></span></h3>
+      <div class="parts" id="koleksi"></div>
+    </div>
+
+    <!-- Bina Litar -->
+    <div class="view" id="view-litar">
+      <h2 id="mTitle">Bina Litar</h2>
+      <p class="lead" id="mDesc"></p>
+      <svg class="circuit" id="circuit" viewBox="0 0 640 240" role="img" aria-label="Rajah litar"></svg>
+      <div class="note" id="litarFb"></div>
+      <div class="actions">
+        <button class="btn line" id="btnHint">Beri petunjuk</button>
+        <button class="btn line" id="btnResetM">Ulang misi</button>
+        <button class="btn" id="btnNextM">Misi seterusnya</button>
+      </div>
+      <p class="progress-line" id="mProg"></p>
+    </div>
+
+    <!-- Kuiz -->
+    <div class="view" id="view-kuiz">
+      <div id="quizStart">
+        <h2>Kuiz cabaran</h2>
+        <p class="lead">Baca petunjuk, cari komponen yang sepadan dan tunjukkan kepada kamera. Lebih cepat dijawab, lebih tinggi markahnya.</p>
+        <button class="btn" id="btnQuiz">Mula kuiz</button>
+      </div>
+      <div id="quizPlay" style="display:none">
+        <div class="clue-box">
+          <div class="num" id="qNum"></div>
+          <div class="clue" id="qClue"></div>
+          <div class="timer"><div id="qTimer"></div></div>
+          <div class="scoreline">
+            <div>Markah<b id="qScore">0</b></div>
+            <div>Betul<b id="qBetul">0</b></div>
+            <div>Masa<b id="qTime">20</b></div>
+          </div>
+        </div>
+        <div class="note" id="quizFb"></div>
+        <div class="actions"><button class="btn line" id="btnSkip">Langkau soalan</button></div>
+      </div>
+      <div id="quizEnd" style="display:none">
+        <div class="clue-box">
+          <div class="num">Markah akhir</div>
+          <div class="final" id="endScore">0</div>
+          <div class="small" id="endInfo"></div>
+        </div>
+        <label class="field">Nama<input id="inNama" maxlength="40" autocomplete="name"></label>
+        <label class="field">Kelas<input id="inKelas" maxlength="20" placeholder="Contoh: 3 Bestari"></label>
+        <div class="actions">
+          <button class="btn go" id="btnSend">Simpan markah</button>
+          <button class="btn line" id="btnAgain">Main semula</button>
+        </div>
+        <div class="note" id="sendFb"></div>
+      </div>
+    </div>
+
+    <!-- Uji Ketepatan -->
+    <div class="view" id="view-uji">
+      <h2>Uji ketepatan AI</h2>
+      <p class="lead">Pilih komponen yang sedang dipegang, halakan ke kamera dan rekod. Gunakan komponen atau latar yang tidak digunakan semasa latihan supaya keputusannya jujur.</p>
+      <label class="field">Komponen sebenar<select id="ujiActual"></select></label>
+      <div class="actions">
+        <button class="btn" id="btnRec">Rekod 30 sampel</button>
+        <button class="btn line" id="btnCsv">Muat turun CSV</button>
+        <button class="btn line" id="btnClr">Kosongkan data</button>
+      </div>
+      <div class="rec"><div id="recProg"></div></div>
+      <div class="acc"><b id="accAll">–</b><span id="accN">ketepatan keseluruhan</span></div>
+      <div class="scroll" id="matrix"></div>
+      <p class="small">Baris ialah komponen sebenar, lajur ialah ramalan AI. Hijau bermaksud betul, merah bermaksud AI tersalah kenal.</p>
+    </div>
+
+    <!-- Papan Markah -->
+    <div class="view" id="view-markah">
+      <h2>Papan markah kuiz</h2>
+      <p class="lead">Sepuluh markah tertinggi daripada semua pemain.</p>
+      <button class="btn line" id="btnLoadLb">Muat semula</button>
+      <div id="lb" style="margin-top:14px"></div>
+    </div>
+  </section>
+</main>
+
+<footer>Projek murid SBP Integrasi Selandar untuk AIMIX: IID 2026.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.3/dist/teachablemachine-image.min.js"></script>
+<script>
+/* =========================================================
+   TETAPAN — ubah di sini sahaja
+   ========================================================= */
+const CONFIG = {
+  MODEL_URL: "",   // Pautan model Teachable Machine, cth: "https://teachablemachine.withgoogle.com/models/AbCdEf123/"
+  SCRIPT_URL: "",  // URL Web App Apps Script (berakhir dengan /exec)
+  THRESHOLD: 0.85,      // keyakinan minimum AI (0–1)
+  STABLE_FRAMES: 6,     // bilangan bingkai berturut-turut sebelum dikunci
+  PREDICT_MS: 120,      // selang ramalan (ms)
+  NONE_CLASS: "Tiada Komponen",
+  QUIZ_COUNT: 10,
+  QUIZ_SECONDS: 20,
+  REC_SAMPLES: 30
+};
+
+/* =========================================================
+   DATA KOMPONEN — nama kunci MESTI sama dengan nama kelas
+   dalam Teachable Machine (huruf besar/kecil tidak penting)
+   ========================================================= */
+const COMPONENTS = {
+  "Perintang": {
+    nama: "Perintang", pendek: "Perintang", jenis: "Komponen pasif", blok: "",
+    fungsi: "Menghadkan atau mengawal jumlah arus elektrik yang mengalir dalam litar.",
+    contoh: "Melindungi LED daripada rosak akibat arus berlebihan.",
+    unit: "Ohm (Ω)",
+    clue: "Komponen yang menghadkan arus elektrik dalam litar"
+  },
+  "LED": {
+    nama: "LED", pendek: "LED", jenis: "Output", blok: "Output",
+    fungsi: "Diod pemancar cahaya. Mengeluarkan cahaya apabila arus mengalir mengikut satu arah sahaja. Kaki yang lebih panjang ialah anod (+).",
+    contoh: "Lampu penunjuk, lampu isyarat dan papan iklan digital.",
+    unit: "",
+    clue: "Komponen yang mengeluarkan cahaya apabila arus mengalir ikut satu arah"
+  },
+  "Bateri": {
+    nama: "Bateri", pendek: "Bateri", jenis: "Sumber kuasa", blok: "",
+    fungsi: "Membekalkan tenaga elektrik arus terus (a.t.) kepada litar.",
+    contoh: "Sumber kuasa robot, alat kawalan jauh dan jam dinding.",
+    unit: "Volt (V)",
+    clue: "Sumber tenaga elektrik arus terus untuk litar"
+  },
+  "Suis": {
+    nama: "Suis", pendek: "Suis", jenis: "Kawalan", blok: "Input",
+    fungsi: "Menyambung (ON) atau memutuskan (OFF) aliran arus dalam litar.",
+    contoh: "Suis lampu dan butang tekan pada loceng.",
+    unit: "",
+    clue: "Komponen untuk menyambung dan memutuskan litar"
+  },
+  "Buzzer": {
+    nama: "Buzzer", pendek: "Buzzer", jenis: "Output", blok: "Output",
+    fungsi: "Menukarkan tenaga elektrik kepada tenaga bunyi.",
+    contoh: "Penggera keselamatan, loceng pintu elektronik dan penggera ketuhar.",
+    unit: "",
+    clue: "Komponen yang menukarkan isyarat elektrik kepada bunyi"
+  },
+  "LDR": {
+    nama: "LDR", pendek: "LDR", jenis: "Input (sensor)", blok: "Input",
+    fungsi: "Perintang peka cahaya. Rintangannya berkurang apabila cahaya semakin terang dan bertambah dalam gelap.",
+    contoh: "Lampu jalan automatik dan lampu taman solar.",
+    unit: "Ohm (Ω)",
+    clue: "Komponen yang rintangannya berubah mengikut keamatan cahaya"
+  },
+  "Perintang Boleh Ubah": {
+    nama: "Potensiometer", pendek: "Potensiometer", jenis: "Input (kawalan)", blok: "Input",
+    fungsi: "Perintang boleh ubah. Rintangannya dilaraskan dengan memutar tombol.",
+    contoh: "Kawalan kelantangan radio dan pemalap lampu.",
+    unit: "Ohm (Ω)",
+    clue: "Komponen yang rintangannya boleh dilaras dengan memutar tombol"
+  },
+  "Servo": {
+    nama: "Motor servo", pendek: "Servo", jenis: "Output (penggerak)", blok: "Output",
+    fungsi: "Berputar ke sudut tertentu, antara 0° hingga 180°, mengikut isyarat daripada mikropengawal.",
+    contoh: "Lengan robot, palang pintu automatik dan pemberi makanan ikan automatik.",
+    unit: "",
+    clue: "Motor yang boleh berputar ke sudut tertentu"
+  },
+  "ESP32": {
+    nama: "ESP32", pendek: "ESP32", jenis: "Proses (mikropengawal)", blok: "Proses",
+    fungsi: "Mikropengawal yang boleh diprogram, dengan Wi-Fi dan Bluetooth terbina dalam.",
+    contoh: "Projek IoT, rumah pintar dan sistem pemantauan jarak jauh.",
+    unit: "",
+    clue: "Mikropengawal yang mempunyai Wi-Fi dan Bluetooth"
+  },
+  "Sensor Ultrasonik": {
+    nama: "Sensor ultrasonik", pendek: "Ultrasonik", jenis: "Input (sensor)", blok: "Input",
+    fungsi: "Mengukur jarak objek menggunakan gelombang bunyi ultrasonik yang dipantulkan.",
+    contoh: "Sensor parkir kereta dan robot pengelak halangan.",
+    unit: "Sentimeter (cm)",
+    clue: "Sensor yang mengukur jarak menggunakan gelombang bunyi"
+  }
+};
+
+/* Simbol litar (SVG) — pusat (0,0), kaki penyambung di x = -40 dan x = 40 */
+const SYM = {
+  "Perintang": `<line x1="-40" y1="0" x2="-20" y2="0"/><rect x="-20" y="-9" width="40" height="18"/><line x1="20" y1="0" x2="40" y2="0"/>`,
+  "LED": `<line x1="-40" y1="0" x2="-12" y2="0"/><polygon points="-12,-12 -12,12 10,0"/><line x1="10" y1="-12" x2="10" y2="12"/><line x1="10" y1="0" x2="40" y2="0"/><line x1="0" y1="-14" x2="10" y2="-26"/><polyline points="4,-26 10,-26 10,-20"/><line x1="12" y1="-14" x2="22" y2="-26"/><polyline points="16,-26 22,-26 22,-20"/>`,
+  "Bateri": `<line x1="-40" y1="0" x2="-6" y2="0"/><line x1="-6" y1="-18" x2="-6" y2="18"/><line x1="6" y1="-9" x2="6" y2="9" stroke-width="6"/><line x1="6" y1="0" x2="40" y2="0"/><text x="-20" y="-20" font-size="14" fill="currentColor" stroke="none">+</text>`,
+  "Suis": `<line x1="-40" y1="0" x2="-17" y2="0"/><circle cx="-14" cy="0" r="3"/><line x1="-12" y1="-2" x2="14" y2="-16"/><circle cx="16" cy="0" r="3"/><line x1="19" y1="0" x2="40" y2="0"/>`,
+  "Buzzer": `<line x1="-40" y1="0" x2="-16" y2="0"/><line x1="16" y1="0" x2="40" y2="0"/><path d="M-16,0 A16,16 0 0 1 16,0 Z"/><line x1="-6" y1="-6" x2="-6" y2="0"/><line x1="6" y1="-6" x2="6" y2="0"/>`,
+  "LDR": `<line x1="-40" y1="0" x2="-14" y2="0"/><rect x="-14" y="-6" width="28" height="12"/><line x1="14" y1="0" x2="40" y2="0"/><circle cx="0" cy="0" r="20"/><line x1="-28" y1="-32" x2="-16" y2="-20"/><polyline points="-16,-26 -16,-20 -22,-20"/><line x1="-14" y1="-34" x2="-2" y2="-22"/><polyline points="-2,-28 -2,-22 -8,-22"/>`,
+  "Perintang Boleh Ubah": `<line x1="-40" y1="0" x2="-20" y2="0"/><rect x="-20" y="-9" width="40" height="18"/><line x1="20" y1="0" x2="40" y2="0"/><line x1="0" y1="28" x2="0" y2="12"/><polyline points="-5,17 0,11 5,17"/>`,
+  "Servo": `<line x1="-40" y1="0" x2="-18" y2="0"/><circle cx="0" cy="0" r="18"/><line x1="18" y1="0" x2="40" y2="0"/><text x="0" y="6" font-size="18" text-anchor="middle" fill="currentColor" stroke="none" font-weight="700">M</text>`,
+  "ESP32": `<line x1="-40" y1="0" x2="-28" y2="0"/><rect x="-28" y="-18" width="56" height="36" rx="3"/><line x1="28" y1="0" x2="40" y2="0"/><line x1="-18" y1="-18" x2="-18" y2="-24"/><line x1="-6" y1="-18" x2="-6" y2="-24"/><line x1="6" y1="-18" x2="6" y2="-24"/><line x1="18" y1="-18" x2="18" y2="-24"/><line x1="-18" y1="18" x2="-18" y2="24"/><line x1="-6" y1="18" x2="-6" y2="24"/><line x1="6" y1="18" x2="6" y2="24"/><line x1="18" y1="18" x2="18" y2="24"/><text x="0" y="4" font-size="11" text-anchor="middle" fill="currentColor" stroke="none" font-weight="700">ESP32</text>`,
+  "Sensor Ultrasonik": `<line x1="-40" y1="0" x2="-30" y2="0"/><rect x="-30" y="-16" width="60" height="32" rx="4"/><circle cx="-13" cy="0" r="9"/><circle cx="13" cy="0" r="9"/><line x1="30" y1="0" x2="40" y2="0"/>`
+};
+
+/* Misi Bina Litar */
+const MISSIONS = [
+  { id: "m1", tajuk: "Litar LED asas", jenis: "litar",
+    desc: "Bina litar sesiri untuk menyalakan LED dengan selamat. Imbas komponen mengikut urutan aliran arus.",
+    urutan: ["Bateri", "Suis", "Perintang", "LED"], output: "LED",
+    berjaya: "LED menyala. Perintang melindungi LED daripada arus berlebihan." },
+  { id: "m2", tajuk: "Penggera bunyi", jenis: "litar",
+    desc: "Bina litar penggera ringkas yang berbunyi apabila suis dihidupkan.",
+    urutan: ["Bateri", "Suis", "Buzzer"], output: "Buzzer",
+    berjaya: "Buzzer berbunyi apabila litar lengkap." },
+  { id: "m3", tajuk: "Lampu malap", jenis: "litar",
+    desc: "Bina litar yang membolehkan kecerahan LED dilaraskan.",
+    urutan: ["Bateri", "Perintang Boleh Ubah", "LED"], output: "LED",
+    berjaya: "Putar potensiometer untuk mengubah kecerahan LED." },
+  { id: "m4", tajuk: "Lampu peka cahaya", jenis: "litar",
+    desc: "Bina litar di mana kecerahan LED dipengaruhi oleh cahaya sekeliling.",
+    urutan: ["Bateri", "LDR", "Perintang", "LED"], output: "LED",
+    berjaya: "Rintangan LDR berubah mengikut cahaya, jadi kecerahan LED turut berubah." },
+  { id: "m5", tajuk: "Sistem parkir pintar", jenis: "blok",
+    desc: "Susun gambar rajah blok input, proses dan output. Sensor mengesan jarak, ESP32 memproses dan buzzer memberi amaran.",
+    urutan: ["Sensor Ultrasonik", "ESP32", "Buzzer"], output: "Buzzer",
+    berjaya: "Inilah konsep input, proses dan output dalam sistem pintar." },
+  { id: "m6", tajuk: "Palang pintu automatik", jenis: "blok",
+    desc: "Susun sistem palang automatik. Sensor mengesan kenderaan, ESP32 memproses dan servo mengangkat palang.",
+    urutan: ["Sensor Ultrasonik", "ESP32", "Servo"], output: "Servo",
+    berjaya: "Servo berputar ke sudut tertentu untuk mengangkat palang." }
+];
+
+/* =========================================================
+   UTILITI
+   ========================================================= */
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const shuffle = a => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+function store(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+function load(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
+function note(el, cls, text) { el.className = "note show " + cls; el.textContent = text; }
+function hideNote(el) { el.className = "note"; }
+function normKey(name) {
+  const n = String(name).trim().toLowerCase();
+  if (n === CONFIG.NONE_CLASS.toLowerCase()) return CONFIG.NONE_CLASS;
+  const k = Object.keys(COMPONENTS).find(x => x.toLowerCase() === n);
+  return k || String(name).trim();
+}
+const isNone = k => k === CONFIG.NONE_CLASS;
+const compName = k => isNone(k) ? "Tiada komponen" : (COMPONENTS[k]?.nama || k);
+const compShort = k => isNone(k) ? "Tiada" : (COMPONENTS[k]?.pendek || k);
+function symSvg(k, maxW) {
+  return `<svg viewBox="-50 -38 100 76" style="width:100%;max-width:${maxW}px;display:block;margin:auto" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${SYM[k] || ""}</g></svg>`;
+}
+
+/* Suara (Bahasa Melayu) */
+let soundOn = load("ik_snd", true);
+const ICON_ON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>`;
+const ICON_OFF = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>`;
+function updSoundBtn() {
+  $("btnSound").innerHTML = soundOn ? ICON_ON : ICON_OFF;
+  $("btnSound").setAttribute("aria-label", soundOn ? "Matikan suara" : "Hidupkan suara");
+}
+function speak(text) {
+  if (!soundOn || !("speechSynthesis" in window)) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    const voices = speechSynthesis.getVoices();
+    const v = voices.find(v => /^ms/i.test(v.lang)) || voices.find(v => /^id/i.test(v.lang));
+    if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = "ms-MY"; }
+    u.rate = 1;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+/* =========================================================
+   KEADAAN
+   ========================================================= */
+let model = null, labels = [], keys = [], simulate = false, running = false;
+let stream = null, facing = "environment";
+let mode = "imbas";
+let cand = null, candCount = 0, noneCount = 0, locked = null;
+const video = $("video");
+const canvas = document.createElement("canvas");
+canvas.width = 224; canvas.height = 224;
+const ctx = canvas.getContext("2d");
+
+const availKeys = () => keys.filter(k => COMPONENTS[k]);
+
+/* =========================================================
+   KAMERA
+   ========================================================= */
+function stopCamera() {
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+}
+async function startCamera() {
+  stopCamera();
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: facing, width: { ideal: 640 }, height: { ideal: 640 } }, audio: false
+    });
+    video.srcObject = stream;
+    await video.play();
+    video.classList.toggle("mirror", facing === "user");
+    $("camPh").style.display = "none";
+    $("btnFlip").disabled = false;
+    $("btnStart").textContent = "Matikan kamera";
+  } catch (e) {
+    $("status").textContent = "Kamera tidak dapat dibuka (" + e.message + "). Buka laman ini melalui https dan benarkan akses kamera.";
+  }
+}
+$("btnStart").onclick = () => {
+  if (stream) {
+    stopCamera(); video.srcObject = null;
+    $("camPh").style.display = "grid";
+    $("btnFlip").disabled = true;
+    $("btnStart").textContent = "Hidupkan kamera";
+  } else startCamera();
+};
+$("btnFlip").onclick = () => { facing = facing === "user" ? "environment" : "user"; startCamera(); };
+
+function drawFrame() {
+  const vw = video.videoWidth, vh = video.videoHeight;
+  const s = Math.min(vw, vh), sx = (vw - s) / 2, sy = (vh - s) / 2;
+  ctx.save();
+  if (facing === "user") { ctx.translate(224, 0); ctx.scale(-1, 1); } // padan dengan latihan webcam Teachable Machine
+  ctx.drawImage(video, sx, sy, s, s, 0, 0, 224, 224);
+  ctx.restore();
+}
+
+/* =========================================================
+   GELUNG RAMALAN AI
+   ========================================================= */
+function simPreds() {
+  const sel = $("simSelect").value;
+  const rest = 0.04 / Math.max(1, labels.length - 1);
+  return labels.map(l => ({ className: l, probability: l === sel ? 0.96 : rest }));
+}
+
+async function loop() {
+  if (!running) return;
+  try {
+    let preds = null;
+    if (model && stream && video.readyState >= 2 && video.videoWidth) {
+      drawFrame();
+      preds = await model.predict(canvas);
+    } else if (simulate) {
+      preds = simPreds();
+    }
+    if (preds) handlePreds(preds);
+  } catch (e) { console.error(e); }
+  setTimeout(loop, CONFIG.PREDICT_MS);
+}
+
+function renderBars(top3) {
+  $("bars").innerHTML = top3.map(p => {
+    const pct = Math.round(p.probability * 100);
+    return `<div class="bar"><span>${esc(compShort(normKey(p.className)))}</span><div class="track"><div class="fill" style="width:${pct}%"></div></div><em>${pct}%</em></div>`;
+  }).join("");
+}
+
+function handlePreds(preds) {
+  const sorted = [...preds].sort((a, b) => b.probability - a.probability);
+  const top = sorted[0];
+  const key = normKey(top.className);
+  const p = top.probability;
+  renderBars(sorted.slice(0, 3));
+  $("camTop").textContent = compName(key);
+  $("camPct").textContent = isNone(key) ? "" : "keyakinan " + Math.round(p * 100) + "%";
+
+  if (recording) recordSample(key);
+
+  if (!isNone(key) && p >= CONFIG.THRESHOLD) {
+    if (key === cand) candCount++; else { cand = key; candCount = 1; }
+    noneCount = 0;
+  } else {
+    noneCount++; cand = null; candCount = 0;
+  }
+  if (cand && candCount >= CONFIG.STABLE_FRAMES && cand !== locked) {
+    locked = cand;
+    $("viewfinder").classList.add("locked");
+    onLock(locked);
+  }
+  if (noneCount >= CONFIG.STABLE_FRAMES && locked) {
+    locked = null;
+    $("viewfinder").classList.remove("locked");
+  }
+}
+
+function onLock(k) {
+  if (mode === "imbas") showInfo(k);
+  else if (mode === "litar") litarLock(k);
+  else if (mode === "kuiz") quizLock(k);
+}
+
+/* =========================================================
+   MOD IMBAS
+   ========================================================= */
+const discovered = new Set(load("ik_kol", []));
+function showInfo(k) {
+  const c = COMPONENTS[k];
+  if (!c) {
+    $("infoArea").innerHTML = `<div class="empty"><b>${esc(k)}</b> dikesan tetapi belum ada maklumatnya. Tambah dalam senarai COMPONENTS.</div>`;
+    return;
+  }
+  $("infoArea").innerHTML = `
+    <div class="comp">
+      <div class="symbol">${symSvg(k, 150)}<small>Simbol litar</small></div>
+      <div>
+        <h4>${esc(c.nama)}</h4>
+        <dl class="facts">
+          <dt>Jenis</dt><dd>${esc(c.jenis)}</dd>
+          ${c.unit ? `<dt>Unit</dt><dd>${esc(c.unit)}</dd>` : ""}
+          <dt>Fungsi</dt><dd>${esc(c.fungsi)}</dd>
+          <dt>Contoh</dt><dd>${esc(c.contoh)}</dd>
+        </dl>
+      </div>
+    </div>`;
+  speak(`${c.nama}. ${c.fungsi}`);
+  discovered.add(k);
+  store("ik_kol", [...discovered]);
+  renderKoleksi();
+}
+function renderKoleksi() {
+  const av = availKeys();
+  const got = av.filter(k => discovered.has(k)).length;
+  $("kolCount").textContent = `${got} daripada ${av.length} ditemui`;
+  $("koleksi").innerHTML = av.map(k => `<span class="${discovered.has(k) ? "got" : ""}">${esc(COMPONENTS[k].pendek)}</span>`).join("");
+}
+
+/* =========================================================
+   MOD BINA LITAR
+   ========================================================= */
+let missions = [], mi = 0, step = 0, done = false;
+const completed = new Set(load("ik_done", []));
+
+function slotSvg(k, i, x, y, m) {
+  const placed = i < step;
+  const target = i === step && !done;
+  let s = `<g transform="translate(${x},${y})">`;
+  if (m.jenis === "blok") {
+    s += `<text x="0" y="-44" text-anchor="middle" font-size="14" font-weight="700" fill="#1F4FBF">${esc(COMPONENTS[k].blok || "")}</text>`;
+  }
+  if (placed) {
+    s += m.jenis === "blok"
+      ? `<rect x="-46" y="-32" width="92" height="64" rx="6" fill="#fff" stroke="#D3D8CD" stroke-width="2"/>`
+      : `<rect x="-40" y="-30" width="80" height="60" fill="#F6F7F3"/>`;
+    if (done && k === m.output && k === "LED") s += `<circle cx="0" cy="0" r="26" fill="#FFD84D" opacity=".7" class="glow"/>`;
+    s += `<g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${SYM[k] || ""}</g>`;
+    if (done && k === m.output && k === "Buzzer") {
+      s += `<g fill="none" stroke="#B5652A" stroke-width="2.5" stroke-linecap="round">
+        <path class="wave" d="M-10,-14 A12,12 0 0 1 10,-14"/>
+        <path class="wave" style="animation-delay:.25s" d="M-16,-20 A20,20 0 0 1 16,-20"/>
+        <path class="wave" style="animation-delay:.5s" d="M-22,-26 A28,28 0 0 1 22,-26"/></g>`;
+    }
+    if (done && k === m.output && k === "Servo") s += `<g class="arm"><line x1="0" y1="0" x2="0" y2="-30" stroke="#B5652A" stroke-width="5" stroke-linecap="round"/></g>`;
+    s += `<text x="0" y="52" text-anchor="middle" font-size="17" font-weight="700" fill="#1B2330">${esc(COMPONENTS[k].pendek)}</text>`;
+  } else if (target) {
+    s += `<rect x="-40" y="-28" width="80" height="56" rx="6" class="slot-target"/><text x="0" y="8" text-anchor="middle" font-size="24" font-weight="700" fill="#1F4FBF">?</text><text x="0" y="52" text-anchor="middle" font-size="16" fill="#1F4FBF" font-weight="700">Imbas sekarang</text>`;
+  } else {
+    s += `<rect x="-40" y="-28" width="80" height="56" rx="6" class="slot-empty"/><text x="0" y="7" text-anchor="middle" font-size="18" fill="#9AA29A">${i + 1}</text>`;
+  }
+  return s + "</g>";
+}
+
+function renderCircuit() {
+  const svg = $("circuit");
+  if (!missions.length) { svg.innerHTML = `<text x="320" y="120" text-anchor="middle" fill="#59636F">Tiada misi sepadan dengan komponen dalam model.</text>`; return; }
+  const m = missions[mi], n = m.urutan.length;
+  const xs = m.urutan.map((_, i) => n === 1 ? 320 : 110 + i * (420 / (n - 1)));
+  let s = `<defs>
+    <marker id="ah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B2330"/></marker>
+    <pattern id="holes" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="8" cy="8" r="1.4" fill="#D3D8CD"/></pattern>
+  </defs><rect width="640" height="240" fill="url(#holes)"/>`;
+  let y;
+  if (m.jenis === "litar") {
+    y = 80;
+    const d = `M40,${y} L600,${y} L600,190 L40,190 Z`;
+    s += `<path class="wire" d="${d}"/>`;
+    if (done) s += `<path class="flow" d="${d}"/>`;
+  } else {
+    y = 124;
+    for (let i = 0; i < n - 1; i++) {
+      s += `<line x1="${xs[i] + 50}" y1="${y}" x2="${xs[i + 1] - 54}" y2="${y}" class="wire" marker-end="url(#ah)"/>`;
+      if (done) s += `<line x1="${xs[i] + 50}" y1="${y}" x2="${xs[i + 1] - 54}" y2="${y}" class="flow"/>`;
+    }
+  }
+  m.urutan.forEach((k, i) => { s += slotSvg(k, i, xs[i], y, m); });
+  svg.innerHTML = s;
+}
+
+function renderMission() {
+  if (!missions.length) { $("mTitle").textContent = "Bina Litar"; $("mDesc").textContent = ""; $("mProg").textContent = ""; renderCircuit(); return; }
+  const m = missions[mi];
+  const nDone = missions.filter(x => completed.has(x.id)).length;
+  $("mTitle").textContent = `Misi ${mi + 1}: ${m.tajuk}`;
+  $("mDesc").textContent = m.desc;
+  $("mProg").textContent = `Misi ${mi + 1} daripada ${missions.length}. ${nDone} misi telah diselesaikan.`;
+  renderCircuit();
+}
+
+function litarLock(k) {
+  if (!missions.length || done) return;
+  const m = missions[mi];
+  const expected = m.urutan[step];
+  if (k === expected) {
+    step++;
+    if (step === m.urutan.length) {
+      done = true;
+      completed.add(m.id);
+      store("ik_done", [...completed]);
+      note($("litarFb"), "ok", "Litar lengkap. " + m.berjaya);
+      speak("Litar lengkap. " + m.berjaya);
+    } else {
+      note($("litarFb"), "ok", `${COMPONENTS[k].nama} dipasang. Cari komponen ke-${step + 1}.`);
+      speak(`Betul. ${COMPONENTS[k].pendek}.`);
+    }
+    renderMission();
+  } else if (m.urutan.slice(0, step).includes(k)) {
+    // komponen sudah dipasang
+  } else {
+    note($("litarFb"), "bad", `Itu ${compName(k)}, bukan komponen yang diperlukan sekarang. Petunjuk: ${COMPONENTS[expected].clue.toLowerCase()}.`);
+    speak(`Itu ${compShort(k)}. Cuba lagi.`);
+  }
+}
+$("btnHint").onclick = () => {
+  if (!missions.length || done) return;
+  const k = missions[mi].urutan[step];
+  note($("litarFb"), "info", `Komponen ke-${step + 1}: ${COMPONENTS[k].clue.toLowerCase()}.`);
+  speak(COMPONENTS[k].clue);
+};
+$("btnResetM").onclick = () => { step = 0; done = false; locked = null; hideNote($("litarFb")); renderMission(); };
+$("btnNextM").onclick = () => { if (!missions.length) return; mi = (mi + 1) % missions.length; step = 0; done = false; locked = null; hideNote($("litarFb")); renderMission(); };
+
+/* =========================================================
+   MOD KUIZ
+   ========================================================= */
+let quiz = null;
+function showQuiz(part) {
+  $("quizStart").style.display = part === "start" ? "block" : "none";
+  $("quizPlay").style.display = part === "play" ? "block" : "none";
+  $("quizEnd").style.display = part === "end" ? "block" : "none";
+}
+function updQuizStats() {
+  $("qScore").textContent = quiz.score;
+  $("qBetul").textContent = quiz.betul;
+  $("qTime").textContent = quiz.timeLeft + "s";
+  $("qTimer").style.width = (quiz.timeLeft / CONFIG.QUIZ_SECONDS * 100) + "%";
+  $("qTimer").classList.toggle("low", quiz.timeLeft <= 5);
+}
+function startQuiz() {
+  const pool = shuffle(availKeys()).slice(0, CONFIG.QUIZ_COUNT);
+  if (pool.length < 2) { note($("sendFb"), "bad", "Model perlu sekurang-kurangnya dua komponen untuk kuiz."); return; }
+  quiz = { qs: pool, i: 0, score: 0, betul: 0, t0: Date.now(), timeLeft: CONFIG.QUIZ_SECONDS, iv: null, answered: false };
+  showQuiz("play");
+  nextQ();
+}
+function nextQ() {
+  if (!quiz) return;
+  clearInterval(quiz.iv);
+  if (quiz.i >= quiz.qs.length) return endQuiz();
+  const k = quiz.qs[quiz.i];
+  quiz.answered = false;
+  quiz.timeLeft = CONFIG.QUIZ_SECONDS;
+  $("qNum").textContent = `Soalan ${quiz.i + 1} daripada ${quiz.qs.length}`;
+  $("qClue").textContent = COMPONENTS[k].clue;
+  hideNote($("quizFb"));
+  updQuizStats();
+  speak(COMPONENTS[k].clue);
+  quiz.iv = setInterval(() => {
+    quiz.timeLeft--;
+    updQuizStats();
+    if (quiz.timeLeft <= 0) {
+      clearInterval(quiz.iv);
+      quiz.answered = true;
+      note($("quizFb"), "bad", `Masa tamat. Jawapannya ${COMPONENTS[k].nama}.`);
+      speak("Masa tamat. Jawapannya " + COMPONENTS[k].pendek);
+      quiz.i++;
+      setTimeout(nextQ, 2200);
+    }
+  }, 1000);
+}
+function quizLock(k) {
+  if (!quiz || quiz.answered || quiz.i >= quiz.qs.length) return;
+  const target = quiz.qs[quiz.i];
+  if (k === target) {
+    quiz.answered = true;
+    clearInterval(quiz.iv);
+    const pts = 10 + quiz.timeLeft;
+    quiz.score += pts; quiz.betul++;
+    updQuizStats();
+    note($("quizFb"), "ok", `Betul, ${COMPONENTS[k].nama}. Tambah ${pts} markah.`);
+    speak("Betul!");
+    quiz.i++;
+    setTimeout(nextQ, 1500);
+  } else {
+    note($("quizFb"), "bad", `Itu ${compName(k)}. Cuba lagi.`);
+  }
+}
+function endQuiz() {
+  clearInterval(quiz.iv);
+  quiz.masa = Math.round((Date.now() - quiz.t0) / 1000);
+  $("endScore").textContent = quiz.score;
+  $("endInfo").textContent = `${quiz.betul} daripada ${quiz.qs.length} betul dalam ${quiz.masa} saat`;
+  $("btnSend").disabled = false;
+  hideNote($("sendFb"));
+  showQuiz("end");
+  speak(`Kuiz tamat. Markah anda ${quiz.score}.`);
+}
+function abortQuiz() {
+  if (quiz) clearInterval(quiz.iv);
+  quiz = null;
+  showQuiz("start");
+}
+$("btnQuiz").onclick = startQuiz;
+$("btnAgain").onclick = startQuiz;
+$("btnSkip").onclick = () => {
+  if (!quiz || quiz.answered) return;
+  quiz.answered = true;
+  clearInterval(quiz.iv);
+  const k = quiz.qs[quiz.i];
+  note($("quizFb"), "info", `Jawapannya ${COMPONENTS[k].nama}.`);
+  quiz.i++;
+  setTimeout(nextQ, 1500);
+};
+$("btnSend").onclick = async () => {
+  const nama = $("inNama").value.trim(), kelas = $("inKelas").value.trim();
+  if (!nama) { note($("sendFb"), "bad", "Isi nama dahulu."); return; }
+  if (!CONFIG.SCRIPT_URL) { note($("sendFb"), "bad", "Markah tidak dapat disimpan kerana SCRIPT_URL belum ditetapkan dalam CONFIG."); return; }
+  $("btnSend").disabled = true;
+  note($("sendFb"), "info", "Menyimpan markah…");
+  try {
+    const res = await fetch(CONFIG.SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({ nama, kelas, markah: quiz.score, betul: quiz.betul, jumlah: quiz.qs.length, masa: quiz.masa, mod: "Kuiz" })
+    });
+    const j = await res.json();
+    if (!j.ok) throw new Error(j.error || "ralat pelayan");
+    note($("sendFb"), "ok", "Markah disimpan. Lihat kedudukan anda di Papan Markah.");
+  } catch (e) {
+    $("btnSend").disabled = false;
+    note($("sendFb"), "bad", "Markah tidak disimpan (" + e.message + "). Semak sambungan internet dan cuba lagi.");
+  }
+};
+
+/* =========================================================
+   MOD UJI KETEPATAN (Matriks Kekeliruan)
+   ========================================================= */
+let MX = load("ik_mx", {});
+let recording = false, recLeft = 0, recActual = null, clearArmed = false;
+$("btnRec").onclick = () => {
+  recActual = $("ujiActual").value;
+  recLeft = CONFIG.REC_SAMPLES;
+  recording = true;
+  $("btnRec").disabled = true;
+  $("recProg").style.width = "0%";
+};
+function recordSample(predKey) {
+  MX[recActual] = MX[recActual] || {};
+  MX[recActual][predKey] = (MX[recActual][predKey] || 0) + 1;
+  recLeft--;
+  $("recProg").style.width = ((CONFIG.REC_SAMPLES - recLeft) / CONFIG.REC_SAMPLES * 100) + "%";
+  if (recLeft <= 0) {
+    recording = false;
+    $("btnRec").disabled = false;
+    store("ik_mx", MX);
+    renderMatrix();
+    speak("Rakaman selesai");
+  }
+}
+function renderMatrix() {
+  const cls = keys;
+  const rows = cls.filter(a => MX[a]);
+  if (!rows.length) { $("matrix").innerHTML = `<div class="empty">Belum ada data. Pilih komponen dan tekan Rekod 30 sampel.</div>`; $("accAll").textContent = "–"; $("accN").textContent = "ketepatan keseluruhan"; return; }
+  let total = 0, correct = 0;
+  let h = `<table><tr><th>Sebenar / Ramalan</th>${cls.map(c => `<th>${esc(compShort(c))}</th>`).join("")}<th>Ketepatan</th></tr>`;
+  rows.forEach(a => {
+    const rowTotal = Object.values(MX[a]).reduce((x, y) => x + y, 0);
+    const ok = MX[a][a] || 0;
+    total += rowTotal; correct += ok;
+    h += `<tr><th>${esc(compShort(a))}</th>`;
+    cls.forEach(p => {
+      const v = MX[a][p] || 0;
+      const f = rowTotal ? v / rowTotal : 0;
+      const bg = v === 0 ? "#fff" : (a === p ? `rgba(30,158,90,${0.15 + f * 0.75})` : `rgba(210,43,60,${0.15 + f * 0.75})`);
+      const col = f > 0.55 ? "#fff" : "#1B2330";
+      h += `<td style="background:${bg};color:${col}">${v || ""}</td>`;
+    });
+    h += `<td><b>${Math.round(ok / rowTotal * 100)}%</b></td></tr>`;
+  });
+  h += "</table>";
+  $("matrix").innerHTML = h;
+  $("accAll").textContent = Math.round(correct / total * 100) + "%";
+  $("accN").textContent = `ketepatan keseluruhan, ${correct} daripada ${total} sampel betul`;
+}
+$("btnClr").onclick = () => {
+  if (!clearArmed) {
+    clearArmed = true;
+    $("btnClr").textContent = "Tekan lagi untuk sahkan";
+    setTimeout(() => { clearArmed = false; $("btnClr").textContent = "Kosongkan data"; }, 3000);
+    return;
+  }
+  clearArmed = false;
+  $("btnClr").textContent = "Kosongkan data";
+  MX = {}; store("ik_mx", MX); renderMatrix();
+};
+$("btnCsv").onclick = () => {
+  const cls = keys;
+  let csv = "Sebenar/Ramalan," + cls.map(compShort).join(",") + ",Ketepatan\n";
+  cls.filter(a => MX[a]).forEach(a => {
+    const t = Object.values(MX[a]).reduce((x, y) => x + y, 0);
+    csv += compShort(a) + "," + cls.map(p => MX[a][p] || 0).join(",") + "," + Math.round((MX[a][a] || 0) / t * 100) + "%\n";
+  });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+  a.download = "ketepatan_imbaskomp.csv";
+  a.click();
+};
+
+/* =========================================================
+   PAPAN MARKAH
+   ========================================================= */
+async function loadLb() {
+  if (!CONFIG.SCRIPT_URL) { $("lb").innerHTML = `<div class="empty">Papan markah perlukan SCRIPT_URL dalam CONFIG.</div>`; return; }
+  $("lb").innerHTML = `<p class="small">Memuatkan…</p>`;
+  try {
+    const res = await fetch(CONFIG.SCRIPT_URL + "?action=top");
+    const j = await res.json();
+    if (!j.ok || !j.rows.length) { $("lb").innerHTML = `<div class="empty">Belum ada markah. Jadilah yang pertama dengan bermain kuiz.</div>`; return; }
+    $("lb").innerHTML = `<table><tr><th>Kedudukan</th><th>Nama</th><th>Kelas</th><th>Markah</th><th>Betul</th><th>Masa</th></tr>` +
+      j.rows.map((r, i) => `<tr><td class="rank ${i === 0 ? "r1" : ""}">${i + 1}</td><td style="text-align:left">${esc(r.nama)}</td><td>${esc(r.kelas)}</td><td><b>${esc(r.markah)}</b></td><td>${esc(r.betul)}/${esc(r.jumlah)}</td><td>${esc(r.masa)}s</td></tr>`).join("") + "</table>";
+  } catch (e) {
+    $("lb").innerHTML = `<div class="empty">Papan markah tidak dapat dimuatkan (${esc(e.message)}). Semak sambungan internet.</div>`;
+  }
+}
+$("btnLoadLb").onclick = loadLb;
+
+/* =========================================================
+   TAB
+   ========================================================= */
+document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
+  const nm = t.dataset.mode;
+  if (mode === "kuiz" && nm !== "kuiz") abortQuiz();
+  mode = nm;
+  document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", x === t ? "true" : "false"));
+  document.querySelectorAll(".view").forEach(p => p.classList.toggle("on", p.id === "view-" + nm));
+  locked = null; cand = null; candCount = 0;
+  $("viewfinder").classList.remove("locked");
+  if (nm === "litar") renderMission();
+  if (nm === "markah") loadLb();
+  if (nm === "uji") renderMatrix();
+});
+$("btnSound").onclick = () => { soundOn = !soundOn; store("ik_snd", soundOn); updSoundBtn(); if (!soundOn && "speechSynthesis" in window) speechSynthesis.cancel(); };
+
+/* =========================================================
+   MULA
+   ========================================================= */
+async function init() {
+  updSoundBtn();
+  if ("speechSynthesis" in window) speechSynthesis.getVoices();
+  if (CONFIG.MODEL_URL && window.tmImage) {
+    try {
+      let u = CONFIG.MODEL_URL.trim();
+      if (!u.endsWith("/")) u += "/";
+      model = await tmImage.load(u + "model.json", u + "metadata.json");
+      labels = model.getClassLabels();
+      $("status").textContent = `Model AI sedia dengan ${labels.length} kelas. Hidupkan kamera untuk bermula.`;
+    } catch (e) {
+      model = null;
+      $("status").textContent = "Model tidak dapat dimuatkan (" + e.message + "). Semak MODEL_URL dalam CONFIG.";
+    }
+  }
+  if (!model) {
+    simulate = true;
+    labels = [...Object.keys(COMPONENTS), CONFIG.NONE_CLASS];
+    $("simBox").style.display = "block";
+    $("simSelect").innerHTML = labels.map(l => `<option value="${esc(l)}" ${isNone(l) ? "selected" : ""}>${esc(compName(l))}</option>`).join("");
+    if (!CONFIG.MODEL_URL) $("status").textContent = "Masukkan MODEL_URL dalam CONFIG untuk menggunakan AI sebenar.";
+  }
+  keys = labels.map(normKey);
+  const unknown = keys.filter(k => !COMPONENTS[k] && !isNone(k));
+  if (unknown.length) $("status").textContent += ` Nama kelas tidak dikenali: ${unknown.join(", ")}. Semak ejaan dalam Teachable Machine.`;
+
+  const av = availKeys();
+  missions = MISSIONS.filter(m => m.urutan.every(k => av.includes(k)));
+  $("ujiActual").innerHTML = keys.map(k => `<option value="${esc(k)}">${esc(compName(k))}</option>`).join("");
+  renderKoleksi();
+  renderMission();
+  renderMatrix();
+  running = true;
+  loop();
+}
+init();
+</script>
+</body>
+</html>
