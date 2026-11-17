@@ -14,6 +14,8 @@ Pilih topik di bahagian atas. Misi, kuiz dan papan markah berubah ikut topik.
 
 - **Imbas**: kenal komponen, papar simbol litar, peranan dalam topik, fungsi dan contoh.
 - **Bina Litar**: imbas komponen mengikut urutan litar atau gambar rajah blok.
+- **Makmal Litar**: gaya Tinkercad. Tambah komponen (LED, pembaz, motor AT, servo, butang, LDR, ultrasonik), sambung kaki komponen ke pin mikropengawal, susun kod blok, jalankan simulasi dan salin kod Arduino yang dijana.
+- **Multimeter**: multimeter maya untuk mengukur voltan, arus dan rintangan pada litar sesiri, serta cabaran Hukum Ohm.
 - **Kuiz**: 10 soalan, campuran soalan komponen (boleh dijawab dengan kamera) dan soalan konsep.
 - **Uji Ketepatan**: matriks kekeliruan dan peratus ketepatan model.
 - **Papan Markah**: sepuluh markah tertinggi bagi setiap topik.
@@ -21,7 +23,7 @@ Pilih topik di bahagian atas. Misi, kuiz dan papan markah berubah ikut topik.
 ## Pemasangan
 
 1. Latih model di Teachable Machine (Image Project). Nama kelas:
-   `Bateri`, `Wayar`, `Suis`, `Mentol`, `Motor AT`, `Buzzer`, `LED`, `Perintang`, `LDR`, `Sensor Ultrasonik`, `Mikropengawal`, `Servo`, `Pemacu Motor`, `Tiada Komponen`
+   `Bateri`, `Wayar`, `Suis`, `Mentol`, `Motor AT`, `Buzzer`, `LED`, `Perintang`, `LDR`, `Sensor Ultrasonik`, `Mikropengawal`, `Servo`, `Pemacu Motor`, `Multimeter`, `Tiada Komponen`
    Komponen yang tiada boleh ditinggalkan. Nama lain seperti `ESP32`, `Arduino` atau `Pembaz` juga dikenali.
 2. Export model (TensorFlow.js, Upload) dan tampal pautan ke `MODEL_URL` dalam `index.html`.
 3. Buat Google Sheets (jika sudah ada, tampal semula `Code.gs` dan buat deployment baharu), buka Extensions > Apps Script, tampal `Code.gs`, Deploy sebagai Web app (Execute as: Me, akses: Anyone). Tampal URL `/exec` ke `SCRIPT_URL`.

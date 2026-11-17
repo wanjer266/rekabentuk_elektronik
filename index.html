@@ -188,6 +188,66 @@ footer{max-width:1040px;margin:0 auto;padding:6px 18px 28px;font-size:13px;color
 .topic[aria-pressed="true"] small{color:#C9D1DB}
 .topic-desc{font-size:13px;color:var(--soft);margin:0 0 10px}
 .opt.text{min-height:56px;font-family:var(--body);font-weight:700;font-size:15px}
+/* Makmal litar */
+.lab-bar{display:flex;gap:12px;align-items:end;flex-wrap:wrap}
+.chk{display:flex;gap:6px;align-items:center;font-size:14px;color:var(--soft);padding-bottom:10px}
+.chk input{width:auto;margin:0}
+.palette{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+.palette button{border:1px solid var(--edge);background:var(--surface);border-radius:6px;padding:7px 11px;font-family:var(--display);font-weight:650;font-size:14px;cursor:pointer}
+.palette button:hover{border-color:var(--ink)}
+.blocks-pal .b-out{border-left:5px solid var(--rail-blue)}
+.blocks-pal .b-ctl{border-left:5px solid var(--copper)}
+.blocks-pal .b-log{border-left:5px solid var(--led)}
+.labwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:6px}
+svg.labsvg{min-width:560px;width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;background:#F6F7F3;font-family:var(--body);touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.labsvg [data-leg],.labsvg [data-pin],.labsvg [data-wire],.labsvg [data-del],.labsvg [data-press]{cursor:pointer}
+.lab-hint{font-size:13px;color:var(--soft);margin:8px 0 0}
+.checklist{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:4px;font-size:14px}
+.checklist li{padding:6px 10px;border-left:3px solid var(--led);background:#EAF7F0}
+.checklist li.bad{border-color:var(--rail-red);background:#FCECEE}
+.sensors{display:grid;gap:10px;margin-top:10px}
+.sensor{border:1px solid var(--edge);border-radius:6px;padding:10px 12px;background:var(--surface);font-size:14px}
+.sensor b{font-family:var(--display)}
+.sensor input[type=range]{padding:0;border:0;margin-top:6px;accent-color:var(--rail-blue)}
+.hold{user-select:none;-webkit-user-select:none;touch-action:none}
+.program{border:1px dashed var(--hole);border-radius:6px;padding:10px;background:#F6F7F3;min-height:70px}
+.blk{background:var(--surface);border:1px solid var(--edge);border-left:6px solid var(--rail-blue);border-radius:6px;padding:7px 8px;margin:6px 0;font-size:14px}
+.blk.k-ctl{border-left-color:var(--copper)}
+.blk.k-log{border-left-color:var(--led)}
+.blk.run{outline:3px solid #E9B23A;outline-offset:1px}
+.blk.err{border-color:var(--rail-red)}
+.blk-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.blk-row b{font-family:var(--display);font-weight:700}
+.blk select,.blk input{width:auto;margin:0;padding:5px 6px;font-size:14px;border-radius:5px}
+.blk input{width:64px}
+.blk-tools{margin-left:auto;display:flex;gap:4px}
+.blk-tools button{width:30px;height:30px;border:1px solid var(--edge);background:#fff;border-radius:5px;display:grid;place-items:center;cursor:pointer;padding:0}
+.blk-tools svg{width:14px;height:14px}
+.blk-body{margin:6px 0 2px 10px;padding-left:8px;border-left:2px solid var(--edge)}
+.blk-sub{font-size:13px;color:var(--soft);margin-top:6px}
+.zone{display:block;width:100%;text-align:left;border:1px dashed var(--hole);background:transparent;border-radius:5px;padding:6px 8px;font-size:13px;color:var(--soft);cursor:pointer;margin-top:4px}
+.zone.on{border:2px solid var(--rail-blue);color:var(--rail-blue);background:#EBF0FB;font-weight:700}
+pre.code{background:#1B2330;color:#E6EBF1;border-radius:6px;padding:12px;font-size:12.5px;line-height:1.5;overflow-x:auto;white-space:pre;margin:6px 0 0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+/* Multimeter maya */
+.meter-grid{display:grid;gap:14px;margin-top:4px}
+@media(min-width:640px){.meter-grid{grid-template-columns:1fr 210px;align-items:start}}
+svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;background:#F6F7F3;color:var(--ink);font-family:var(--body)}
+.meter{background:#2A3442;border:6px solid #E9B23A;border-radius:18px;padding:14px;color:#fff}
+.meter .brand{font-family:var(--display);font-stretch:125%;font-weight:800;font-size:13px;color:#E9B23A;margin-bottom:8px}
+.lcd{background:#C9D6B8;color:#1B2330;border-radius:6px;padding:10px 12px;text-align:right;min-height:72px;box-shadow:inset 0 2px 6px rgba(0,0,0,.25)}
+.lcd b{display:block;font-family:var(--display);font-weight:800;font-size:36px;line-height:1;font-variant-numeric:tabular-nums}
+.lcd span{display:block;font-size:13px;margin-top:4px;min-height:1em}
+.dial{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}
+.dial button{background:#3A4656;color:#fff;border:0;border-radius:6px;padding:9px 0;font-family:var(--display);font-weight:700;font-size:15px;cursor:pointer}
+.dial button[aria-pressed="true"]{background:#E9B23A;color:#1B2330}
+.dial-cap{font-size:12px;color:#AEB7C2;margin-top:8px;line-height:1.4}
+.probes{display:flex;gap:8px;margin-top:10px;font-size:13px}
+.probes i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.ctrl-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ohm-box{margin-top:18px;border-top:1px solid var(--edge);padding-top:14px}
+.ohm-q{font-family:var(--display);font-weight:700;font-size:18px;margin:6px 0 4px}
+.ohm-in{display:flex;gap:8px;align-items:end}
+.ohm-in input{max-width:160px}
 .spin{animation:spin 1.2s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 </style>
@@ -252,6 +312,8 @@ footer{max-width:1040px;margin:0 auto;padding:6px 18px 28px;font-size:13px;color
     <nav class="tabs" role="tablist">
       <button class="tab" role="tab" aria-selected="true" data-mode="imbas">Imbas</button>
       <button class="tab" role="tab" aria-selected="false" data-mode="litar">Bina Litar</button>
+      <button class="tab" role="tab" aria-selected="false" data-mode="lab">Makmal Litar</button>
+      <button class="tab" role="tab" aria-selected="false" data-mode="meter">Multimeter</button>
       <button class="tab" role="tab" aria-selected="false" data-mode="kuiz">Kuiz</button>
       <button class="tab" role="tab" aria-selected="false" data-mode="uji">Uji Ketepatan</button>
       <button class="tab" role="tab" aria-selected="false" data-mode="markah">Papan Markah</button>
@@ -278,6 +340,110 @@ footer{max-width:1040px;margin:0 auto;padding:6px 18px 28px;font-size:13px;color
         <button class="btn" id="btnNextM">Misi seterusnya</button>
       </div>
       <p class="progress-line" id="mProg"></p>
+    </div>
+
+    <!-- Makmal Litar -->
+    <div class="view" id="view-lab">
+      <h2>Makmal litar</h2>
+      <p class="lead">Tambah komponen, sambungkan kaki komponen ke pin mikropengawal, kemudian susun kod blok dan jalankan simulasi.</p>
+
+      <div class="lab-bar">
+        <label class="field" style="margin:0;flex:1">Contoh projek<select id="labEx">
+          <option value="">Pilih contoh…</option>
+          <option value="kelip">LED berkelip</option>
+          <option value="lampu">Lampu automatik (LDR)</option>
+          <option value="penggera">Penggera keselamatan (ultrasonik)</option>
+          <option value="palang">Palang automatik (butang dan servo)</option>
+          <option value="kipas">Kipas automatik (butang dan motor)</option>
+        </select></label>
+        <label class="chk"><input type="checkbox" id="labSelf"> Sambung wayar sendiri</label>
+      </div>
+
+      <h3>1. Komponen dan wayar</h3>
+      <div class="palette" id="compPalette">
+        <button data-add="LED">LED</button>
+        <button data-add="Pembaz">Pembaz</button>
+        <button data-add="Motor">Motor AT</button>
+        <button data-add="Servo">Servo</button>
+        <button data-add="Butang">Butang</button>
+        <button data-add="LDR">LDR</button>
+        <button data-add="Ultrasonik">Ultrasonik</button>
+      </div>
+      <div class="labwrap"><svg class="labsvg" id="labSvg" viewBox="0 0 560 470" role="img" aria-label="Papan litar"></svg></div>
+      <p class="lab-hint" id="labHint">Ketik kaki komponen, kemudian ketik pin pada mikropengawal untuk menyambung wayar. Ketik wayar untuk membuangnya.</p>
+      <div class="actions" style="margin-top:6px"><button class="btn line" id="btnClrWire">Buang semua wayar</button></div>
+      <ul class="checklist" id="labCheck"></ul>
+      <div class="sensors" id="labSensors"></div>
+
+      <h3>2. Kod blok</h3>
+      <div class="palette blocks-pal" id="blkPalette">
+        <button data-blk="out" class="b-out">Tetapkan output</button>
+        <button data-blk="servo" class="b-out">Putar servo</button>
+        <button data-blk="wait" class="b-ctl">Tunggu</button>
+        <button data-blk="repeat" class="b-ctl">Ulang</button>
+        <button data-blk="forever" class="b-ctl">Ulang selamanya</button>
+        <button data-blk="if" class="b-log">Jika</button>
+      </div>
+      <p class="lab-hint" id="blkHint"></p>
+      <div class="program" id="program"></div>
+      <div class="actions">
+        <button class="btn go" id="btnRun">Jalankan</button>
+        <button class="btn line" id="btnStop" disabled>Henti</button>
+        <button class="btn line" id="btnClrProg">Kosongkan kod</button>
+      </div>
+      <div class="note" id="labFb"></div>
+
+      <h3>3. Kod Arduino</h3>
+      <p class="small" style="margin-top:0">Dijana daripada kod blok dan sambungan wayar. Boleh disalin ke Arduino IDE.</p>
+      <pre class="code" id="ardCode"></pre>
+      <div class="actions"><button class="btn line" id="btnCopyCode">Salin kod</button></div>
+    </div>
+
+    <!-- Multimeter -->
+    <div class="view" id="view-meter">
+      <h2>Multimeter maya</h2>
+      <p class="lead">Ukur voltan, arus dan rintangan pada litar sesiri. Pilih fungsi pada pemutar, kemudian pilih kedudukan probe.</p>
+      <div class="meter-grid">
+        <svg class="mcirc" id="mCirc" viewBox="0 0 320 210" role="img" aria-label="Litar ujian multimeter"></svg>
+        <div class="meter">
+          <div class="brand">MULTIMETER</div>
+          <div class="lcd"><b id="lcdVal"></b><span id="lcdUnit"></span></div>
+          <div class="dial" role="group" aria-label="Fungsi multimeter">
+            <button data-m="off" aria-pressed="true">OFF</button>
+            <button data-m="V" aria-pressed="false">V</button>
+            <button data-m="A" aria-pressed="false">A</button>
+            <button data-m="R" aria-pressed="false">Ω</button>
+          </div>
+          <div class="dial-cap" id="dialCap">Pemutar di kedudukan OFF.</div>
+          <div class="probes"><span><i style="background:#D22B3C"></i>Probe merah</span><span><i style="background:#1B2330;border:1px solid #fff"></i>Probe hitam</span></div>
+        </div>
+      </div>
+      <label class="field">Kedudukan probe<select id="probe">
+        <option value="bat">Merentasi bateri</option>
+        <option value="r1" selected>Merentasi R1</option>
+        <option value="r2">Merentasi R2</option>
+        <option value="r12">Merentasi R1 dan R2</option>
+        <option value="siri">Bersiri dalam litar</option>
+      </select></label>
+      <div class="ctrl-row">
+        <label class="field">Bateri<select id="selV"><option>3</option><option>4.5</option><option selected>6</option><option>9</option><option>12</option></select></label>
+        <label class="field">R1 (Ω)<select id="selR1"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>6</option><option>10</option></select></label>
+        <label class="field">R2 (Ω)<select id="selR2"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>6</option><option>10</option></select></label>
+      </div>
+      <div class="actions"><button class="btn line" id="btnSw">Tutup suis litar</button></div>
+      <div class="note" id="meterFb"></div>
+
+      <div class="ohm-box">
+        <h3 style="margin-top:0">Cabaran Hukum Ohm</h3>
+        <p class="small" style="margin:0">Kira dahulu, kemudian ukur dengan multimeter untuk menyemak. V = I × R, dan dalam litar sesiri jumlah rintangan ialah R1 + R2.</p>
+        <div class="ohm-q" id="ohmQ"></div>
+        <div class="ohm-in">
+          <label class="field" style="margin:0;flex:1;max-width:180px">Jawapan<input id="ohmAns" type="number" step="any" inputmode="decimal"></label>
+          <button class="btn" id="btnOhmCheck">Semak</button>
+          <button class="btn line" id="btnOhmNew">Soalan baharu</button>
+        </div>
+        <div class="note" id="ohmFb"></div>
+      </div>
     </div>
 
     <!-- Kuiz -->
@@ -479,6 +645,14 @@ const COMPONENTS = {
     unit: "",
     clue: "Motor yang berputar ke sudut tertentu mengikut isyarat mikropengawal"
   },
+  "Multimeter": {
+    nama: "Multimeter", pendek: "Multimeter", topik: ["elektrik", "elektronik"],
+    elemen: "", peranti: "Alat pengukur", mek: "Alat pengujian", peranan: "Alat pengukur parameter elektrik",
+    fungsi: "Mengukur voltan (V), arus (A) dan rintangan (Ω). Voltan diukur secara selari, arus secara bersiri, dan rintangan diukur ketika litar tiada bekalan kuasa.",
+    contoh: "Menguji bateri, menyemak sambungan litar dan mengukur nilai perintang.",
+    unit: "V, A, Ω",
+    clue: "Alat untuk mengukur voltan, arus dan rintangan"
+  },
   "Pemacu Motor": {
     nama: "Pemacu motor", pendek: "Pemacu motor", topik: ["mekatronik"],
     elemen: "", peranti: "Pemacu", mek: "Sistem elektronik",
@@ -493,7 +667,7 @@ const ALIASES = {
   "esp32": "Mikropengawal", "arduino": "Mikropengawal", "papan mikropengawal": "Mikropengawal",
   "pembaz": "Buzzer", "penderia ultrasonik": "Sensor Ultrasonik", "motor servo": "Servo",
   "wayar pelompat": "Wayar", "perintang tetap": "Perintang", "motor": "Motor AT",
-  "pemacu": "Pemacu Motor", "l298n": "Pemacu Motor"
+  "pemacu": "Pemacu Motor", "l298n": "Pemacu Motor", "meter": "Multimeter", "multimeter digital": "Multimeter"
 };
 
 /* Simbol litar (SVG) — pusat (0,0), kaki penyambung di x = -40 dan x = 40 */
@@ -514,6 +688,8 @@ const SYM = {
 };
 
 /* Misi Bina Litar mengikut topik */
+SYM["Multimeter"] = `<rect x="-20" y="-28" width="40" height="56" rx="5"/><rect x="-13" y="-21" width="26" height="12" rx="1"/><circle cx="0" cy="9" r="8"/><line x1="0" y1="9" x2="5" y2="4"/><line x1="-40" y1="20" x2="-20" y2="20"/><line x1="20" y1="20" x2="40" y2="20"/>`;
+
 const MISSIONS = {
   elektrik: [
     { id: "e1", tajuk: "Lampu suluh", jenis: "litar",
@@ -589,7 +765,11 @@ const KONSEP = {
     { q: "Sebuah peranti 6 V menggunakan arus 2 A. Berapakah kuasanya? (P = VI)", opts: ["3 W", "4 W", "8 W", "12 W"], ans: 3,
       nota: "P = V × I = 6 V × 2 A = 12 W." },
     { q: "Dalam litar selari, apakah berlaku kepada mentol lain jika satu mentol terbakar?", opts: ["Semua padam", "Terus menyala", "Menjadi lebih malap", "Berkelip-kelip"], ans: 1,
-      nota: "Setiap cabang litar selari mempunyai laluan arus sendiri." }
+      nota: "Setiap cabang litar selari mempunyai laluan arus sendiri." },
+    { q: "Untuk mengukur arus, multimeter perlu disambung secara", opts: ["Bersiri dalam litar", "Selari merentasi beban", "Merentasi bateri", "Tanpa wayar"], ans: 0,
+      nota: "Arus perlu mengalir melalui meter, jadi ia disambung bersiri." },
+    { q: "Apakah yang perlu dilakukan sebelum mengukur rintangan sebuah perintang dalam litar?", opts: ["Naikkan voltan bateri", "Matikan bekalan kuasa litar", "Tukar pemutar ke A", "Sambung meter bersiri"], ans: 1,
+      nota: "Rintangan diukur ketika litar tiada bekalan kuasa." }
   ],
   elektronik: [
     { q: "Apakah maksud mikropengawal?", opts: ["Peranti kawalan dalam satu cip yang mengandungi CPU, memori dan port input/output", "Cip pemproses yang memerlukan memori dan port luaran", "Komponen yang menyimpan cas elektrik", "Komponen yang mengehadkan arus"], ans: 0,
@@ -800,6 +980,7 @@ function onLock(k) {
    TOPIK
    ========================================================= */
 function topicRole(c) {
+  if (c.peranan) return c.peranan;
   if (topic === "elektrik") return c.elemen ? `${c.elemen} (elemen sistem elektrik)` : "Komponen sokongan dalam litar";
   if (topic === "elektronik") return c.peranti;
   return `${c.mek}. Dalam gambar rajah blok: ${c.peranti.toLowerCase()}`;
@@ -850,6 +1031,8 @@ function showInfo(k) {
         </dl>
       </div>
     </div>`;
+  if (k === "Multimeter") $("infoArea").insertAdjacentHTML("beforeend", `<div class="actions"><button class="btn" id="btnGoMeter">Buka multimeter maya</button></div>`);
+  if ($("btnGoMeter")) $("btnGoMeter").onclick = () => document.querySelector('.tab[data-mode="meter"]').click();
   speak(`${c.nama}. ${c.fungsi}`);
   discovered.add(k);
   store("ik_kol", [...discovered]);
@@ -972,6 +1155,613 @@ $("btnHint").onclick = () => {
 };
 $("btnResetM").onclick = () => { step = 0; done = false; locked = null; hideNote($("litarFb")); renderMission(); };
 $("btnNextM").onclick = () => { if (!missions.length) return; mi = (mi + 1) % missions.length; step = 0; done = false; locked = null; hideNote($("litarFb")); renderMission(); };
+
+/* =========================================================
+   MULTIMETER MAYA
+   ========================================================= */
+const meter = { mode: "off", sw: false };
+const fmt = (n, d = 2) => (Math.round(n * 100) / 100).toFixed(d);
+function circuitVals() {
+  const V = parseFloat($("selV").value), R1 = parseFloat($("selR1").value), R2 = parseFloat($("selR2").value);
+  return { V, R1, R2, I: meter.sw ? V / (R1 + R2) : 0 };
+}
+function meterRead() {
+  const { V, R1, R2, I } = circuitVals();
+  const p = $("probe").value, m = meter.mode;
+  if (m === "off") return { val: "", unit: "", msg: "", cls: "" };
+  if (m === "V") {
+    if (p === "siri") return { val: fmt(meter.sw ? V : 0), unit: "volt (V)", cls: "bad",
+      msg: "Voltmeter bersiri menghalang arus, jadi litar tidak berfungsi. Voltan diukur secara selari, iaitu merentasi komponen." };
+    const v = p === "bat" ? V : p === "r1" ? I * R1 : p === "r2" ? I * R2 : I * (R1 + R2);
+    let msg = meter.sw ? "" : (p === "bat" ? "" : "Suis terbuka, tiada arus, jadi tiada voltan merentasi perintang.");
+    if (meter.sw && p !== "bat") msg = `V = I × R = ${fmt(I)} A × ${p === "r1" ? R1 : p === "r2" ? R2 : R1 + R2} Ω = ${fmt(v)} V`;
+    return { val: fmt(v), unit: "volt (V)", cls: msg ? "info" : "", msg };
+  }
+  if (m === "A") {
+    if (p !== "siri") return { val: "FUSE", unit: "fius putus", cls: "bad",
+      msg: "Bahaya: ammeter yang disambung merentasi komponen menyebabkan litar pintas dan memutuskan fius multimeter. Arus mesti diukur secara bersiri." };
+    return { val: fmt(I), unit: "ampere (A)", cls: "info",
+      msg: meter.sw ? `I = V ÷ (R1 + R2) = ${V} V ÷ ${R1 + R2} Ω = ${fmt(I)} A` : "Suis terbuka, jadi tiada arus mengalir." };
+  }
+  // rintangan
+  if (meter.sw) return { val: "Err", unit: "", cls: "bad", msg: "Buka suis litar (matikan bekalan) sebelum mengukur rintangan." };
+  if (p === "bat") return { val: "Err", unit: "", cls: "bad", msg: "Rintangan tidak diukur pada sumber kuasa. Letakkan probe merentasi perintang." };
+  if (p === "siri") return { val: "OL", unit: "litar terbuka", cls: "info", msg: "Untuk mengukur rintangan, letakkan probe merentasi perintang." };
+  const r = p === "r1" ? R1 : p === "r2" ? R2 : R1 + R2;
+  return { val: fmt(r, 1), unit: "ohm (Ω)", cls: p === "r12" ? "info" : "", msg: p === "r12" ? `Jumlah rintangan sesiri = R1 + R2 = ${R1} + ${R2} = ${R1 + R2} Ω` : "" };
+}
+function drawMeterCircuit() {
+  const { V, R1, R2 } = circuitVals();
+  const p = $("probe").value, sw = meter.sw;
+  const siri = p === "siri" && meter.mode !== "off";
+  // nod: bateri (40,70)-(40,140); suis atas (90..130,30); R1 atas (190..250,30); R2 kanan (290,75..135)
+  let s = `<defs><pattern id="h2" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="7" cy="7" r="1.2" fill="#D3D8CD"/></pattern></defs><rect width="320" height="210" fill="url(#h2)"/>`;
+  const bottom = siri ? `M40,140 L40,180 L135,180 M185,180 L290,180 L290,135` : `M40,140 L40,180 L290,180 L290,135`;
+  const loop = `M40,70 L40,30 L90,30 M130,30 L190,30 M250,30 L290,30 L290,75 ${bottom}`;
+  s += `<path d="${loop}" class="wire" stroke-width="2.5"/>`;
+  if (sw && !(siri && meter.mode === "V")) s += `<path d="${loop}" class="flow" stroke-width="3"/>`;
+  s += `<g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">`;
+  // bateri menegak
+  s += `<line x1="40" y1="70" x2="40" y2="98"/><line x1="24" y1="98" x2="56" y2="98"/><line x1="32" y1="110" x2="48" y2="110" stroke-width="5"/><line x1="40" y1="110" x2="40" y2="140"/>`;
+  // suis
+  s += `<circle cx="93" cy="30" r="3"/><circle cx="127" cy="30" r="3"/>` + (sw ? `<line x1="95" y1="30" x2="125" y2="30"/>` : `<line x1="95" y1="29" x2="122" y2="12"/>`);
+  // R1
+  s += `<rect x="200" y="21" width="40" height="18"/><line x1="190" y1="30" x2="200" y2="30"/><line x1="240" y1="30" x2="250" y2="30"/>`;
+  // R2 menegak
+  s += `<rect x="281" y="85" width="18" height="40"/><line x1="290" y1="75" x2="290" y2="85"/><line x1="290" y1="125" x2="290" y2="135"/>`;
+  if (siri) s += `<circle cx="160" cy="180" r="20" fill="#E9B23A"/><line x1="135" y1="180" x2="140" y2="180"/><line x1="180" y1="180" x2="185" y2="180"/>`;
+  s += `</g>`;
+  if (siri) s += `<text x="160" y="186" text-anchor="middle" font-size="16" font-weight="800" fill="#1B2330">${meter.mode === "R" ? "Ω" : meter.mode}</text>`;
+  s += `<text x="12" y="108" font-size="12" fill="#59636F">${V} V</text>`;
+  s += `<text x="110" y="52" text-anchor="middle" font-size="12" fill="#59636F">Suis</text>`;
+  s += `<text x="220" y="56" text-anchor="middle" font-size="13" font-weight="700" fill="#1B2330">R1 = ${R1} Ω</text>`;
+  s += `<text x="276" y="110" text-anchor="end" font-size="13" font-weight="700" fill="#1B2330">R2 = ${R2} Ω</text>`;
+  // probe
+  const pts = { bat: [[40, 70], [40, 140]], r1: [[190, 30], [250, 30]], r2: [[290, 75], [290, 135]], r12: [[190, 30], [290, 135]] };
+  if (meter.mode !== "off" && pts[p]) {
+    const [a, b] = pts[p];
+    s += `<circle cx="${a[0]}" cy="${a[1]}" r="7" fill="#D22B3C" stroke="#fff" stroke-width="2"/><circle cx="${b[0]}" cy="${b[1]}" r="7" fill="#1B2330" stroke="#fff" stroke-width="2"/>`;
+  }
+  $("mCirc").innerHTML = s;
+}
+function renderMeter() {
+  const r = meterRead();
+  $("lcdVal").textContent = r.val;
+  $("lcdUnit").textContent = r.unit;
+  const caps = { off: "Pemutar di kedudukan OFF.", V: "Fungsi voltan AT. Sambung probe secara selari, merentasi komponen.", A: "Fungsi arus AT. Sambung meter secara bersiri dalam litar.", R: "Fungsi rintangan. Pastikan litar tiada bekalan kuasa." };
+  $("dialCap").textContent = caps[meter.mode];
+  $("btnSw").textContent = meter.sw ? "Buka suis litar" : "Tutup suis litar";
+  if (r.msg) note($("meterFb"), r.cls || "info", r.msg); else hideNote($("meterFb"));
+  drawMeterCircuit();
+}
+document.querySelectorAll(".dial button").forEach(b => b.onclick = () => {
+  meter.mode = b.dataset.m;
+  document.querySelectorAll(".dial button").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+  renderMeter();
+});
+["probe", "selV", "selR1", "selR2"].forEach(id => $(id).onchange = () => { renderMeter(); });
+$("btnSw").onclick = () => { meter.sw = !meter.sw; renderMeter(); };
+
+/* Cabaran Hukum Ohm */
+let ohm = null;
+function newOhm() {
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const V = pick([3, 4.5, 6, 9, 12]), R1 = pick([1, 2, 3, 4, 6, 10]), R2 = pick([1, 2, 3, 4, 6, 10]);
+  const I = V / (R1 + R2);
+  const types = [
+    { q: `Bateri ${V} V, R1 = ${R1} Ω, R2 = ${R2} Ω. Berapakah arus dalam litar (A)?`, ans: I, kerja: `I = V ÷ (R1 + R2) = ${V} ÷ ${R1 + R2} = ${fmt(I)} A`, set: { mode: "A", probe: "siri", sw: true } },
+    { q: `Bateri ${V} V, R1 = ${R1} Ω, R2 = ${R2} Ω. Berapakah voltan merentasi R1 (V)?`, ans: I * R1, kerja: `I = ${fmt(I)} A, maka V1 = I × R1 = ${fmt(I)} × ${R1} = ${fmt(I * R1)} V`, set: { mode: "V", probe: "r1", sw: true } },
+    { q: `R1 = ${R1} Ω dan R2 = ${R2} Ω disambung sesiri. Berapakah jumlah rintangan (Ω)?`, ans: R1 + R2, kerja: `R = R1 + R2 = ${R1} + ${R2} = ${R1 + R2} Ω`, set: { mode: "R", probe: "r12", sw: false } }
+  ];
+  ohm = { V, R1, R2, ...pick(types) };
+  $("ohmQ").textContent = ohm.q;
+  $("ohmAns").value = "";
+  hideNote($("ohmFb"));
+  $("selV").value = String(V); $("selR1").value = String(R1); $("selR2").value = String(R2);
+  renderMeter();
+}
+$("btnOhmNew").onclick = newOhm;
+$("btnOhmCheck").onclick = () => {
+  if (!ohm) return;
+  const v = parseFloat($("ohmAns").value);
+  if (isNaN(v)) { note($("ohmFb"), "bad", "Masukkan jawapan dalam bentuk nombor."); return; }
+  const ok = Math.abs(v - ohm.ans) <= Math.max(0.02, Math.abs(ohm.ans) * 0.02);
+  note($("ohmFb"), ok ? "ok" : "bad", (ok ? "Betul. " : "Belum tepat. ") + ohm.kerja + ". Semak dengan multimeter: pemutar dan probe telah disediakan.");
+  meter.mode = ohm.set.mode; meter.sw = ohm.set.sw; $("probe").value = ohm.set.probe;
+  document.querySelectorAll(".dial button").forEach(x => x.setAttribute("aria-pressed", x.dataset.m === meter.mode ? "true" : "false"));
+  renderMeter();
+  speak(ok ? "Betul!" : "Belum tepat.");
+};
+
+/* =========================================================
+   MAKMAL LITAR (sambung wayar, kod blok, simulasi)
+   ========================================================= */
+const PINS = ["5V", "GND", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10", "D11", "D12", "D13", "A0", "A1"];
+const PIN_X = 140, pinY = i => 38 + i * 26;
+const SLOTS = [[205, 12], [385, 12], [205, 162], [385, 162], [205, 312], [385, 312]];
+const SLOT_W = 165, SLOT_H = 142;
+const SIG_COLORS = ["#1F4FBF", "#1E9E5A", "#B5652A", "#7A3FB0", "#D97706", "#0E7490", "#BE185D", "#4D7C0F"];
+
+/* role: dig = pin digital, ana = pin analog, gnd = GND, vcc = 5V */
+const LABTYPES = {
+  LED:        { nama: "LED", jenis: "out", legs: [["a", "Anod (+)", "dig"], ["k", "Katod (−)", "gnd"]] },
+  Pembaz:     { nama: "Pembaz", jenis: "out", legs: [["p", "Positif (+)", "dig"], ["n", "Negatif (−)", "gnd"]] },
+  Motor:      { nama: "Motor AT", jenis: "out", legs: [["in", "IN pemacu", "dig"], ["g", "GND", "gnd"]] },
+  Servo:      { nama: "Servo", jenis: "servo", legs: [["s", "Isyarat", "dig"], ["v", "5V", "vcc"], ["g", "GND", "gnd"]] },
+  Butang:     { nama: "Butang", jenis: "in", legs: [["s", "Kaki 1", "dig"], ["g", "Kaki 2", "gnd"]] },
+  LDR:        { nama: "LDR", jenis: "in", legs: [["ao", "AO", "ana"], ["v", "VCC", "vcc"], ["g", "GND", "gnd"]] },
+  Ultrasonik: { nama: "Ultrasonik", jenis: "in", legs: [["v", "VCC", "vcc"], ["t", "Trig", "dig"], ["e", "Echo", "dig"], ["g", "GND", "gnd"]] }
+};
+
+const lab = { comps: [], wires: [], sel: null, prog: [], target: null, running: false, stop: false, seq: 1 };
+let audioCtx = null, osc = null;
+
+const labComp = id => lab.comps.find(c => c.id === id);
+const wireOf = (cid, leg) => lab.wires.find(w => w.comp === cid && w.leg === leg);
+const pinClass = p => p === "GND" ? "gnd" : p === "5V" ? "vcc" : p[0] === "A" ? "ana" : "dig";
+function compLabel(c) { return `${LABTYPES[c.type].nama} ${c.n}`; }
+
+function addComp(type, opts = {}) {
+  const used = lab.comps.map(c => c.slot);
+  const slot = [0, 1, 2, 3, 4, 5].find(i => !used.includes(i));
+  if (slot === undefined) { note($("labFb"), "bad", "Papan penuh. Buang satu komponen dahulu (maksimum enam)."); return null; }
+  const n = lab.comps.filter(c => c.type === type).length + 1;
+  const c = { id: "c" + (lab.seq++), type, n, slot, on: false, deg: 0, pressed: false, ldr: 70, jarak: 50, ...opts };
+  lab.comps.push(c);
+  return c;
+}
+function removeComp(id) {
+  lab.comps = lab.comps.filter(c => c.id !== id);
+  lab.wires = lab.wires.filter(w => w.comp !== id);
+  if (lab.sel && lab.sel.comp === id) lab.sel = null;
+}
+
+/* Semak sambungan setiap komponen */
+function compStatus(c) {
+  const T = LABTYPES[c.type], msgs = [], pins = {};
+  // LED atau pembaz terbalik
+  if (c.type === "LED" || c.type === "Pembaz") {
+    const wa = wireOf(c.id, T.legs[0][0]), wk = wireOf(c.id, T.legs[1][0]);
+    if (wa && wk && pinClass(wa.pin) === "gnd" && pinClass(wk.pin) === "dig")
+      return { ok: false, pins, msgs: [`${compLabel(c)} disambung terbalik. ${T.legs[0][1]} ke pin digital, ${T.legs[1][1]} ke GND.`] };
+  }
+  T.legs.forEach(([lid, lname, role]) => {
+    const w = wireOf(c.id, lid);
+    if (!w) { msgs.push(`${lname} belum disambung`); return; }
+    const pc = pinClass(w.pin);
+    if (pc !== role) {
+      const want = role === "dig" ? "pin digital (D2 hingga D13)" : role === "ana" ? "pin analog (A0 atau A1)" : role === "gnd" ? "GND" : "5V";
+      msgs.push(`${lname} perlu ke ${want}, bukan ${w.pin}`);
+      return;
+    }
+    pins[lid] = w.pin;
+  });
+  return { ok: msgs.length === 0, pins, msgs };
+}
+const sigPin = c => {
+  const st = compStatus(c);
+  const lid = LABTYPES[c.type].legs.find(l => l[2] === "dig" || l[2] === "ana")[0];
+  return st.ok ? st.pins[lid] : null;
+};
+
+/* ---------- Lukis papan ---------- */
+function legPos(c, i) { const [x, y] = SLOTS[c.slot]; return [x + 10, y + 42 + i * 24]; }
+function compGraphic(c) {
+  const [x, y] = SLOTS[c.slot];
+  const cx = x + 118, cy = y + 80;
+  let g = "";
+  if (c.type === "LED") {
+    if (c.on) g += `<circle cx="${cx}" cy="${cy}" r="30" fill="#FF6B6B" opacity=".35" class="glow"/>`;
+    g += `<path d="M${cx - 15},${cy + 14} L${cx - 15},${cy - 4} A15,15 0 0 1 ${cx + 15},${cy - 4} L${cx + 15},${cy + 14} Z" fill="${c.on ? "#FF3B3B" : "#F2C4C4"}" stroke="#8E1A27" stroke-width="2"/>`;
+    g += `<rect x="${cx - 19}" y="${cy + 14}" width="38" height="6" fill="${c.on ? "#E22" : "#E9B0B0"}" stroke="#8E1A27" stroke-width="1.5"/>`;
+  } else if (c.type === "Pembaz") {
+    g += `<circle cx="${cx}" cy="${cy}" r="22" fill="#1B2330"/><circle cx="${cx}" cy="${cy}" r="4" fill="#59636F"/>`;
+    if (c.on) g += `<g fill="none" stroke="#B5652A" stroke-width="2.5" stroke-linecap="round"><path class="wave" d="M${cx + 26},${cy - 12} A14,14 0 0 1 ${cx + 26},${cy + 12}"/><path class="wave" style="animation-delay:.3s" d="M${cx + 33},${cy - 19} A22,22 0 0 1 ${cx + 33},${cy + 19}"/></g>`;
+  } else if (c.type === "Motor") {
+    g += `<circle cx="${cx}" cy="${cy}" r="24" fill="#C7CCC2" stroke="#59636F" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="5" fill="#59636F"/>`;
+    g += `<g transform="translate(${cx},${cy})"><g class="${c.on ? "spin" : ""}"><line x1="0" y1="0" x2="0" y2="-20" stroke="#1B2330" stroke-width="4" stroke-linecap="round"/><line x1="0" y1="0" x2="17" y2="10" stroke="#1B2330" stroke-width="4" stroke-linecap="round"/><line x1="0" y1="0" x2="-17" y2="10" stroke="#1B2330" stroke-width="4" stroke-linecap="round"/></g></g>`;
+  } else if (c.type === "Servo") {
+    g += `<rect x="${cx - 26}" y="${cy - 14}" width="52" height="34" rx="3" fill="#1F4FBF"/>`;
+    g += `<g transform="translate(${cx},${cy - 2})"><g style="transform:rotate(${c.deg - 90}deg);transition:transform .45s"><rect x="-4" y="-4" width="34" height="8" rx="4" fill="#F6F7F3" stroke="#1B2330" stroke-width="1.5"/></g><circle r="5" fill="#F6F7F3" stroke="#1B2330" stroke-width="1.5"/></g>`;
+    g += `<text x="${cx}" y="${cy + 38}" text-anchor="middle" font-size="12" fill="#59636F">${c.deg}°</text>`;
+  } else if (c.type === "Butang") {
+    g += `<g data-press="${c.id}"><rect x="${cx - 22}" y="${cy - 22}" width="44" height="44" rx="5" fill="#1B2330"/><circle cx="${cx}" cy="${cy}" r="${c.pressed ? 12 : 14}" fill="${c.pressed ? "#B5652A" : "#E9B23A"}"/></g>`;
+    g += `<text x="${cx}" y="${cy + 38}" text-anchor="middle" font-size="12" fill="#59636F">${c.pressed ? "Ditekan" : "Tekan saya"}</text>`;
+  } else if (c.type === "LDR") {
+    g += `<rect x="${cx - 22}" y="${cy - 16}" width="44" height="32" rx="3" fill="#1E9E5A"/><circle cx="${cx}" cy="${cy}" r="9" fill="#F2D27A" stroke="#8C6A10" stroke-width="1.5"/><path d="M${cx - 5},${cy - 3} h3 v6 h3 v-6 h3" fill="none" stroke="#8E1A27" stroke-width="1.2"/>`;
+    g += `<text x="${cx}" y="${cy + 34}" text-anchor="middle" font-size="12" fill="#59636F">Cahaya ${c.ldr}%</text>`;
+  } else if (c.type === "Ultrasonik") {
+    g += `<rect x="${cx - 32}" y="${cy - 16}" width="64" height="32" rx="3" fill="#1F4FBF"/><circle cx="${cx - 15}" cy="${cy}" r="11" fill="#D3D8CD" stroke="#59636F" stroke-width="2"/><circle cx="${cx + 15}" cy="${cy}" r="11" fill="#D3D8CD" stroke="#59636F" stroke-width="2"/>`;
+    g += `<text x="${cx}" y="${cy + 34}" text-anchor="middle" font-size="12" fill="#59636F">Jarak ${c.jarak} cm</text>`;
+  }
+  return g;
+}
+function drawLab() {
+  let s = `<defs><pattern id="h3" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="7" cy="7" r="1.2" fill="#D3D8CD"/></pattern></defs><rect width="560" height="470" fill="url(#h3)"/>`;
+  let dots = "";
+  // mikropengawal
+  s += `<rect x="8" y="10" width="146" height="450" rx="10" fill="#1D4C9E"/>`;
+  s += `<text x="20" y="30" font-size="12" font-weight="700" fill="#fff">MIKROPENGAWAL</text>`;
+  s += `<rect x="24" y="200" width="62" height="62" rx="3" fill="#1B2330"/><text x="55" y="236" text-anchor="middle" font-size="10" fill="#AEB7C2">MCU</text>`;
+  PINS.forEach((p, i) => {
+    const y = pinY(i), selp = lab.sel && lab.sel.kind === "pin" && lab.sel.pin === p;
+    const col = p === "GND" ? "#1B2330" : p === "5V" ? "#D22B3C" : "#F6F7F3";
+    s += `<text x="${PIN_X - 14}" y="${y + 4}" text-anchor="end" font-size="12" font-weight="700" fill="#fff">${p}</text>`;
+    dots += `<g data-pin="${p}"><circle cx="${PIN_X}" cy="${y}" r="12" fill="transparent"/><circle cx="${PIN_X}" cy="${y}" r="6.5" fill="${col}" stroke="${selp ? "#E9B23A" : "#fff"}" stroke-width="${selp ? 4 : 2}"/></g>`;
+  });
+  // komponen (badan)
+  lab.comps.forEach(c => {
+    const [x, y] = SLOTS[c.slot], T = LABTYPES[c.type], st = compStatus(c);
+    s += `<rect x="${x}" y="${y}" width="${SLOT_W}" height="${SLOT_H}" rx="8" fill="#fff" stroke="${st.ok ? "#1E9E5A" : "#D3D8CD"}" stroke-width="${st.ok ? 2 : 1.5}"/>`;
+    s += `<text x="${x + 10}" y="${y + 22}" font-size="14" font-weight="700" fill="#1B2330">${compLabel(c)}</text>`;
+    s += `<g data-del="${c.id}"><rect x="${x + SLOT_W - 30}" y="${y + 6}" width="24" height="24" rx="5" fill="#F6F7F3" stroke="#D3D8CD"/><path d="M${x + SLOT_W - 23},${y + 13} l10,10 M${x + SLOT_W - 13},${y + 13} l-10,10" stroke="#59636F" stroke-width="2" stroke-linecap="round"/></g>`;
+    T.legs.forEach(([lid, lname], i) => {
+      const [lx, ly] = legPos(c, i), sl = lab.sel && lab.sel.kind === "leg" && lab.sel.comp === c.id && lab.sel.leg === lid;
+      s += `<line x1="${lx}" y1="${ly}" x2="${x + 82}" y2="${ly}" stroke="#AEB7C2" stroke-width="2"/>`;
+      s += `<text x="${lx + 12}" y="${ly - 5}" font-size="11" fill="#59636F">${lname}</text>`;
+      dots += `<g data-leg="${c.id}|${lid}"><circle cx="${lx}" cy="${ly}" r="11" fill="transparent"/><circle cx="${lx}" cy="${ly}" r="6" fill="#B5652A" stroke="${sl ? "#E9B23A" : "#fff"}" stroke-width="${sl ? 4 : 2}"/></g>`;
+    });
+    s += compGraphic(c);
+  });
+  // wayar (di bawah titik pin dan kaki supaya titik masih boleh diketik)
+  let si = 0;
+  lab.wires.forEach((w, i) => {
+    const c = labComp(w.comp); if (!c) return;
+    const li = LABTYPES[c.type].legs.findIndex(l => l[0] === w.leg);
+    const [lx, ly] = legPos(c, li), py = pinY(PINS.indexOf(w.pin));
+    const col = w.pin === "GND" ? "#1B2330" : w.pin === "5V" ? "#D22B3C" : SIG_COLORS[(si++) % SIG_COLORS.length];
+    const d = `M${PIN_X},${py} C${PIN_X + 45},${py} ${lx - 45},${ly} ${lx},${ly}`;
+    s += `<g data-wire="${i}"><path d="${d}" stroke="transparent" stroke-width="12" fill="none"/><path d="${d}" stroke="${col}" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".9"/></g>`;
+  });
+  $("labSvg").innerHTML = s + dots;
+  renderChecklist();
+}
+function renderChecklist() {
+  if (!lab.comps.length) { $("labCheck").innerHTML = ""; return; }
+  $("labCheck").innerHTML = lab.comps.map(c => {
+    const st = compStatus(c);
+    if (st.ok) {
+      const pins = Object.values(st.pins).filter(p => p !== "GND" && p !== "5V").join(" dan ");
+      return `<li>${esc(compLabel(c))}: disambung dengan betul${pins ? " ke " + esc(pins) : ""}.</li>`;
+    }
+    return `<li class="bad">${esc(compLabel(c))}: ${esc(st.msgs.join("; "))}.</li>`;
+  }).join("");
+}
+function renderSensors() {
+  const ins = lab.comps.filter(c => c.type === "LDR" || c.type === "Ultrasonik" || c.type === "Butang");
+  $("labSensors").innerHTML = ins.map(c => {
+    if (c.type === "Butang") return `<div class="sensor"><b>${esc(compLabel(c))}</b><div class="actions" style="margin-top:6px"><button class="btn line hold" data-hold="${c.id}">Tekan dan tahan</button></div></div>`;
+    if (c.type === "LDR") return `<div class="sensor"><b>${esc(compLabel(c))}</b>: cahaya <span id="v-${c.id}">${c.ldr}</span>% (gelap jika kurang 40%)<input type="range" min="0" max="100" value="${c.ldr}" data-ldr="${c.id}" aria-label="Keamatan cahaya"></div>`;
+    return `<div class="sensor"><b>${esc(compLabel(c))}</b>: jarak objek <span id="v-${c.id}">${c.jarak}</span> cm<input type="range" min="2" max="100" value="${c.jarak}" data-jarak="${c.id}" aria-label="Jarak objek"></div>`;
+  }).join("");
+  $("labSensors").querySelectorAll("[data-ldr]").forEach(r => r.oninput = () => { const c = labComp(r.dataset.ldr); c.ldr = +r.value; $("v-" + c.id).textContent = c.ldr; drawLab(); });
+  $("labSensors").querySelectorAll("[data-jarak]").forEach(r => r.oninput = () => { const c = labComp(r.dataset.jarak); c.jarak = +r.value; $("v-" + c.id).textContent = c.jarak; drawLab(); });
+  $("labSensors").querySelectorAll("[data-hold]").forEach(b => {
+    const set = v => { const c = labComp(b.dataset.hold); if (c) { c.pressed = v; drawLab(); } };
+    b.onpointerdown = e => { e.preventDefault(); set(true); };
+    b.onpointerup = b.onpointerleave = b.onpointercancel = () => set(false);
+  });
+}
+
+/* ---------- Interaksi papan ---------- */
+function labHint(t) { $("labHint").textContent = t; }
+function connect(cid, leg, pin) {
+  const c = labComp(cid);
+  const other = lab.wires.find(w => w.pin === pin && pinClass(pin) !== "gnd" && pinClass(pin) !== "vcc" && !(w.comp === cid && w.leg === leg));
+  if (other) { labHint(`Pin ${pin} sudah digunakan oleh ${compLabel(labComp(other.comp))}. Pilih pin lain.`); return; }
+  lab.wires = lab.wires.filter(w => !(w.comp === cid && w.leg === leg));
+  lab.wires.push({ pin, comp: cid, leg });
+  const lname = LABTYPES[c.type].legs.find(l => l[0] === leg)[1];
+  labHint(`${lname} ${compLabel(c)} disambung ke ${pin}.`);
+  lab.sel = null;
+  refreshLab();
+}
+$("labSvg").addEventListener("click", e => {
+  const del = e.target.closest("[data-del]"), leg = e.target.closest("[data-leg]"), pin = e.target.closest("[data-pin]"), wire = e.target.closest("[data-wire]");
+  if (del) { removeComp(del.dataset.del); refreshLab(); return; }
+  if (leg) {
+    const [cid, lid] = leg.dataset.leg.split("|");
+    if (lab.sel && lab.sel.kind === "pin") return connect(cid, lid, lab.sel.pin);
+    lab.sel = { kind: "leg", comp: cid, leg: lid };
+    const c = labComp(cid);
+    labHint(`Dipilih: ${LABTYPES[c.type].legs.find(l => l[0] === lid)[1]} ${compLabel(c)}. Sekarang ketik pin pada mikropengawal.`);
+    drawLab(); return;
+  }
+  if (pin) {
+    const p = pin.dataset.pin;
+    if (lab.sel && lab.sel.kind === "leg") return connect(lab.sel.comp, lab.sel.leg, p);
+    lab.sel = { kind: "pin", pin: p };
+    labHint(`Dipilih: pin ${p}. Sekarang ketik kaki komponen.`);
+    drawLab(); return;
+  }
+  if (wire) {
+    const w = lab.wires[+wire.dataset.wire];
+    lab.wires.splice(+wire.dataset.wire, 1);
+    labHint(`Wayar ke ${w.pin} dibuang.`);
+    refreshLab(); return;
+  }
+  if (lab.sel) { lab.sel = null; labHint("Pilihan dibatalkan."); drawLab(); }
+});
+$("labSvg").addEventListener("pointerdown", e => {
+  const pr = e.target.closest("[data-press]");
+  if (!pr) return;
+  const c = labComp(pr.dataset.press);
+  c.pressed = true; drawLab();
+  const up = () => { c.pressed = false; drawLab(); window.removeEventListener("pointerup", up); };
+  window.addEventListener("pointerup", up);
+});
+document.querySelectorAll("#compPalette [data-add]").forEach(b => b.onclick = () => {
+  const c = addComp(b.dataset.add);
+  if (c) { labHint(`${compLabel(c)} ditambah. Ketik kakinya untuk mula menyambung wayar.`); refreshLab(); }
+});
+$("btnClrWire").onclick = () => { lab.wires = []; lab.sel = null; labHint("Semua wayar dibuang."); refreshLab(); };
+
+/* ---------- Kod blok ---------- */
+const ICON_UP = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l5-5 5 5"/></svg>`;
+const ICON_X = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>`;
+const newBlk = t => {
+  const id = "b" + (lab.seq++);
+  const outs = lab.comps.filter(c => LABTYPES[c.type].jenis === "out");
+  const servos = lab.comps.filter(c => c.type === "Servo");
+  const conds = condOptions();
+  if (t === "out") return { id, t, c: outs[0] ? outs[0].id : "", on: true };
+  if (t === "servo") return { id, t, c: servos[0] ? servos[0].id : "", deg: 90 };
+  if (t === "wait") return { id, t, s: 1 };
+  if (t === "repeat") return { id, t, n: 3, body: [] };
+  if (t === "forever") return { id, t, body: [] };
+  return { id, t: "if", cond: conds[0] ? conds[0][0] : "", body: [], els: [] };
+};
+function condOptions() {
+  const o = [];
+  lab.comps.forEach(c => {
+    const L = compLabel(c);
+    if (c.type === "Butang") { o.push([`${c.id}|tekan`, `${L} ditekan`]); o.push([`${c.id}|lepas`, `${L} tidak ditekan`]); }
+    if (c.type === "LDR") { o.push([`${c.id}|gelap`, `${L}: gelap`]); o.push([`${c.id}|terang`, `${L}: terang`]); }
+    if (c.type === "Ultrasonik") [10, 20, 30, 50].forEach(v => o.push([`${c.id}|lt${v}`, `${L}: jarak < ${v} cm`]));
+  });
+  return o;
+}
+function findList(id, list = lab.prog, parent = null) {
+  for (let i = 0; i < list.length; i++) {
+    const b = list[i];
+    if (b.id === id) return { list, i, b };
+    for (const f of ["body", "els"]) if (b[f]) { const r = findList(id, b[f], b); if (r) return r; }
+  }
+  return null;
+}
+function targetList() {
+  if (!lab.target) return lab.prog;
+  const r = findList(lab.target.id);
+  return r ? r.b[lab.target.f] : lab.prog;
+}
+function sel(name, opts, val) {
+  return `<select data-f="${name}">${opts.map(([v, t]) => `<option value="${esc(v)}" ${String(v) === String(val) ? "selected" : ""}>${esc(t)}</option>`).join("")}</select>`;
+}
+function zone(id, f, label) {
+  const on = lab.target ? (lab.target.id === id && lab.target.f === f) : id === null;
+  return `<button class="zone ${on ? "on" : ""}" data-zid="${id || ""}" data-zf="${f}">${on ? "Blok baharu masuk di sini" : label}</button>`;
+}
+function blkHTML(b) {
+  const tools = `<span class="blk-tools"><button data-up="${b.id}" aria-label="Naikkan">${ICON_UP}</button><button data-rm="${b.id}" aria-label="Buang">${ICON_X}</button></span>`;
+  let row = "", cls = "", body = "";
+  if (b.t === "out") {
+    const outs = lab.comps.filter(c => LABTYPES[c.type].jenis === "out").map(c => [c.id, compLabel(c)]);
+    if (!outs.find(o => o[0] === b.c)) outs.unshift([b.c, "(pilih komponen)"]);
+    row = `<b>Tetapkan</b>${sel("c", outs, b.c)}${sel("on", [["1", "HIDUP"], ["0", "MATI"]], b.on ? "1" : "0")}`;
+  } else if (b.t === "servo") {
+    const sv = lab.comps.filter(c => c.type === "Servo").map(c => [c.id, compLabel(c)]);
+    if (!sv.find(o => o[0] === b.c)) sv.unshift([b.c, "(pilih servo)"]);
+    row = `<b>Putar</b>${sel("c", sv, b.c)}<b>ke</b>${sel("deg", [0, 45, 90, 135, 180].map(d => [d, d + "°"]), b.deg)}`;
+  } else if (b.t === "wait") {
+    cls = "k-ctl"; row = `<b>Tunggu</b>${sel("s", [0.2, 0.5, 1, 2, 3].map(v => [v, v + " saat"]), b.s)}`;
+  } else if (b.t === "repeat") {
+    cls = "k-ctl"; row = `<b>Ulang</b>${sel("n", [2, 3, 4, 5, 10].map(v => [v, v + " kali"]), b.n)}`;
+    body = `<div class="blk-body">${b.body.map(blkHTML).join("")}${zone(b.id, "body", "+ Tambah blok ke dalam ulang")}</div>`;
+  } else if (b.t === "forever") {
+    cls = "k-ctl"; row = `<b>Ulang selamanya</b>`;
+    body = `<div class="blk-body">${b.body.map(blkHTML).join("")}${zone(b.id, "body", "+ Tambah blok ke dalam ulang selamanya")}</div>`;
+  } else {
+    cls = "k-log";
+    const co = condOptions();
+    if (!co.find(o => o[0] === b.cond)) co.unshift([b.cond, "(tambah sensor dahulu)"]);
+    row = `<b>Jika</b>${sel("cond", co, b.cond)}`;
+    body = `<div class="blk-body">${b.body.map(blkHTML).join("")}${zone(b.id, "body", "+ Tambah blok jika benar")}</div>
+      <div class="blk-sub">jika tidak</div><div class="blk-body">${b.els.map(blkHTML).join("")}${zone(b.id, "els", "+ Tambah blok jika tidak")}</div>`;
+  }
+  return `<div class="blk ${cls}" data-bid="${b.id}"><div class="blk-row">${row}${tools}</div>${body}</div>`;
+}
+function renderProg() {
+  $("program").innerHTML = lab.prog.map(blkHTML).join("") + zone(null, "root", "+ Tambah blok di sini");
+  $("blkHint").textContent = lab.target ? "Blok baharu akan dimasukkan ke dalam blok yang dipilih. Ketik ruang bawah sekali untuk kembali ke luar." : "Ketik blok di atas untuk menambahnya. Ketik ruang bertitik dalam blok Ulang atau Jika untuk memasukkan blok ke dalamnya.";
+  renderCode();
+}
+$("program").addEventListener("change", e => {
+  const s = e.target.closest("select"); if (!s) return;
+  const r = findList(s.closest("[data-bid]").dataset.bid); if (!r) return;
+  const f = s.dataset.f, v = s.value;
+  r.b[f] = f === "on" ? v === "1" : (f === "deg" || f === "n" || f === "s") ? parseFloat(v) : v;
+  renderCode();
+});
+$("program").addEventListener("click", e => {
+  const up = e.target.closest("[data-up]"), rm = e.target.closest("[data-rm]"), z = e.target.closest("[data-zf]");
+  if (rm) { const r = findList(rm.dataset.rm); if (r) { r.list.splice(r.i, 1); if (lab.target && !findList(lab.target.id)) lab.target = null; renderProg(); } return; }
+  if (up) { const r = findList(up.dataset.up); if (r && r.i > 0) { [r.list[r.i - 1], r.list[r.i]] = [r.list[r.i], r.list[r.i - 1]]; renderProg(); } return; }
+  if (z) { lab.target = z.dataset.zf === "root" ? null : { id: z.dataset.zid, f: z.dataset.zf }; renderProg(); }
+});
+document.querySelectorAll("#blkPalette [data-blk]").forEach(b => b.onclick = () => {
+  if (lab.running) return;
+  targetList().push(newBlk(b.dataset.blk));
+  renderProg();
+});
+$("btnClrProg").onclick = () => { if (lab.running) return; lab.prog = []; lab.target = null; renderProg(); };
+
+/* ---------- Simulasi ---------- */
+const labSleep = ms => new Promise(r => setTimeout(r, ms));
+async function labWait(ms) { const t0 = Date.now(); while (!lab.stop && Date.now() - t0 < ms) await labSleep(Math.min(40, ms)); }
+function beep(on) {
+  try {
+    if (on && !osc) {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      osc = audioCtx.createOscillator(); const g = audioCtx.createGain(); g.gain.value = 0.06;
+      osc.type = "square"; osc.frequency.value = 880; osc.connect(g).connect(audioCtx.destination); osc.start();
+    } else if (!on && osc) { osc.stop(); osc = null; }
+  } catch (e) {}
+}
+function syncBeep() { beep(lab.comps.some(c => c.type === "Pembaz" && c.on)); }
+function hl(id) {
+  document.querySelectorAll(".blk.run").forEach(x => x.classList.remove("run"));
+  if (id) { const el = document.querySelector(`.blk[data-bid="${id}"]`); if (el) el.classList.add("run"); }
+}
+function evalCond(cond) {
+  const [cid, k] = cond.split("|"); const c = labComp(cid); if (!c) return false;
+  if (k === "tekan") return c.pressed;
+  if (k === "lepas") return !c.pressed;
+  if (k === "gelap") return c.ldr < 40;
+  if (k === "terang") return c.ldr >= 40;
+  if (k.startsWith("lt")) return c.jarak < parseInt(k.slice(2));
+  return false;
+}
+async function runList(list) { for (const b of list) { if (lab.stop) return; await runBlock(b); } }
+async function runBlock(b) {
+  hl(b.id);
+  if (b.t === "out") { const c = labComp(b.c); if (c) { c.on = b.on; drawLab(); syncBeep(); } await labWait(60); }
+  else if (b.t === "servo") { const c = labComp(b.c); if (c) { c.deg = b.deg; drawLab(); } await labWait(450); }
+  else if (b.t === "wait") await labWait(b.s * 1000);
+  else if (b.t === "repeat") { for (let i = 0; i < b.n && !lab.stop; i++) await runList(b.body); }
+  else if (b.t === "forever") { while (!lab.stop) { await runList(b.body); await labWait(30); } }
+  else if (b.t === "if") { await runList(evalCond(b.cond) ? b.body : b.els); await labWait(30); }
+}
+function usedComps(list = lab.prog, set = new Set()) {
+  list.forEach(b => {
+    if (b.c) set.add(b.c);
+    if (b.cond) set.add(b.cond.split("|")[0]);
+    if (b.body) usedComps(b.body, set);
+    if (b.els) usedComps(b.els, set);
+  });
+  return set;
+}
+$("btnRun").onclick = async () => {
+  if (lab.running) return;
+  if (!lab.prog.length) { note($("labFb"), "bad", "Kod kosong. Tambah blok dahulu."); return; }
+  const errs = [];
+  usedComps().forEach(id => {
+    const c = labComp(id);
+    if (!c) { errs.push("Ada blok yang belum memilih komponen"); return; }
+    const st = compStatus(c);
+    if (!st.ok) errs.push(`${compLabel(c)}: ${st.msgs.join("; ")}`);
+  });
+  if (errs.length) { note($("labFb"), "bad", "Litar belum lengkap. " + [...new Set(errs)].join(". ") + "."); speak("Semak sambungan wayar."); return; }
+  lab.running = true; lab.stop = false;
+  $("btnRun").disabled = true; $("btnStop").disabled = false;
+  note($("labFb"), "info", "Simulasi sedang berjalan. Ubah input sensor untuk melihat tindak balas.");
+  await runList(lab.prog);
+  lab.running = false;
+  $("btnRun").disabled = false; $("btnStop").disabled = true;
+  hl(null);
+  if (!lab.stop) note($("labFb"), "ok", "Atur cara selesai dijalankan.");
+};
+$("btnStop").onclick = () => {
+  lab.stop = true;
+  lab.comps.forEach(c => { if (LABTYPES[c.type].jenis === "out") c.on = false; });
+  syncBeep(); drawLab();
+  note($("labFb"), "info", "Simulasi dihentikan.");
+};
+
+/* ---------- Kod Arduino ---------- */
+function varName(c) { return { LED: "led", Pembaz: "pembaz", Motor: "motor", Servo: "servo", Butang: "butang", LDR: "ldr", Ultrasonik: "jarak" }[c.type] + c.n; }
+const pinNum = p => p ? (p[0] === "D" ? p.slice(1) : p) : "?";
+function condCode(cond) {
+  const [cid, k] = cond.split("|"); const c = labComp(cid); if (!c) return "false";
+  const v = varName(c);
+  if (k === "tekan") return `digitalRead(${v.toUpperCase()}) == LOW`;
+  if (k === "lepas") return `digitalRead(${v.toUpperCase()}) == HIGH`;
+  if (k === "gelap") return `analogRead(${v.toUpperCase()}) < 409`;
+  if (k === "terang") return `analogRead(${v.toUpperCase()}) >= 409`;
+  return `bacaJarak(TRIG${c.n}, ECHO${c.n}) < ${k.slice(2)}`;
+}
+function blkCode(list, ind, depth) {
+  const pad = "  ".repeat(ind);
+  return list.map(b => {
+    const c = b.c ? labComp(b.c) : null;
+    if (b.t === "out") return c ? `${pad}digitalWrite(${varName(c).toUpperCase()}, ${b.on ? "HIGH" : "LOW"});` : `${pad}// pilih komponen output`;
+    if (b.t === "servo") return c ? `${pad}${varName(c)}.write(${b.deg});\n${pad}delay(450);` : `${pad}// pilih servo`;
+    if (b.t === "wait") return `${pad}delay(${Math.round(b.s * 1000)});`;
+    if (b.t === "repeat") { const v = "ijk"[depth % 3]; return `${pad}for (int ${v} = 0; ${v} < ${b.n}; ${v}++) {\n${blkCode(b.body, ind + 1, depth + 1)}\n${pad}}`; }
+    if (b.t === "forever") return blkCode(b.body, ind, depth);
+    let s = `${pad}if (${condCode(b.cond)}) {\n${blkCode(b.body, ind + 1, depth)}\n${pad}}`;
+    if (b.els.length) s += ` else {\n${blkCode(b.els, ind + 1, depth)}\n${pad}}`;
+    return s;
+  }).filter(x => x !== "").join("\n");
+}
+function renderCode() {
+  const lines = ["// Dijana oleh ImbasKomp AI (Makmal litar)"];
+  const servos = lab.comps.filter(c => c.type === "Servo");
+  const ultra = lab.comps.filter(c => c.type === "Ultrasonik");
+  if (servos.length) lines.push("#include <Servo.h>");
+  lines.push("");
+  lab.comps.forEach(c => {
+    const st = compStatus(c), v = varName(c);
+    if (c.type === "Servo") { lines.push(`Servo ${v};`); lines.push(`const int ${v.toUpperCase()}_PIN = ${pinNum(st.pins.s)};`); }
+    else if (c.type === "Ultrasonik") { lines.push(`const int TRIG${c.n} = ${pinNum(st.pins.t)};`); lines.push(`const int ECHO${c.n} = ${pinNum(st.pins.e)};`); }
+    else if (c.type === "LDR") lines.push(`const int ${v.toUpperCase()} = ${st.pins.ao || "A0"};`);
+    else { const lid = LABTYPES[c.type].legs[0][0]; lines.push(`const int ${v.toUpperCase()} = ${pinNum(st.pins[lid])};`); }
+  });
+  if (ultra.length) {
+    lines.push("", "long bacaJarak(int trig, int echo) {", "  digitalWrite(trig, LOW);", "  delayMicroseconds(2);", "  digitalWrite(trig, HIGH);", "  delayMicroseconds(10);", "  digitalWrite(trig, LOW);", "  return pulseIn(echo, HIGH) * 0.034 / 2;", "}");
+  }
+  const fi = lab.prog.findIndex(b => b.t === "forever");
+  const setupBlocks = fi >= 0 ? lab.prog.slice(0, fi) : lab.prog;
+  const loopBlocks = fi >= 0 ? lab.prog[fi].body : [];
+  lines.push("", "void setup() {");
+  lab.comps.forEach(c => {
+    const v = varName(c);
+    if (c.type === "Servo") lines.push(`  ${v}.attach(${v.toUpperCase()}_PIN);`);
+    else if (c.type === "Ultrasonik") { lines.push(`  pinMode(TRIG${c.n}, OUTPUT);`); lines.push(`  pinMode(ECHO${c.n}, INPUT);`); }
+    else if (c.type === "Butang") lines.push(`  pinMode(${v.toUpperCase()}, INPUT_PULLUP);`);
+    else if (c.type !== "LDR") lines.push(`  pinMode(${v.toUpperCase()}, OUTPUT);`);
+  });
+  const sc = blkCode(setupBlocks, 1, 0); if (sc) lines.push(sc);
+  lines.push("}", "", "void loop() {");
+  const lc = blkCode(loopBlocks, 1, 0); if (lc) lines.push(lc);
+  lines.push("}");
+  $("ardCode").textContent = lines.join("\n");
+}
+$("btnCopyCode").onclick = async () => {
+  try { await navigator.clipboard.writeText($("ardCode").textContent); note($("labFb"), "ok", "Kod Arduino disalin."); }
+  catch (e) { note($("labFb"), "bad", "Kod tidak dapat disalin secara automatik. Pilih teks kod dan salin secara manual."); }
+};
+
+/* ---------- Contoh projek ---------- */
+const EXAMPLES = {
+  kelip: { comps: [["LED", { a: "D13", k: "GND" }]],
+    prog: c => [{ t: "forever", body: [{ t: "out", c: c[0], on: true }, { t: "wait", s: 0.5 }, { t: "out", c: c[0], on: false }, { t: "wait", s: 0.5 }] }] },
+  lampu: { comps: [["LDR", { ao: "A0", v: "5V", g: "GND" }], ["LED", { a: "D13", k: "GND" }]],
+    prog: c => [{ t: "forever", body: [{ t: "if", cond: c[0] + "|gelap", body: [{ t: "out", c: c[1], on: true }], els: [{ t: "out", c: c[1], on: false }] }] }] },
+  penggera: { comps: [["Ultrasonik", { v: "5V", t: "D6", e: "D7", g: "GND" }], ["Pembaz", { p: "D8", n: "GND" }], ["LED", { a: "D13", k: "GND" }]],
+    prog: c => [{ t: "forever", body: [{ t: "if", cond: c[0] + "|lt20", body: [{ t: "out", c: c[1], on: true }, { t: "out", c: c[2], on: true }, { t: "wait", s: 0.2 }, { t: "out", c: c[2], on: false }, { t: "wait", s: 0.2 }], els: [{ t: "out", c: c[1], on: false }] }] }] },
+  palang: { comps: [["Butang", { s: "D2", g: "GND" }], ["Servo", { s: "D9", v: "5V", g: "GND" }]],
+    prog: c => [{ t: "servo", c: c[1], deg: 0 }, { t: "forever", body: [{ t: "if", cond: c[0] + "|tekan", body: [{ t: "servo", c: c[1], deg: 90 }, { t: "wait", s: 2 }, { t: "servo", c: c[1], deg: 0 }], els: [] }] }] },
+  kipas: { comps: [["Butang", { s: "D2", g: "GND" }], ["Motor", { in: "D5", g: "GND" }]],
+    prog: c => [{ t: "forever", body: [{ t: "if", cond: c[0] + "|tekan", body: [{ t: "out", c: c[1], on: true }], els: [{ t: "out", c: c[1], on: false }] }] }] }
+};
+function withIds(list) { return list.map(b => ({ id: "b" + (lab.seq++), ...b, ...(b.body ? { body: withIds(b.body) } : {}), ...(b.els ? { els: withIds(b.els) } : {}) })); }
+function loadExample(key) {
+  const ex = EXAMPLES[key]; if (!ex) return;
+  if (lab.running) $("btnStop").click();
+  lab.comps = []; lab.wires = []; lab.sel = null; lab.target = null;
+  const self = $("labSelf").checked;
+  const ids = ex.comps.map(([type, wiring]) => {
+    const c = addComp(type);
+    if (!self) Object.entries(wiring).forEach(([leg, pin]) => lab.wires.push({ pin, comp: c.id, leg }));
+    return c.id;
+  });
+  lab.prog = withIds(ex.prog(ids));
+  refreshLab();
+  hideNote($("labFb"));
+  labHint(self ? "Komponen dan kod sudah disediakan. Sambungkan wayar sendiri sehingga semua komponen bertanda hijau, kemudian tekan Jalankan." : "Contoh dimuatkan. Tekan Jalankan, kemudian ubah input sensor.");
+}
+$("labEx").onchange = () => loadExample($("labEx").value);
+function refreshLab() { drawLab(); renderSensors(); renderProg(); }
 
 /* =========================================================
    MOD KUIZ
@@ -1226,6 +2016,7 @@ $("btnLoadLb").onclick = loadLb;
 document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
   const nm = t.dataset.mode;
   if (mode === "kuiz" && nm !== "kuiz") abortQuiz();
+  if (mode === "lab" && nm !== "lab" && lab.running) $("btnStop").click();
   mode = nm;
   document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", x === t ? "true" : "false"));
   document.querySelectorAll(".view").forEach(p => p.classList.toggle("on", p.id === "view-" + nm));
@@ -1234,6 +2025,8 @@ document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
   if (nm === "litar") renderMission();
   if (nm === "markah") loadLb();
   if (nm === "uji") renderMatrix();
+  if (nm === "meter") renderMeter();
+  if (nm === "lab") refreshLab();
 });
 $("btnSound").onclick = () => { soundOn = !soundOn; store("ik_snd", soundOn); updSoundBtn(); if (!soundOn && "speechSynthesis" in window) speechSynthesis.cancel(); };
 
@@ -1269,6 +2062,8 @@ async function init() {
   $("ujiActual").innerHTML = keys.map(k => `<option value="${esc(k)}">${esc(compName(k))}</option>`).join("");
   setTopic(topic);
   renderMatrix();
+  newOhm();
+  loadExample("kelip"); $("labEx").value = "kelip";
   running = true;
   loop();
 }
