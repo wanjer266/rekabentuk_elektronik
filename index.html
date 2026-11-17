@@ -146,6 +146,16 @@ svg.circuit{width:100%;height:auto;border:1px solid var(--edge);border-radius:6p
 .timer div.low{background:var(--rail-red)}
 .scoreline{display:flex;gap:22px;margin-top:12px;font-size:14px;color:var(--soft)}
 .scoreline b{display:block;font-family:var(--display);font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.opt{display:flex;align-items:center;gap:10px;text-align:left;padding:10px 12px;border:1.5px solid var(--edge);border-radius:8px;background:var(--surface);cursor:pointer;font-family:var(--display);font-weight:650;font-size:15px;line-height:1.2;min-height:60px}
+.opt:hover:not(:disabled){border-color:var(--rail-blue)}
+.opt svg{flex:0 0 52px;width:52px;height:auto;color:var(--ink)}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--led);background:#EAF7F0;color:#145C37}
+.opt.right svg{color:#145C37}
+.opt.wrong{border-color:var(--rail-red);background:#FCECEE;color:#8E1A27;opacity:.8}
+.opt.wrong svg{color:#8E1A27}
+@media(max-width:380px){.opts{grid-template-columns:1fr}}
 .final{font-family:var(--display);font-stretch:125%;font-weight:800;font-size:56px;line-height:1;margin:4px 0}
 label.field{display:block;margin-top:12px;font-size:14px;color:var(--soft)}
 input,select{width:100%;padding:10px 12px;border:1px solid var(--edge);border-radius:8px;font-size:16px;margin-top:4px;background:#fff}
@@ -254,7 +264,7 @@ footer{max-width:1040px;margin:0 auto;padding:6px 18px 28px;font-size:13px;color
     <div class="view" id="view-kuiz">
       <div id="quizStart">
         <h2>Kuiz cabaran</h2>
-        <p class="lead">Baca petunjuk, cari komponen yang sepadan dan tunjukkan kepada kamera. Lebih cepat dijawab, lebih tinggi markahnya.</p>
+        <p class="lead">Baca petunjuk, kemudian pilih jawapan atau tunjukkan komponen sebenar kepada kamera. Lebih cepat dijawab, lebih tinggi markahnya.</p>
         <button class="btn" id="btnQuiz">Mula kuiz</button>
       </div>
       <div id="quizPlay" style="display:none">
@@ -268,6 +278,7 @@ footer{max-width:1040px;margin:0 auto;padding:6px 18px 28px;font-size:13px;color
             <div>Masa<b id="qTime">20</b></div>
           </div>
         </div>
+        <div class="opts" id="qOpts"></div>
         <div class="note" id="quizFb"></div>
         <div class="actions"><button class="btn line" id="btnSkip">Langkau soalan</button></div>
       </div>
@@ -788,6 +799,7 @@ function nextQ() {
   $("qNum").textContent = `Soalan ${quiz.i + 1} daripada ${quiz.qs.length}`;
   $("qClue").textContent = COMPONENTS[k].clue;
   hideNote($("quizFb"));
+  renderOptions(k);
   updQuizStats();
   speak(COMPONENTS[k].clue);
   quiz.iv = setInterval(() => {
@@ -796,6 +808,7 @@ function nextQ() {
     if (quiz.timeLeft <= 0) {
       clearInterval(quiz.iv);
       quiz.answered = true;
+      revealAnswer(k);
       note($("quizFb"), "bad", `Masa tamat. Jawapannya ${COMPONENTS[k].nama}.`);
       speak("Masa tamat. Jawapannya " + COMPONENTS[k].pendek);
       quiz.i++;
@@ -803,7 +816,19 @@ function nextQ() {
     }
   }, 1000);
 }
-function quizLock(k) {
+function renderOptions(target) {
+  const others = shuffle(availKeys().filter(x => x !== target)).slice(0, 3);
+  const opts = shuffle([target, ...others]);
+  $("qOpts").innerHTML = opts.map(k => `<button class="opt" data-k="${esc(k)}">${symSvg(k, 52)}<span>${esc(COMPONENTS[k].nama)}</span></button>`).join("");
+  $("qOpts").querySelectorAll(".opt").forEach(b => b.onclick = () => answerQuiz(b.dataset.k, b));
+}
+function revealAnswer(target) {
+  $("qOpts").querySelectorAll(".opt").forEach(b => {
+    b.disabled = true;
+    if (b.dataset.k === target) b.classList.add("right");
+  });
+}
+function answerQuiz(k, btn) {
   if (!quiz || quiz.answered || quiz.i >= quiz.qs.length) return;
   const target = quiz.qs[quiz.i];
   if (k === target) {
@@ -812,14 +837,18 @@ function quizLock(k) {
     const pts = 10 + quiz.timeLeft;
     quiz.score += pts; quiz.betul++;
     updQuizStats();
+    revealAnswer(target);
     note($("quizFb"), "ok", `Betul, ${COMPONENTS[k].nama}. Tambah ${pts} markah.`);
     speak("Betul!");
     quiz.i++;
-    setTimeout(nextQ, 1500);
+    setTimeout(nextQ, 1600);
   } else {
+    const b = btn || $("qOpts").querySelector(`.opt[data-k="${CSS.escape(k)}"]`);
+    if (b) { b.classList.add("wrong"); b.disabled = true; }
     note($("quizFb"), "bad", `Itu ${compName(k)}. Cuba lagi.`);
   }
 }
+const quizLock = k => answerQuiz(k, null);
 function endQuiz() {
   clearInterval(quiz.iv);
   quiz.masa = Math.round((Date.now() - quiz.t0) / 1000);
@@ -842,6 +871,7 @@ $("btnSkip").onclick = () => {
   quiz.answered = true;
   clearInterval(quiz.iv);
   const k = quiz.qs[quiz.i];
+  revealAnswer(k);
   note($("quizFb"), "info", `Jawapannya ${COMPONENTS[k].nama}.`);
   quiz.i++;
   setTimeout(nextQ, 1500);
