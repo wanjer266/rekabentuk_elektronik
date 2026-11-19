@@ -210,8 +210,13 @@ footer{max-width:1040px;margin:0 auto;padding:6px 18px 28px;font-size:13px;color
 .blocks-pal .b-out{border-left:5px solid var(--rail-blue)}
 .blocks-pal .b-ctl{border-left:5px solid var(--copper)}
 .blocks-pal .b-log{border-left:5px solid var(--led)}
-.labwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:6px}
-svg.labsvg{min-width:700px;width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;background:#F6F7F3;font-family:var(--body);touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.zoombar{display:flex;align-items:center;gap:6px;margin:0 0 6px}
+.zoombar button{height:34px;min-width:34px;border:1px solid var(--edge);background:var(--surface);border-radius:6px;display:grid;place-items:center;cursor:pointer;font-family:var(--display);font-weight:650;font-size:14px;padding:0 10px}
+.zoombar button:disabled{opacity:.4;cursor:default}
+.zoombar svg{width:16px;height:16px}
+.zoombar span{min-width:46px;text-align:center;font-size:14px;color:var(--soft);font-variant-numeric:tabular-nums}
+.labwrap{overflow:auto;max-height:80vh;-webkit-overflow-scrolling:touch;border-radius:6px}
+svg.labsvg{display:block;width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;background:#F6F7F3;font-family:var(--body);touch-action:manipulation;user-select:none;-webkit-user-select:none}
 .labsvg [data-leg],.labsvg [data-pin],.labsvg [data-wire],.labsvg [data-del],.labsvg [data-press]{cursor:pointer}
 .lab-hint{font-size:13px;color:var(--soft);margin:8px 0 0}
 .swipe{display:none}
@@ -359,10 +364,10 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
     <!-- Makmal Litar -->
     <div class="view" id="view-lab">
       <h2>Makmal litar</h2>
-      <details class="info"><summary>Cara guna</summary><div><p>1. Tambah komponen atau pilih contoh projek.</p><p>2. Ketik kaki komponen, kemudian ketik pin pada ESP32 untuk menyambung wayar. Ketik wayar untuk membuangnya.</p><p>3. Susun kod blok, kemudian tekan Jalankan.</p><p>Di telefon, leret papan ke kiri atau kanan untuk melihat semua pin.</p></div></details>
+      <details class="info"><summary>Cara guna</summary><div><p>1. Tambah komponen atau pilih contoh projek.</p><p>2. Ketik kaki komponen, kemudian ketik pin pada ESP32 untuk menyambung wayar. Ketik wayar untuk membuangnya.</p><p>3. Susun kod blok, kemudian tekan Jalankan.</p><p>Papan dipaparkan penuh dalam satu skrin. Tekan butang tambah untuk zum masuk supaya kaki dan pin lebih mudah diketik, kemudian leret untuk melihat bahagian lain. Tekan Muat skrin untuk kembali.</p></div></details>
 
       <div class="lab-bar">
-        <label class="field" style="margin:0;flex:1">Contoh projek<select id="labEx">
+        <label class="field" style="margin:0">Contoh projek<select id="labEx">
           <option value="">Pilih contoh…</option>
           <option value="kelip">LED berkelip</option>
           <option value="lampu">Lampu automatik (LDR)</option>
@@ -383,7 +388,13 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
         <button data-add="LDR">LDR</button>
         <button data-add="Ultrasonik">Ultrasonik</button>
       </div>
-      <div class="labwrap"><svg class="labsvg" id="labSvg" viewBox="0 0 760 510" role="img" aria-label="Papan litar"></svg></div>
+      <div class="zoombar" role="group" aria-label="Zum papan litar">
+        <button id="zOut" aria-label="Zum keluar"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8h10"/></svg></button>
+        <span id="zLvl">100%</span>
+        <button id="zIn" aria-label="Zum masuk"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8h10M8 3v10"/></svg></button>
+        <button id="zFit">Muat skrin</button>
+      </div>
+      <div class="labwrap" id="labWrap"><svg class="labsvg" id="labSvg" viewBox="0 0 760 510" role="img" aria-label="Papan litar"></svg></div>
       <p class="lab-hint" id="labHint"></p>
       <div class="actions" style="margin-top:6px"><button class="btn line" id="btnClrWire">Buang semua wayar</button></div>
       <ul class="checklist" id="labCheck"></ul>
@@ -1835,6 +1846,43 @@ function loadExample(key) {
 $("labEx").onchange = () => loadExample($("labEx").value);
 function refreshLab() { drawLab(); renderSensors(); renderProg(); }
 
+/* ---------- Zum papan ---------- */
+const ZOOMS = [1, 1.5, 2, 2.5, 3];
+let zoomIdx = 0;
+function applyZoom(keepCenter = true) {
+  const wrap = $("labWrap"), svg = $("labSvg");
+  const cx = wrap.scrollLeft + wrap.clientWidth / 2, cy = wrap.scrollTop + wrap.clientHeight / 2;
+  const oldW = svg.getBoundingClientRect().width || 1;
+  const z = ZOOMS[zoomIdx];
+  svg.style.width = (z * 100) + "%";
+  $("zLvl").textContent = Math.round(z * 100) + "%";
+  $("zOut").disabled = zoomIdx === 0;
+  $("zIn").disabled = zoomIdx === ZOOMS.length - 1;
+  $("zFit").disabled = zoomIdx === 0;
+  const ratio = svg.getBoundingClientRect().width / oldW;
+  if (keepCenter) {
+    wrap.scrollLeft = cx * ratio - wrap.clientWidth / 2;
+    wrap.scrollTop = cy * ratio - wrap.clientHeight / 2;
+  }
+}
+$("zIn").onclick = () => { if (zoomIdx < ZOOMS.length - 1) { zoomIdx++; applyZoom(); } };
+$("zOut").onclick = () => { if (zoomIdx > 0) { zoomIdx--; applyZoom(); } };
+$("zFit").onclick = () => { zoomIdx = 0; applyZoom(false); $("labWrap").scrollLeft = 0; $("labWrap").scrollTop = 0; };
+/* Zum dengan dua jari pada papan */
+(() => {
+  const wrap = $("labWrap"); let d0 = 0, z0 = 0;
+  const dist = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+  wrap.addEventListener("touchstart", e => { if (e.touches.length === 2) { d0 = dist(e.touches); z0 = zoomIdx; } }, { passive: true });
+  wrap.addEventListener("touchmove", e => {
+    if (e.touches.length !== 2 || !d0) return;
+    e.preventDefault();
+    const target = ZOOMS[z0] * dist(e.touches) / d0;
+    let best = 0; ZOOMS.forEach((z, i) => { if (Math.abs(z - target) < Math.abs(ZOOMS[best] - target)) best = i; });
+    if (best !== zoomIdx) { zoomIdx = best; applyZoom(); }
+  }, { passive: false });
+  wrap.addEventListener("touchend", () => { d0 = 0; });
+})();
+
 /* =========================================================
    MOD KUIZ
    ========================================================= */
@@ -2137,6 +2185,7 @@ async function init() {
   renderMatrix();
   newOhm();
   loadExample("kelip"); $("labEx").value = "kelip";
+  applyZoom(false);
   running = true;
   loop();
 }
