@@ -365,7 +365,7 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
     <!-- Makmal Litar -->
     <div class="view" id="view-lab">
       <h2>Makmal litar</h2>
-      <details class="info"><summary>Cara guna</summary><div><p>1. Tambah komponen atau pilih contoh projek.</p><p>2. Ketik kaki komponen, kemudian ketik pin pada ESP32 untuk menyambung wayar. Ketik wayar untuk membuangnya.</p><p>3. Susun kod blok, kemudian tekan Jalankan.</p><p>Untuk menguji sensor, seret objek di bawah sensor ultrasonik naik atau turun untuk mengubah jarak, seret matahari pada LDR untuk mengubah cahaya, dan tekan butang pada papan.</p><p>Papan dipaparkan penuh dalam satu skrin. Tekan butang tambah untuk zum masuk supaya kaki dan pin lebih mudah diketik, kemudian leret untuk melihat bahagian lain. Tekan Muat skrin untuk kembali.</p></div></details>
+      <details class="info"><summary>Cara guna</summary><div><p>1. Tambah komponen atau pilih contoh projek.</p><p>2. Ketik kaki komponen, kemudian ketik pin pada ESP32 untuk menyambung wayar. Ketik wayar untuk membuangnya.</p><p>3. Susun kod blok, kemudian tekan Jalankan.</p><p>Butang tekan berbunyi klik dan pembaz berbunyi semasa simulasi. Gunakan butang pembesar suara di atas untuk mematikan bunyi.</p><p>Untuk menguji sensor, seret objek di bawah sensor ultrasonik naik atau turun untuk mengubah jarak, seret matahari pada LDR untuk mengubah cahaya, dan tekan butang pada papan.</p><p>Papan dipaparkan penuh dalam satu skrin. Tekan butang tambah untuk zum masuk supaya kaki dan pin lebih mudah diketik, kemudian leret untuk melihat bahagian lain. Tekan Muat skrin untuk kembali.</p></div></details>
 
       <div class="lab-bar">
         <label class="field" style="margin:0">Contoh projek<select id="labEx">
@@ -1525,7 +1525,7 @@ function renderSensors() {
   $("labSensors").querySelectorAll("[data-ldr]").forEach(r => r.oninput = () => { const c = labComp(r.dataset.ldr); c.ldr = +r.value; $("v-" + c.id).textContent = c.ldr; drawLab(); });
   $("labSensors").querySelectorAll("[data-jarak]").forEach(r => r.oninput = () => { const c = labComp(r.dataset.jarak); c.jarak = +r.value; $("v-" + c.id).textContent = c.jarak; drawLab(); });
   $("labSensors").querySelectorAll("[data-hold]").forEach(b => {
-    const set = v => { const c = labComp(b.dataset.hold); if (c && c.pressed !== v) { c.pressed = v; drawLab(); } };
+    const set = v => { const c = labComp(b.dataset.hold); if (c && c.pressed !== v) { c.pressed = v; drawLab(); playClick(v); } };
     b.onpointerdown = e => { e.preventDefault(); set(true); };
     b.onpointerup = b.onpointerleave = b.onpointercancel = () => set(false);
     b.oncontextmenu = e => e.preventDefault();
@@ -1543,6 +1543,7 @@ function connect(cid, leg, pin) {
   if (other) { labHint(`Pin ${pinLabel(pin)} sudah digunakan oleh ${compLabel(labComp(other.comp))}. Pilih pin lain.`); lab.sel = null; drawLab(); return; }
   lab.wires = lab.wires.filter(w => !(w.comp === cid && w.leg === leg));
   lab.wires.push({ pin, comp: cid, leg });
+  playBlip();
   labHint(`${lname} ${compLabel(c)} disambung ke ${pinLabel(pin)}.`);
   lab.sel = null;
   refreshLab();
@@ -1614,8 +1615,8 @@ $("labSvg").addEventListener("pointerdown", e => {
   const pr = e.target.closest("[data-press]");
   if (!pr) return;
   const c = labComp(pr.dataset.press);
-  c.pressed = true; drawLab();
-  const up = () => { c.pressed = false; drawLab(); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); };
+  c.pressed = true; drawLab(); playClick(true);
+  const up = () => { c.pressed = false; drawLab(); playClick(false); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); };
   window.addEventListener("pointerup", up);
   window.addEventListener("pointercancel", up);
 });
@@ -1727,13 +1728,53 @@ $("btnClrProg").onclick = () => { if (lab.running) return; lab.prog = []; lab.ta
 /* ---------- Simulasi ---------- */
 const labSleep = ms => new Promise(r => setTimeout(r, ms));
 async function labWait(ms) { const t0 = Date.now(); while (!lab.stop && Date.now() - t0 < ms) await labSleep(Math.min(40, ms)); }
+/* ---------- Bunyi (Web Audio) ---------- */
+function audio() {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    return audioCtx;
+  } catch (e) { return null; }
+}
+/* Telefon (terutama iPhone) hanya membenarkan bunyi selepas sentuhan pengguna */
+document.addEventListener("pointerdown", () => { if (soundOn) audio(); }, true);
+let oscGain = null, lfo = null;
 function beep(on) {
   try {
-    if (on && !osc) {
-      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-      osc = audioCtx.createOscillator(); const g = audioCtx.createGain(); g.gain.value = 0.06;
-      osc.type = "square"; osc.frequency.value = 880; osc.connect(g).connect(audioCtx.destination); osc.start();
-    } else if (!on && osc) { osc.stop(); osc = null; }
+    if (on && soundOn && !osc) {
+      const ctx = audio(); if (!ctx) return;
+      osc = ctx.createOscillator(); oscGain = ctx.createGain();
+      osc.type = "square"; osc.frequency.value = 2300;            // pembaz aktif lazimnya sekitar 2.3 kHz
+      oscGain.gain.value = 0.04;
+      lfo = ctx.createOscillator(); const lg = ctx.createGain();   // getaran kecil supaya bunyi seperti pembaz
+      lfo.frequency.value = 30; lg.gain.value = 60; lfo.connect(lg).connect(osc.frequency); lfo.start();
+      osc.connect(oscGain).connect(ctx.destination); osc.start();
+    } else if ((!on || !soundOn) && osc) {
+      const t = audioCtx.currentTime;
+      oscGain.gain.setTargetAtTime(0, t, 0.01);
+      osc.stop(t + 0.05); lfo.stop(t + 0.05);
+      osc = null; lfo = null;
+    }
+  } catch (e) {}
+}
+function playClick(down) {
+  if (!soundOn) return;
+  try {
+    const ctx = audio(); if (!ctx) return;
+    const t = ctx.currentTime, o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "square"; o.frequency.setValueAtTime(down ? 1800 : 1100, t);
+    g.gain.setValueAtTime(down ? 0.12 : 0.07, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.035);
+    o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + 0.04);
+  } catch (e) {}
+}
+function playBlip() {
+  if (!soundOn) return;
+  try {
+    const ctx = audio(); if (!ctx) return;
+    const t = ctx.currentTime, o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "sine"; o.frequency.setValueAtTime(660, t); o.frequency.linearRampToValueAtTime(990, t + 0.08);
+    g.gain.setValueAtTime(0.08, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+    o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + 0.13);
   } catch (e) {}
 }
 function syncBeep() { beep(lab.comps.some(c => c.type === "Pembaz" && c.on)); }
@@ -2205,7 +2246,11 @@ document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
   if (nm === "meter") renderMeter();
   if (nm === "lab") refreshLab();
 });
-$("btnSound").onclick = () => { soundOn = !soundOn; store("ik_snd", soundOn); updSoundBtn(); if (!soundOn && "speechSynthesis" in window) speechSynthesis.cancel(); };
+$("btnSound").onclick = () => {
+  soundOn = !soundOn; store("ik_snd", soundOn); updSoundBtn();
+  if (!soundOn && "speechSynthesis" in window) speechSynthesis.cancel();
+  syncBeep();
+};
 
 /* =========================================================
    MULA
