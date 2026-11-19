@@ -217,6 +217,7 @@ footer{max-width:1040px;margin:0 auto;padding:6px 18px 28px;font-size:13px;color
 .zoombar span{min-width:46px;text-align:center;font-size:14px;color:var(--soft);font-variant-numeric:tabular-nums}
 .labwrap{overflow:auto;max-height:80vh;-webkit-overflow-scrolling:touch;border-radius:6px}
 svg.labsvg{display:block;width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;background:#F6F7F3;font-family:var(--body);touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.labsvg [data-drag]{cursor:ns-resize;touch-action:none}
 .labsvg [data-leg],.labsvg [data-pin],.labsvg [data-wire],.labsvg [data-del],.labsvg [data-press]{cursor:pointer}
 .lab-hint{font-size:13px;color:var(--soft);margin:8px 0 0}
 .swipe{display:none}
@@ -364,7 +365,7 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
     <!-- Makmal Litar -->
     <div class="view" id="view-lab">
       <h2>Makmal litar</h2>
-      <details class="info"><summary>Cara guna</summary><div><p>1. Tambah komponen atau pilih contoh projek.</p><p>2. Ketik kaki komponen, kemudian ketik pin pada ESP32 untuk menyambung wayar. Ketik wayar untuk membuangnya.</p><p>3. Susun kod blok, kemudian tekan Jalankan.</p><p>Papan dipaparkan penuh dalam satu skrin. Tekan butang tambah untuk zum masuk supaya kaki dan pin lebih mudah diketik, kemudian leret untuk melihat bahagian lain. Tekan Muat skrin untuk kembali.</p></div></details>
+      <details class="info"><summary>Cara guna</summary><div><p>1. Tambah komponen atau pilih contoh projek.</p><p>2. Ketik kaki komponen, kemudian ketik pin pada ESP32 untuk menyambung wayar. Ketik wayar untuk membuangnya.</p><p>3. Susun kod blok, kemudian tekan Jalankan.</p><p>Untuk menguji sensor, seret objek di bawah sensor ultrasonik naik atau turun untuk mengubah jarak, seret matahari pada LDR untuk mengubah cahaya, dan tekan butang pada papan.</p><p>Papan dipaparkan penuh dalam satu skrin. Tekan butang tambah untuk zum masuk supaya kaki dan pin lebih mudah diketik, kemudian leret untuk melihat bahagian lain. Tekan Muat skrin untuk kembali.</p></div></details>
 
       <div class="lab-bar">
         <label class="field" style="margin:0">Contoh projek<select id="labEx">
@@ -1427,11 +1428,31 @@ function compGraphic(c) {
     g += `<g data-press="${c.id}"><rect x="${cx - 22}" y="${cy - 22}" width="44" height="44" rx="5" fill="#1B2330"/><circle cx="${cx}" cy="${cy}" r="${c.pressed ? 12 : 14}" fill="${c.pressed ? "#B5652A" : "#E9B23A"}"/></g>`;
     g += `<text x="${cx}" y="${cy + 38}" text-anchor="middle" font-size="12" fill="#59636F">${c.pressed ? "Ditekan" : "Tekan"}</text>`;
   } else if (c.type === "LDR") {
-    g += `<rect x="${cx - 24}" y="${cy - 18}" width="48" height="34" rx="3" fill="#1E9E5A"/><circle cx="${cx - 8}" cy="${cy - 2}" r="9" fill="#F2D27A" stroke="#8C6A10" stroke-width="1.5"/><path d="M${cx - 13},${cy - 5} h3 v6 h3 v-6 h3" fill="none" stroke="#8E1A27" stroke-width="1.2"/><rect x="${cx + 6}" y="${cy - 10}" width="12" height="16" rx="2" fill="#1F4FBF"/>`;
-    g += `<text x="${cx}" y="${cy + 34}" text-anchor="middle" font-size="12" fill="#59636F">Cahaya ${c.ldr}%</text>`;
+    /* Matahari boleh diseret naik (terang) dan turun (gelap) */
+    const gx = side === "L" ? x + 40 : x + SLOT_W - 40;
+    const top = y + 40, bot = y + 96, sy = bot - (c.ldr / 100) * (bot - top);
+    g += `<rect x="${gx - 34}" y="${y + 30}" width="68" height="118" rx="6" fill="#1B2330" opacity="${((100 - c.ldr) / 100 * 0.55).toFixed(2)}"/>`;
+    g += `<line x1="${gx}" y1="${top}" x2="${gx}" y2="${bot}" stroke="#AEB7C2" stroke-width="2" stroke-dasharray="3 4"/>`;
+    g += `<rect x="${gx - 22}" y="${y + 106}" width="44" height="26" rx="3" fill="#1E9E5A"/><circle cx="${gx - 7}" cy="${y + 119}" r="7" fill="#F2D27A" stroke="#8C6A10" stroke-width="1.5"/><path d="M${gx - 11},${y + 117} h2.5 v4 h3 v-4 h2.5" fill="none" stroke="#8E1A27" stroke-width="1.1"/><rect x="${gx + 6}" y="${y + 112}" width="10" height="14" rx="2" fill="#1F4FBF"/>`;
+    g += `<g data-drag="${c.id}">`;
+    g += `<circle cx="${gx}" cy="${sy}" r="20" fill="transparent"/>`;
+    g += `<g stroke="#E9A100" stroke-width="2" stroke-linecap="round">${[0, 45, 90, 135, 180, 225, 270, 315].map(a => { const r = a * Math.PI / 180; return `<line x1="${(gx + Math.cos(r) * 12).toFixed(1)}" y1="${(sy + Math.sin(r) * 12).toFixed(1)}" x2="${(gx + Math.cos(r) * 16).toFixed(1)}" y2="${(sy + Math.sin(r) * 16).toFixed(1)}"/>`; }).join("")}</g>`;
+    g += `<circle cx="${gx}" cy="${sy}" r="9" fill="#FFD84D" stroke="#E9A100" stroke-width="2"/></g>`;
+    g += `<text x="${gx}" y="${y + 144}" text-anchor="middle" font-size="10" font-weight="700" fill="${c.ldr < 40 ? "#fff" : "#1B2330"}">Cahaya ${c.ldr}%</text>`;
   } else if (c.type === "Ultrasonik") {
-    g += `<rect x="${cx - 32}" y="${cy - 18}" width="64" height="32" rx="3" fill="#1F4FBF"/><circle cx="${cx - 15}" cy="${cy - 2}" r="11" fill="#D3D8CD" stroke="#59636F" stroke-width="2"/><circle cx="${cx + 15}" cy="${cy - 2}" r="11" fill="#D3D8CD" stroke="#59636F" stroke-width="2"/>`;
-    g += `<text x="${cx}" y="${cy + 34}" text-anchor="middle" font-size="12" fill="#59636F">Jarak ${c.jarak} cm</text>`;
+    /* Objek boleh diseret naik (dekat) dan turun (jauh) */
+    const gx = side === "L" ? x + 40 : x + SLOT_W - 40;
+    const top = y + 66, bot = y + 132, oy = top + (c.jarak - 2) / 98 * (bot - top);
+    g += `<rect x="${gx - 30}" y="${y + 30}" width="60" height="20" rx="3" fill="#1F4FBF"/><circle cx="${gx - 13}" cy="${y + 50}" r="8" fill="#D3D8CD" stroke="#59636F" stroke-width="2"/><circle cx="${gx + 13}" cy="${y + 50}" r="8" fill="#D3D8CD" stroke="#59636F" stroke-width="2"/>`;
+    const near = c.jarak < 20;
+    for (let k = 1; k <= 3; k++) {
+      const wy = y + 58 + k * ((oy - y - 58) / 4);
+      if (wy < oy - 4) g += `<path d="M${gx - 10 - k * 3},${wy.toFixed(1)} Q${gx},${(wy + 6).toFixed(1)} ${gx + 10 + k * 3},${wy.toFixed(1)}" fill="none" stroke="${near ? "#D22B3C" : "#1F4FBF"}" stroke-width="1.8" opacity=".7"/>`;
+    }
+    g += `<line x1="${gx + 32}" y1="${y + 58}" x2="${gx + 32}" y2="${oy}" stroke="#AEB7C2" stroke-width="1.5"/><line x1="${gx + 28}" y1="${y + 58}" x2="${gx + 36}" y2="${y + 58}" stroke="#AEB7C2" stroke-width="1.5"/>`;
+    g += `<g data-drag="${c.id}"><rect x="${gx - 34}" y="${oy - 14}" width="68" height="34" fill="transparent"/>`;
+    g += `<rect x="${gx - 28}" y="${oy}" width="56" height="16" rx="3" fill="${near ? "#D22B3C" : "#B5652A"}"/>`;
+    g += `<text x="${gx}" y="${oy + 12}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fff">${c.jarak} cm</text></g>`;
   }
   return g;
 }
@@ -1553,6 +1574,41 @@ $("labSvg").addEventListener("click", e => {
     refreshLab(); return;
   }
   if (lab.sel) { lab.sel = null; labHint("Pilihan dibatalkan."); drawLab(); }
+});
+/* Seret objek ultrasonik dan matahari LDR terus pada papan */
+function svgY(clientY) {
+  const svg = $("labSvg"), pt = svg.createSVGPoint();
+  pt.x = 0; pt.y = clientY;
+  return pt.matrixTransform(svg.getScreenCTM().inverse()).y;
+}
+function syncSensorPanel(c) {
+  const r = document.querySelector(`[data-ldr="${c.id}"],[data-jarak="${c.id}"]`);
+  if (r) r.value = c.type === "LDR" ? c.ldr : c.jarak;
+  const v = $("v-" + c.id); if (v) v.textContent = c.type === "LDR" ? c.ldr : c.jarak;
+}
+$("labSvg").addEventListener("pointerdown", e => {
+  const dg = e.target.closest("[data-drag]");
+  if (!dg) return;
+  e.preventDefault();
+  const c = labComp(dg.dataset.drag); if (!c) return;
+  const y0 = SLOTS[c.slot][1];
+  const move = ev => {
+    const yy = svgY(ev.clientY);
+    if (c.type === "Ultrasonik") {
+      const top = y0 + 66, bot = y0 + 132;
+      c.jarak = Math.round(2 + Math.min(1, Math.max(0, (yy - top) / (bot - top))) * 98);
+    } else {
+      const top = y0 + 40, bot = y0 + 96;
+      c.ldr = Math.round(Math.min(1, Math.max(0, (bot - yy) / (bot - top))) * 100);
+    }
+    syncSensorPanel(c);
+    drawLab();
+  };
+  const up = () => { window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); };
+  window.addEventListener("pointermove", move);
+  window.addEventListener("pointerup", up);
+  window.addEventListener("pointercancel", up);
+  move(e);
 });
 $("labSvg").addEventListener("pointerdown", e => {
   const pr = e.target.closest("[data-press]");
