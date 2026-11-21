@@ -853,7 +853,14 @@ function normKey(name) {
   const n = String(name).trim().toLowerCase();
   if (n === CONFIG.NONE_CLASS.toLowerCase()) return CONFIG.NONE_CLASS;
   const k = Object.keys(COMPONENTS).find(x => x.toLowerCase() === n);
-  return k || ALIASES[n] || String(name).trim();
+  if (k || ALIASES[n]) return k || ALIASES[n];
+  const base = n.replace(/[\s_-]*\d+$/, "");          // cth: "bateri2" -> "bateri"
+  if (base !== n) {
+    if (base === CONFIG.NONE_CLASS.toLowerCase()) return CONFIG.NONE_CLASS;
+    const kb = Object.keys(COMPONENTS).find(x => x.toLowerCase() === base);
+    if (kb || ALIASES[base]) return kb || ALIASES[base];
+  }
+  return String(name).trim();
 }
 const isNone = k => k === CONFIG.NONE_CLASS;
 const compName = k => isNone(k) ? "Tiada komponen" : (COMPONENTS[k]?.nama || k);
@@ -2268,7 +2275,7 @@ async function init() {
       if (!u.endsWith("/")) u += "/";
       model = await tmImage.load(u + "model.json", u + "metadata.json");
       labels = model.getClassLabels();
-      $("status").textContent = `Model AI sedia dengan ${labels.length} kelas. Hidupkan kamera untuk bermula.`;
+      $("status").textContent = `Model AI sedia dengan ${labels.length} kelas: ${labels.join(", ")}.`;
     } catch (e) {
       model = null;
       $("status").textContent = "Model tidak dapat dimuatkan (" + e.message + "). Semak MODEL_URL dalam CONFIG.";
