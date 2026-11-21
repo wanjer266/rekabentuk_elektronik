@@ -13,6 +13,7 @@ Pilih topik di bahagian atas. Misi, kuiz dan papan markah berubah ikut topik.
 ## Mod
 
 - **Imbas**: kenal komponen, papar simbol litar, peranan dalam topik, fungsi dan contoh.
+- **Latih AI**: murid merakam gambar komponen dengan kamera telefon dan melatih model terus dalam aplikasi. Model disimpan dalam telefon dan diutamakan berbanding model Teachable Machine.
 - **Bina Litar**: imbas komponen mengikut urutan litar atau gambar rajah blok.
 - **Makmal Litar**: gaya Tinkercad dengan pin sebenar ESP32 DevKit V1 (30 pin). Tambah komponen (LED, pembaz, motor AT dengan L298N, servo SG90, butang, modul LDR, HC-SR04), sambung kaki komponen ke pin ESP32 (peraturan pin sebenar disemak: pin input sahaja, ADC1, VIN/3V3, UART0), susun kod blok, jalankan simulasi dan salin kod ESP32 untuk Arduino IDE (pustaka ESP32Servo untuk servo).
 - **Multimeter**: multimeter maya untuk mengukur voltan, arus dan rintangan pada litar sesiri, serta cabaran Hukum Ohm.

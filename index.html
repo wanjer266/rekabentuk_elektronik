@@ -248,6 +248,23 @@ svg.labsvg{display:block;width:100%;height:auto;border:1px solid var(--edge);bor
 .zone{display:block;width:100%;text-align:left;border:1px dashed var(--hole);background:transparent;border-radius:5px;padding:6px 8px;font-size:13px;color:var(--soft);cursor:pointer;margin-top:4px}
 .zone.on{border:2px solid var(--rail-blue);color:var(--rail-blue);background:#EBF0FB;font-weight:700}
 pre.code{background:#1B2330;color:#E6EBF1;border-radius:6px;padding:12px;font-size:12.5px;line-height:1.5;overflow-x:auto;white-space:pre;margin:6px 0 0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+/* Latih AI */
+.tprev{position:sticky;top:76px;z-index:5;display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--edge);border-radius:8px;padding:8px;margin-bottom:10px}
+.tprev canvas{width:120px;height:120px;border-radius:6px;background:#1B2330;flex:0 0 auto}
+.tprev .btn{padding:8px 12px;font-size:13px;margin:2px 0}
+.train-src{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:4px 0 12px;font-size:14px;color:var(--soft)}
+.train-src b{color:var(--ink)}
+.trows{display:grid;gap:8px}
+.trow{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;background:var(--surface);border:1px solid var(--edge);border-radius:8px;padding:8px 10px}
+.trow .nm{font-family:var(--display);font-weight:700;font-size:15px;line-height:1.2}
+.trow .nm small{display:block;font-family:var(--body);font-weight:400;font-size:13px;color:var(--soft);margin-top:2px}
+.trow .cnt.ok{color:var(--led);font-weight:700}
+.trow .rec-btn{border:0;border-radius:8px;padding:10px 12px;font-family:var(--display);font-weight:700;font-size:14px;background:var(--rail-red);color:#fff;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none;min-width:96px}
+.trow .rec-btn.on{background:#8E1A27;box-shadow:0 0 0 4px rgba(210,43,60,.25)}
+.trow .clr{width:34px;height:34px;border:1px solid var(--edge);background:#fff;border-radius:6px;display:grid;place-items:center;cursor:pointer;padding:0}
+.trow .clr svg{width:14px;height:14px}
+.tbar{height:8px;background:var(--board);border-radius:4px;overflow:hidden;margin-top:10px}
+.tbar div{height:100%;width:0;background:var(--led);transition:width .2s}
 /* Multimeter maya */
 .meter-grid{display:grid;gap:14px;margin-top:4px}
 @media(min-width:640px){.meter-grid{grid-template-columns:1fr 210px;align-items:start}}
@@ -331,6 +348,7 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
 
     <nav class="tabs" role="tablist">
       <button class="tab" role="tab" aria-selected="true" data-mode="imbas">Imbas</button>
+      <button class="tab" role="tab" aria-selected="false" data-mode="latih">Latih AI</button>
       <button class="tab" role="tab" aria-selected="false" data-mode="litar">Bina Litar</button>
       <button class="tab" role="tab" aria-selected="false" data-mode="lab">Makmal Litar</button>
       <button class="tab" role="tab" aria-selected="false" data-mode="meter">Multimeter</button>
@@ -346,6 +364,33 @@ svg.mcirc{width:100%;height:auto;border:1px solid var(--edge);border-radius:6px;
       <div id="infoArea"><div class="empty">Belum ada komponen dikesan.</div></div>
       <h3>Komponen topik ini <span class="found-count" id="kolCount"></span></h3>
       <div class="parts" id="koleksi"></div>
+    </div>
+
+    <!-- Latih AI -->
+    <div class="view" id="view-latih">
+      <h2>Latih AI dengan kamera ini</h2>
+      <details class="info"><summary>Cara guna</summary><div>
+        <p>1. Hidupkan kamera di atas. Letakkan kertas putih sebagai latar.</p>
+        <p>2. Bagi setiap komponen, pegang komponen 10 hingga 15 cm dari kamera, kemudian tekan dan tahan butang Rakam sambil memusingkan komponen. Sasarkan sekurang-kurangnya 40 gambar.</p>
+        <p>3. Rakam juga Tiada Komponen: tangan kosong dan latar kosong. Ini wajib.</p>
+        <p>4. Tekan Latih model. Selepas siap, model ini terus digunakan oleh semua tab dan disimpan dalam telefon ini.</p>
+        <p>Jangan biarkan muka masuk ke dalam gambar supaya AI belajar mengenal komponen, bukan orang.</p>
+      </div></details>
+      <div class="train-src">Model sedang digunakan: <b id="mdlSrc">-</b></div>
+      <div class="tprev">
+        <canvas id="trainPrev" width="224" height="224" aria-label="Pratonton kamera"></canvas>
+        <div><p class="small" style="margin:0 0 8px">Pratonton gambar yang akan dirakam.</p>
+          <button class="btn" id="btnTrainCam">Hidupkan kamera</button>
+          <button class="btn line" id="btnTrainFlip">Tukar kamera</button></div>
+      </div>
+      <div class="trows" id="trows"></div>
+      <div class="actions">
+        <button class="btn go" id="btnTrain">Latih model</button>
+        <button class="btn line" id="btnTrainClr">Padam semua gambar</button>
+        <button class="btn line" id="btnUseTM">Guna model Teachable Machine</button>
+      </div>
+      <div class="tbar"><div id="trainBar"></div></div>
+      <div class="note" id="trainFb"></div>
     </div>
 
     <!-- Bina Litar -->
@@ -893,6 +938,7 @@ function speak(text) {
 /* =========================================================
    KEADAAN
    ========================================================= */
+let tmModel = null;
 let model = null, labels = [], keys = [], simulate = false, running = false;
 let stream = null, facing = "environment";
 let mode = "imbas";
@@ -1192,6 +1238,150 @@ $("btnHint").onclick = () => {
 };
 $("btnResetM").onclick = () => { step = 0; done = false; locked = null; hideNote($("litarFb")); renderMission(); };
 $("btnNextM").onclick = () => { if (!missions.length) return; mi = (mi + 1) % missions.length; step = 0; done = false; locked = null; hideNote($("litarFb")); renderMission(); };
+
+/* =========================================================
+   LATIH AI (pemindahan pembelajaran dalam pelayar)
+   ========================================================= */
+const TRAIN_DB = "indexeddb://imbaskomp-latih";
+const TRAIN_MIN = 15;          // gambar minimum bagi satu kelas untuk dilatih
+const TRAIN_MAX = 120;         // had gambar bagi satu kelas
+const trainCanvas = document.createElement("canvas");
+trainCanvas.width = 224; trainCanvas.height = 224;
+const tctx = trainCanvas.getContext("2d");
+const trainData = {};          // kunci kelas -> senarai gambar JPEG 224x224 (data URL, jimat memori)
+let mdlSource = "Simulasi";
+let recIv = null;
+
+function trainClasses() { return [...Object.keys(COMPONENTS), CONFIG.NONE_CLASS]; }
+function grabTrainFrame() {
+  if (!stream || !video.videoWidth) return null;
+  const vw = video.videoWidth, vh = video.videoHeight, s = Math.min(vw, vh);
+  tctx.save();
+  if (facing === "user") { tctx.translate(224, 0); tctx.scale(-1, 1); }
+  tctx.drawImage(video, (vw - s) / 2, (vh - s) / 2, s, s, 0, 0, 224, 224);
+  tctx.restore();
+  return trainCanvas.toDataURL("image/jpeg", 0.85);
+}
+const tprevCtx = $("trainPrev").getContext("2d");
+function drawTrainPreview() {
+  if (mode === "latih") {
+    if (stream && video.videoWidth) {
+      const vw = video.videoWidth, vh = video.videoHeight, s = Math.min(vw, vh);
+      tprevCtx.save();
+      if (facing === "user") { tprevCtx.translate(224, 0); tprevCtx.scale(-1, 1); }
+      tprevCtx.drawImage(video, (vw - s) / 2, (vh - s) / 2, s, s, 0, 0, 224, 224);
+      tprevCtx.restore();
+    } else { tprevCtx.fillStyle = "#1B2330"; tprevCtx.fillRect(0, 0, 224, 224); }
+    $("btnTrainCam").textContent = stream ? "Matikan kamera" : "Hidupkan kamera";
+  }
+  requestAnimationFrame(drawTrainPreview);
+}
+requestAnimationFrame(drawTrainPreview);
+$("btnTrainCam").onclick = () => $("btnStart").click();
+$("btnTrainFlip").onclick = () => { facing = facing === "user" ? "environment" : "user"; startCamera(); };
+function renderTrainRows() {
+  $("mdlSrc").textContent = mdlSource;
+  $("trows").innerHTML = trainClasses().map(k => {
+    const n = (trainData[k] || []).length;
+    const sub = isNone(k) ? "Tangan kosong dan latar kosong (wajib)" : (COMPONENTS[k].topik.includes(topic) ? "Dalam topik ini" : "");
+    return `<div class="trow"><div class="nm">${esc(compName(k))}${sub ? `<small>${esc(sub)}</small>` : ""}</div>
+      <span class="cnt ${n >= TRAIN_MIN ? "ok" : ""}" id="cnt-${esc(k).replace(/\s/g, "_")}">${n}</span>
+      <div style="display:flex;gap:6px"><button class="rec-btn" data-rec="${esc(k)}">Rakam</button><button class="clr" data-clr="${esc(k)}" aria-label="Padam gambar ${esc(compName(k))}">${ICON_X}</button></div></div>`;
+  }).join("");
+  $("trows").querySelectorAll("[data-rec]").forEach(b => {
+    const start = e => {
+      e.preventDefault();
+      if (!stream) { note($("trainFb"), "bad", "Hidupkan kamera di atas dahulu."); return; }
+      const k = b.dataset.rec; b.classList.add("on"); b.textContent = "Merakam…";
+      trainData[k] = trainData[k] || [];
+      clearInterval(recIv);
+      recIv = setInterval(() => {
+        if (trainData[k].length >= TRAIN_MAX) return stop();
+        const f = grabTrainFrame(); if (f) trainData[k].push(f);
+        const c = $("cnt-" + k.replace(/\s/g, "_")); if (c) { c.textContent = trainData[k].length; c.classList.toggle("ok", trainData[k].length >= TRAIN_MIN); }
+      }, 110);
+    };
+    const stop = () => { clearInterval(recIv); recIv = null; b.classList.remove("on"); b.textContent = "Rakam"; };
+    b.onpointerdown = start;
+    b.onpointerup = b.onpointerleave = b.onpointercancel = stop;
+    b.oncontextmenu = e => e.preventDefault();
+  });
+  $("trows").querySelectorAll("[data-clr]").forEach(b => b.onclick = () => { delete trainData[b.dataset.clr]; renderTrainRows(); });
+}
+/* Pembalut untuk model yang dimuat daripada storan telefon */
+function wrapLayersModel(lm, lbls) {
+  return {
+    async predict(cv) {
+      const out = tf.tidy(() => lm.predict(tf.browser.fromPixels(cv).expandDims(0).toFloat().div(tf.scalar(127)).sub(tf.scalar(1))));
+      const d = await out.data(); out.dispose();
+      return lbls.map((l, i) => ({ className: l, probability: d[i] }));
+    },
+    getClassLabels: () => lbls
+  };
+}
+function applyModel(m, lbls, sourceName) {
+  model = m; labels = lbls; simulate = false; mdlSource = sourceName;
+  $("simBox").style.display = "none";
+  keys = labels.map(normKey);
+  $("ujiActual").innerHTML = keys.map(k => `<option value="${esc(k)}">${esc(compName(k))}</option>`).join("");
+  $("status").textContent = `${sourceName} sedia dengan ${labels.length} kelas: ${labels.join(", ")}.`;
+  locked = null; cand = null; candCount = 0;
+  setTopic(topic);
+  renderTrainRows();
+}
+async function loadSavedTrained() {
+  try {
+    const lbls = load("ik_train_labels", null);
+    if (!lbls || !window.tf) return false;
+    const lm = await tf.loadLayersModel(TRAIN_DB);
+    applyModel(wrapLayersModel(lm, lbls), lbls, "Model latihan dalam aplikasi");
+    return true;
+  } catch (e) { return false; }
+}
+$("btnTrain").onclick = async () => {
+  if (!window.tmImage || !window.tf) { note($("trainFb"), "bad", "Pustaka AI belum dimuatkan. Semak sambungan internet dan muat semula halaman."); return; }
+  const cls = trainClasses().filter(k => (trainData[k] || []).length >= TRAIN_MIN);
+  if (!cls.includes(CONFIG.NONE_CLASS)) { note($("trainFb"), "bad", `Rakam Tiada Komponen dahulu (sekurang-kurangnya ${TRAIN_MIN} gambar).`); return; }
+  if (cls.length < 3) { note($("trainFb"), "bad", `Rakam sekurang-kurangnya dua komponen dengan ${TRAIN_MIN} gambar atau lebih setiap satu.`); return; }
+  const btn = $("btnTrain"); btn.disabled = true;
+  $("trainBar").style.width = "0%";
+  try {
+    note($("trainFb"), "info", "Menyediakan model asas. Ini mengambil sedikit masa kali pertama…");
+    const tm = await tmImage.createTeachable({ tfjsVersion: tf.version.tfjs }, { version: 2, alpha: 0.35 });
+    tm.setLabels(cls);
+    let done = 0; const total = cls.reduce((a, k) => a + trainData[k].length, 0);
+    for (let i = 0; i < cls.length; i++) {
+      for (const url of trainData[cls[i]]) {
+        const img = new Image(); img.src = url;
+        await (img.decode ? img.decode() : new Promise(r => { img.onload = r; }));
+        await tm.addExample(i, img);
+        done++;
+        if (done % 10 === 0) { $("trainBar").style.width = (done / total * 40) + "%"; note($("trainFb"), "info", `Memproses gambar ${done} daripada ${total}…`); await new Promise(r => setTimeout(r, 0)); }
+      }
+    }
+    const EPOCHS = 40;
+    note($("trainFb"), "info", "Melatih model…");
+    await tm.train({ denseUnits: 100, epochs: EPOCHS, learningRate: 0.001, batchSize: 16 }, {
+      onEpochEnd: async (ep) => { $("trainBar").style.width = (40 + (ep + 1) / EPOCHS * 60) + "%"; note($("trainFb"), "info", `Melatih model: pusingan ${ep + 1} daripada ${EPOCHS}`); }
+    });
+    applyModel(tm, cls, "Model latihan dalam aplikasi");
+    let saved = false;
+    try { await tm.save(TRAIN_DB); store("ik_train_labels", cls); saved = true; } catch (e) {}
+    $("trainBar").style.width = "100%";
+    note($("trainFb"), "ok", `Model siap dilatih dengan ${cls.length} kelas dan sedang digunakan. ${saved ? "Model disimpan dalam telefon ini." : "Model aktif sehingga halaman ditutup."} Cuba di tab Imbas.`);
+    speak("Model siap dilatih.");
+  } catch (e) {
+    note($("trainFb"), "bad", "Latihan gagal: " + e.message + ". Muat semula halaman dan cuba lagi.");
+  }
+  btn.disabled = false;
+};
+$("btnTrainClr").onclick = () => { Object.keys(trainData).forEach(k => delete trainData[k]); renderTrainRows(); hideNote($("trainFb")); };
+$("btnUseTM").onclick = async () => {
+  try { store("ik_train_labels", null); localStorage.removeItem("ik_train_labels"); } catch (e) {}
+  try { if (window.tf) await tf.io.removeModel(TRAIN_DB); } catch (e) {}
+  if (tmModel) { applyModel(tmModel, tmModel.getClassLabels(), "Model Teachable Machine"); note($("trainFb"), "ok", "Kembali menggunakan model Teachable Machine."); }
+  else note($("trainFb"), "bad", "Model Teachable Machine tidak dapat dimuatkan.");
+};
 
 /* =========================================================
    MULTIMETER MAYA
@@ -2256,6 +2446,7 @@ document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
   if (nm === "uji") renderMatrix();
   if (nm === "meter") renderMeter();
   if (nm === "lab") refreshLab();
+  if (nm === "latih") renderTrainRows();
 });
 $("btnSound").onclick = () => {
   soundOn = !soundOn; store("ik_snd", soundOn); updSoundBtn();
@@ -2274,8 +2465,10 @@ async function init() {
       let u = CONFIG.MODEL_URL.trim();
       if (!u.endsWith("/")) u += "/";
       model = await tmImage.load(u + "model.json", u + "metadata.json");
+      tmModel = model;
       labels = model.getClassLabels();
-      $("status").textContent = `Model AI sedia dengan ${labels.length} kelas: ${labels.join(", ")}.`;
+      mdlSource = "Model Teachable Machine";
+      $("status").textContent = `Model Teachable Machine sedia dengan ${labels.length} kelas: ${labels.join(", ")}.`;
     } catch (e) {
       model = null;
       $("status").textContent = "Model tidak dapat dimuatkan (" + e.message + "). Semak MODEL_URL dalam CONFIG.";
@@ -2294,6 +2487,8 @@ async function init() {
 
   $("ujiActual").innerHTML = keys.map(k => `<option value="${esc(k)}">${esc(compName(k))}</option>`).join("");
   setTopic(topic);
+  if (await loadSavedTrained()) { /* model latihan dalam aplikasi diutamakan */ }
+  renderTrainRows();
   renderMatrix();
   newOhm();
   loadExample("kelip"); $("labEx").value = "kelip";
